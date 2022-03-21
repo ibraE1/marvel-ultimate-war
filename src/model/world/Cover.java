@@ -1,6 +1,5 @@
 package model.world;
 import java.awt.*;
-import java.util.*;
 public class Cover {
 
     private int currentHP;
