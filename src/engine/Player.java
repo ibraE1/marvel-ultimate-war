@@ -1,5 +1,7 @@
 package engine;
 
+import model.world.Champion;
+
 import java.util.ArrayList;
 
 public class Player {
@@ -26,10 +28,5 @@ public class Player {
     public ArrayList<Champion> getTeam() {
         return team;
     }
-
-    public void setTeam(ArrayList<Champion> team) {
-        this.team = team;
-    }
-
 
 }
