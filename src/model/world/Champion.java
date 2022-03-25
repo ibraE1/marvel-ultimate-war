@@ -1,6 +1,8 @@
 package model.world;
+
 import model.abilities.Ability;
 import model.effects.Effect;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -20,14 +22,13 @@ public class Champion {
     private Condition condition;
     private Point location;
 
-    public Champion(String name, int maxHP, int mana, int maxActions, int speed, int attackRange, int attackDamage){
+    public Champion(String name, int maxHP, int mana, int maxActions, int speed, int attackRange, int attackDamage) {
         this.name = name;
         this.maxHP = maxHP;
         this.mana = mana;
         this.speed = speed;
         this.attackRange = attackRange;
         this.attackDamage = attackDamage;
-
         condition = Condition.ACTIVE;
         maxActionPointsPerTurn = maxActions;
     }
@@ -88,8 +89,14 @@ public class Champion {
         this.currentHP = currentHP;
     }
 
+    public void setMana(int mana) { this.mana = mana; }
+
     public void setMaxActionPointsPerTurn(int maxActionPointsPerTurn) {
         this.maxActionPointsPerTurn = maxActionPointsPerTurn;
+    }
+
+    public void setCurrentActionPoints(int currentActionPoints) {
+        this.currentActionPoints = currentActionPoints;
     }
 
     public void setAttackDamage(int attackDamage) {
@@ -107,6 +114,5 @@ public class Champion {
     public void setLocation(Point location) {
         this.location = location;
     }
-
 
 }
