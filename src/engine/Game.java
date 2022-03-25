@@ -1,13 +1,15 @@
 package engine;
 
-import model.abilities.Ability;
-import model.world.Champion;
-import model.world.Cover;
+import model.abilities.*;
+import model.effects.Effect;
+import model.effects.EffectType;
+import model.world.*;
 
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Game {
     private Player firstPlayer;
@@ -98,10 +100,64 @@ public class Game {
 
     public static void loadAbilities(String filePath) throws Exception {
         BufferedReader br= new BufferedReader(new FileReader("csv/Abilities.csv"));
+        for (String currentLine = br.readLine(); currentLine != null; currentLine = br.readLine()) {
+            String[] abilityDetails = currentLine.split(",");
+            Ability abt = null;
+            String[] buffs = {"Shield", "Dodge", "PowerUp"};
+            switch (abilityDetails[0]) {
+                case "CC":
+                    Effect eft;
+                    if (Arrays.asList(buffs).contains(abilityDetails[7])) {
+                        eft = new Effect(abilityDetails[7], Integer.parseInt(abilityDetails[8]), EffectType.BUFF);
+                    } else {
+                        eft = new Effect(abilityDetails[7], Integer.parseInt(abilityDetails[8]), EffectType.DEBUFF);
+                    }
+                    abt = new CrowdControlAbility(abilityDetails[1], Integer.parseInt(abilityDetails[2]),
+                            Integer.parseInt(abilityDetails[4]), Integer.parseInt(abilityDetails[3]),
+                            AreaOfEffect.valueOf(abilityDetails[5]), Integer.parseInt(abilityDetails[6]), eft);
+                    break;
+                case "DMG":
+                    abt = new DamagingAbility(abilityDetails[1], Integer.parseInt(abilityDetails[2]),
+                            Integer.parseInt(abilityDetails[4]), Integer.parseInt(abilityDetails[3]),
+                            AreaOfEffect.valueOf(abilityDetails[5]), Integer.parseInt(abilityDetails[6]), Integer.parseInt(abilityDetails[7]));
+                    break;
+                case "HEL":
+                    abt = new HealingAbility(abilityDetails[1], Integer.parseInt(abilityDetails[2]),
+                            Integer.parseInt(abilityDetails[4]), Integer.parseInt(abilityDetails[3]),
+                            AreaOfEffect.valueOf(abilityDetails[5]), Integer.parseInt(abilityDetails[6]), Integer.parseInt(abilityDetails[7]));
+                    break;
+            }
+            availableAbilities.add(abt);
+        }
     }
 
     public static void loadChampions(String filePath) throws Exception {
         BufferedReader br= new BufferedReader(new FileReader("csv/Champions.csv"));
+        for (String currentLine = br.readLine(); currentLine != null; currentLine = br.readLine()) {
+            String[] championDetails = currentLine.split(",");
+            Champion ch = null;
+            switch (championDetails[0]) {
+                case "H":
+                    ch = new Hero(championDetails[1], Integer.parseInt(championDetails[2]),
+                            Integer.parseInt(championDetails[3]), Integer.parseInt(championDetails[4]),
+                            Integer.parseInt(championDetails[5]), Integer.parseInt(championDetails[6]),
+                            Integer.parseInt(championDetails[7]));
+                    break;
+                case "A":
+                    ch = new AntiHero(championDetails[1], Integer.parseInt(championDetails[2]),
+                            Integer.parseInt(championDetails[3]), Integer.parseInt(championDetails[4]),
+                            Integer.parseInt(championDetails[5]), Integer.parseInt(championDetails[6]),
+                            Integer.parseInt(championDetails[7]));
+                    break;
+                case "V":
+                    ch = new Villain(championDetails[1], Integer.parseInt(championDetails[2]),
+                            Integer.parseInt(championDetails[3]), Integer.parseInt(championDetails[4]),
+                            Integer.parseInt(championDetails[5]), Integer.parseInt(championDetails[6]),
+                            Integer.parseInt(championDetails[7]));
+                    break;
+            }
+            availableChampions.add(ch);
+        }
     }
 
 }
