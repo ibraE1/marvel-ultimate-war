@@ -1,8 +1,7 @@
 package engine;
 
 import model.abilities.*;
-import model.effects.Effect;
-import model.effects.EffectType;
+import model.effects.*;
 import model.world.*;
 
 import java.awt.*;
@@ -112,14 +111,40 @@ public class Game {
         for (String currentLine = br.readLine(); currentLine != null; currentLine = br.readLine()) {
             String[] abilityDetails = currentLine.split(",");
             Ability abt = null;
-            String[] buffs = {"Shield", "Dodge", "PowerUp"};
             switch (abilityDetails[0]) {
                 case "CC":
-                    Effect eft;
-                    if (Arrays.asList(buffs).contains(abilityDetails[7])) {
-                        eft = new Effect(abilityDetails[7], Integer.parseInt(abilityDetails[8]), EffectType.BUFF);
-                    } else {
-                        eft = new Effect(abilityDetails[7], Integer.parseInt(abilityDetails[8]), EffectType.DEBUFF);
+                    Effect eft = null;
+                    switch (abilityDetails[7]) {
+                        case "Stun":
+                            eft = new Stun(Integer.parseInt(abilityDetails[8]));
+                            break;
+                        case "SpeedUp":
+                            eft = new SpeedUp(Integer.parseInt(abilityDetails[8]));
+                            break;
+                        case "Silence":
+                            eft = new Silence(Integer.parseInt(abilityDetails[8]));
+                            break;
+                        case "Shock":
+                            eft = new Shock(Integer.parseInt(abilityDetails[8]));
+                            break;
+                        case "Shield":
+                            eft = new Shield(Integer.parseInt(abilityDetails[8]));
+                            break;
+                        case "Root":
+                            eft = new Root(Integer.parseInt(abilityDetails[8]));
+                            break;
+                        case "PowerUp":
+                            eft = new PowerUp(Integer.parseInt(abilityDetails[8]));
+                            break;
+                        case "Embrace":
+                            eft = new Embrace(Integer.parseInt(abilityDetails[8]));
+                            break;
+                        case "Dodge":
+                            eft = new Dodge(Integer.parseInt(abilityDetails[8]));
+                            break;
+                        case "Disarm":
+                            eft = new Disarm(Integer.parseInt(abilityDetails[8]));
+                            break;
                     }
                     abt = new CrowdControlAbility(abilityDetails[1], Integer.parseInt(abilityDetails[2]),
                             Integer.parseInt(abilityDetails[4]), Integer.parseInt(abilityDetails[3]),
@@ -164,6 +189,10 @@ public class Game {
                             Integer.parseInt(championDetails[5]), Integer.parseInt(championDetails[6]),
                             Integer.parseInt(championDetails[7]));
                     break;
+            }
+            for (Ability abt : availableAbilities) {
+                if (abt.getName().equals(championDetails[8]) || abt.getName().equals(championDetails[9]) || abt.getName().equals(championDetails[10]))
+                    ch.getAbilities().add(abt);
             }
             availableChampions.add(ch);
         }
