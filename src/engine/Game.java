@@ -23,12 +23,14 @@ public class Game {
     private static int BOARDHEIGHT = 5;
     private static int BOARDWIDTH = 5;
 
-    public Game(Player first, Player second) {
+    public Game(Player first, Player second) throws Exception {
         firstPlayer = first;
         secondPlayer = second;
         board = new Object[BOARDWIDTH][BOARDHEIGHT];
         placeChampions();
         placeCovers();
+        loadAbilities("csv/Abilities.csv");
+        loadChampions("csv/Champions.csv");
     }
 
     public Player getFirstPlayer() {
@@ -99,7 +101,7 @@ public class Game {
     }
 
     public static void loadAbilities(String filePath) throws Exception {
-        BufferedReader br= new BufferedReader(new FileReader("csv/Abilities.csv"));
+        BufferedReader br= new BufferedReader(new FileReader(filePath));
         for (String currentLine = br.readLine(); currentLine != null; currentLine = br.readLine()) {
             String[] abilityDetails = currentLine.split(",");
             Ability abt = null;
@@ -132,7 +134,7 @@ public class Game {
     }
 
     public static void loadChampions(String filePath) throws Exception {
-        BufferedReader br= new BufferedReader(new FileReader("csv/Champions.csv"));
+        BufferedReader br= new BufferedReader(new FileReader(filePath));
         for (String currentLine = br.readLine(); currentLine != null; currentLine = br.readLine()) {
             String[] championDetails = currentLine.split(",");
             Champion ch = null;
