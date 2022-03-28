@@ -76,33 +76,28 @@ public class Game {
         if (!getFirstPlayer().getTeam().isEmpty()) {
             ArrayList<Champion> firstTeam = getFirstPlayer().getTeam();
             ArrayList<Champion> secondTeam = getSecondPlayer().getTeam();
+            board[0][1] = firstTeam.get(0);
+            board[0][2] = firstTeam.get(1);
+            board[0][3] = firstTeam.get(2);
+            board[4][1] = secondTeam.get(0);
+            board[4][2] = secondTeam.get(1);
+            board[4][3] = secondTeam.get(2);
 
-            board[1][0] = firstTeam.get(0);
-            board[2][0] = firstTeam.get(1);
-            board[3][0] = firstTeam.get(2);
-            board[1][4] = secondTeam.get(0);
-            board[2][4] = secondTeam.get(1);
-            board[3][4] = secondTeam.get(2);
-
-            firstTeam.get(0).setLocation(new Point(1,0));
-            firstTeam.get(1).setLocation(new Point(2,0));
-            firstTeam.get(2).setLocation(new Point(3,0));
-            secondTeam.get(0).setLocation(new Point(1,4));
-            secondTeam.get(1).setLocation(new Point(2,4));
-            secondTeam.get(2).setLocation(new Point(3,4));
+            firstTeam.get(0).setLocation(new Point(0,1));
+            firstTeam.get(1).setLocation(new Point(0,2));
+            firstTeam.get(2).setLocation(new Point(0,3));
+            secondTeam.get(0).setLocation(new Point(4,1));
+            secondTeam.get(1).setLocation(new Point(4,2));
+            secondTeam.get(2).setLocation(new Point(4,3));
         }
     }
 
     private void placeCovers() {
-        int c = 0;
-        while (c < 5) {
-            int x = (int) (Math.random() * 5);
-            int y = (int) ((Math.random() * 2) + 1);
+        for (int c = 0; c < 5; c++) {
+            int x = (int) ((Math.random() * 2) + 1);
+            int y = (int) ((Math.random() * 5));
 
-            if (board[x][y] == null) {
-                board[x][y] = new Cover(x, y);
-                c++;
-            }
+            board[x][y] = new Cover(x, y);
         }
     }
 
