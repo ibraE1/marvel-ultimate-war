@@ -94,8 +94,13 @@ public class Game {
 
     private void placeCovers() {
         for (int c = 0; c < 5; c++) {
-            int x = (int) ((Math.random() * 2) + 1);
+            int x = (int) ((Math.random() * 5));
             int y = (int) ((Math.random() * 5));
+
+            while (x == 4 || x == 0 || board[x][y] != null) {
+                x = (int) ((Math.random() * 5));
+                y = (int) ((Math.random() * 5));
+            }
 
             board[x][y] = new Cover(x, y);
         }
