@@ -31,6 +31,8 @@ public class Champion {
         this.attackDamage = attackDamage;
         condition = Condition.ACTIVE;
         maxActionPointsPerTurn = maxActions;
+        this.currentHP = maxHP;
+        this.currentActionPoints = maxActions;
     }
 
     public String getName() {
