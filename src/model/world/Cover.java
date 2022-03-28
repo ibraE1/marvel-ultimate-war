@@ -5,7 +5,7 @@ public class Cover {
     private int currentHP;
     private Point location;
 
-    public Cover(int x, int y){
+    public Cover(int x, int y) {
         location = new Point(x,y);
         currentHP = (int) ((Math.random() * 900) + 100);
     }

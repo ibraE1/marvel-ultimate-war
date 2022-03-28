@@ -30,6 +30,7 @@ public class Game {
         turnOrder = new PriorityQueue(6);
         availableChampions = new ArrayList<Champion>(15);
         availableAbilities = new ArrayList<Ability>(45);
+
         placeChampions();
         placeCovers();
     }
@@ -76,12 +77,14 @@ public class Game {
         if (!getFirstPlayer().getTeam().isEmpty()) {
             ArrayList<Champion> firstTeam = getFirstPlayer().getTeam();
             ArrayList<Champion> secondTeam = getSecondPlayer().getTeam();
+
             board[1][0] = firstTeam.get(0);
             board[2][0] = firstTeam.get(1);
             board[3][0] = firstTeam.get(2);
             board[1][4] = secondTeam.get(0);
             board[2][4] = secondTeam.get(1);
             board[3][4] = secondTeam.get(2);
+
             firstTeam.get(0).setLocation(new Point(1,0));
             firstTeam.get(1).setLocation(new Point(2,0));
             firstTeam.get(2).setLocation(new Point(3,0));
@@ -96,6 +99,7 @@ public class Game {
         while (c < 5) {
             int x = (int) (Math.random() * 5);
             int y = (int) ((Math.random() * 2) + 1);
+
             if (board[x][y] == null) {
                 board[x][y] = new Cover(x, y);
                 c++;
