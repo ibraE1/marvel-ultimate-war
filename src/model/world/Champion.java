@@ -31,10 +31,10 @@ public class Champion {
         this.attackDamage = attackDamage;
         condition = Condition.ACTIVE;
         maxActionPointsPerTurn = maxActions;
-        this.currentHP = maxHP;
-        this.currentActionPoints = maxActions;
-        this.abilities = new ArrayList<Ability>();
-        this.appliedEffects = new ArrayList<Effect>();
+        currentHP = maxHP;
+        currentActionPoints = maxActions;
+        abilities = new ArrayList<Ability>(3);
+        appliedEffects = new ArrayList<Effect>();
     }
 
     public String getName() {

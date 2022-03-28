@@ -20,17 +20,18 @@ public class Game {
     private static ArrayList<Champion> availableChampions;
     private static ArrayList<Ability> availableAbilities;
     private PriorityQueue turnOrder;
-    private static int BOARDHEIGHT = 5;
-    private static int BOARDWIDTH = 5;
+    private static final int BOARDHEIGHT = 5;
+    private static final int BOARDWIDTH = 5;
 
     public Game(Player first, Player second) throws Exception {
         firstPlayer = first;
         secondPlayer = second;
         board = new Object[BOARDWIDTH][BOARDHEIGHT];
+        turnOrder = new PriorityQueue(6);
+        availableChampions = new ArrayList<Champion>(15);
+        availableAbilities = new ArrayList<Ability>(45);
         placeChampions();
         placeCovers();
-        loadAbilities("csv/Abilities.csv");
-        loadChampions("csv/Champions.csv");
     }
 
     public Player getFirstPlayer() {
@@ -65,27 +66,29 @@ public class Game {
         return turnOrder;
     }
 
-    public static int getBOARDHEIGHT() {
+    public static int getBoardheight() {
         return BOARDHEIGHT;
     }
 
-    public static int getBOARDWIDTH() { return BOARDWIDTH; }
+    public static int getBoardwidth() { return BOARDWIDTH; }
 
     private void placeChampions() {
-        ArrayList<Champion> firstTeam = getFirstPlayer().getTeam();
-        ArrayList<Champion> secondTeam = getSecondPlayer().getTeam();
-        board[1][0] = firstTeam.get(0);
-        board[2][0] = firstTeam.get(1);
-        board[3][0] = firstTeam.get(2);
-        board[1][4] = secondTeam.get(0);
-        board[2][4] = secondTeam.get(1);
-        board[3][4] = secondTeam.get(2);
-        firstTeam.get(0).setLocation(new Point(1,0));
-        firstTeam.get(1).setLocation(new Point(2,0));
-        firstTeam.get(2).setLocation(new Point(3,0));
-        secondTeam.get(0).setLocation(new Point(1,4));
-        secondTeam.get(1).setLocation(new Point(2,4));
-        secondTeam.get(2).setLocation(new Point(3,4));
+        if (!getFirstPlayer().getTeam().isEmpty()) {
+            ArrayList<Champion> firstTeam = getFirstPlayer().getTeam();
+            ArrayList<Champion> secondTeam = getSecondPlayer().getTeam();
+            board[1][0] = firstTeam.get(0);
+            board[2][0] = firstTeam.get(1);
+            board[3][0] = firstTeam.get(2);
+            board[1][4] = secondTeam.get(0);
+            board[2][4] = secondTeam.get(1);
+            board[3][4] = secondTeam.get(2);
+            firstTeam.get(0).setLocation(new Point(1,0));
+            firstTeam.get(1).setLocation(new Point(2,0));
+            firstTeam.get(2).setLocation(new Point(3,0));
+            secondTeam.get(0).setLocation(new Point(1,4));
+            secondTeam.get(1).setLocation(new Point(2,4));
+            secondTeam.get(2).setLocation(new Point(3,4));
+        }
     }
 
     private void placeCovers() {
