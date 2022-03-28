@@ -33,6 +33,8 @@ public class Champion {
         maxActionPointsPerTurn = maxActions;
         this.currentHP = maxHP;
         this.currentActionPoints = maxActions;
+        this.abilities = new ArrayList<Ability>();
+        this.appliedEffects = new ArrayList<Effect>();
     }
 
     public String getName() {
@@ -88,7 +90,13 @@ public class Champion {
     }
 
     public void setCurrentHP(int currentHP) {
-        this.currentHP = currentHP;
+        if (currentHP >= 0 && currentHP <= maxHP) {
+            this.currentHP = currentHP;
+        } else if (currentHP < 0) {
+            this.currentHP = 0;
+        } else {
+            this.currentHP = maxHP;
+        }
     }
 
     public void setMana(int mana) { this.mana = mana; }
