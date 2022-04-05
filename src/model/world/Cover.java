@@ -19,6 +19,6 @@ public class Cover {
     }
 
     public void setCurrentHP(int currentHP) {
-        this.currentHP = currentHP;
+        this.currentHP = Math.max(currentHP,0);
     }
 }
