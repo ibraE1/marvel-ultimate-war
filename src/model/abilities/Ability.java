@@ -1,22 +1,34 @@
 package model.abilities;
 
 public class Ability {
-
     private String name;
     private int manaCost;
     private int baseCooldown;
     private int currentCooldown;
     private int castRange;
-    private int requiredActionPoints;
     private AreaOfEffect castArea;
+    private int requiredActionPoints;
 
-    public Ability(String name,int cost, int baseCoolDown, int castRange, AreaOfEffect area , int required){
+    public Ability(String name, int cost, int baseCoolDown, int castRange, AreaOfEffect area, int required) {
         this.name = name;
+        this.manaCost = cost;
         this.baseCooldown = baseCoolDown;
+        this.currentCooldown = 0;
         this.castRange = castRange;
-        castArea = area;
-        requiredActionPoints = required;
-        manaCost = cost;
+        this.castArea = area;
+        this.requiredActionPoints = required;
+    }
+
+    public int getCurrentCooldown() {
+        return currentCooldown;
+    }
+
+    public void setCurrentCooldown(int currentCoolDown) {
+        if (currentCoolDown < 0)
+            currentCoolDown = 0;
+        else if (currentCoolDown > baseCooldown)
+            currentCoolDown = baseCooldown;
+        this.currentCooldown = currentCoolDown;
     }
 
     public String getName() {
@@ -42,17 +54,4 @@ public class Ability {
     public int getRequiredActionPoints() {
         return requiredActionPoints;
     }
-
-    public int getCurrentCooldown() {
-        return currentCooldown;
-    }
-
-    public void setCurrentCooldown(int currentCooldown) {
-        if(currentCooldown > baseCooldown) {
-            this.currentCooldown = baseCooldown;
-        }else{
-            this.currentCooldown = currentCooldown;
-        }
-    }
-
 }
