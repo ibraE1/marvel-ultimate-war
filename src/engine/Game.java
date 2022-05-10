@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import exceptions.NotEnoughResourcesException;
 import model.abilities.*;
 import model.effects.*;
 import model.world.*;
@@ -218,5 +219,136 @@ public class Game {
 
     public static int getBoardheight() {
         return BOARDHEIGHT;
+    }
+
+    public Champion getCurrentChampion() {
+        return (Champion) turnOrder.peekMin();
+    }
+
+    public Player checkGameOver() {
+        ArrayList<Champion> firstTeam = firstPlayer.getTeam();
+        ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+        boolean firstFlag = true;
+        boolean secondFlag = true;
+        for (Champion champ : firstTeam) {
+            if (champ.getCurrentHP() != 0) {
+                firstFlag = false;
+                break;
+            }
+        }
+        for (Champion champ : secondTeam) {
+            if (champ.getCurrentHP() != 0) {
+                secondFlag = false;
+                break;
+            }
+        }
+        if (!firstFlag)
+            return firstPlayer;
+        else if (!secondFlag)
+            return secondPlayer;
+        else return null;
+    }
+
+    public void move(Direction d) throws NotEnoughResourcesException {
+        Champion champ = getCurrentChampion();
+        int action = champ.getCurrentActionPoints();
+        Point location = champ.getLocation();
+        if (action <= 0)
+            throw new NotEnoughResourcesException();
+        else {
+            champ.setCurrentActionPoints(action - 1);
+            switch (d) {
+                case UP:
+                    champ.setLocation(new Point(location.x, location.y+1));
+                    break;
+                case DOWN:
+                    champ.setLocation(new Point(location.x, location.y-1));
+                    break;
+                case LEFT:
+                    champ.setLocation(new Point(location.x-1, location.y));
+                    break;
+                case RIGHT:
+                    champ.setLocation(new Point(location.x+1, location.y-1));
+                    break;
+            }
+        }
+    }
+
+    public int calculateDamage(Champion attacker, Damageable defender) {
+        int ad  = attacker.getAttackDamage();
+        if (attacker instanceof Hero) {
+            if (defender instanceof Hero || defender instanceof Cover) {
+                return ad;
+            } else {
+                return (int) (ad*1.5);
+            }
+        } else if (attacker instanceof Villain) {
+            if (defender instanceof Villain || defender instanceof Cover) {
+                return ad;
+            } else {
+                return (int) (ad*1.5);
+            }
+        } else if (attacker instanceof AntiHero) {
+            if (defender instanceof AntiHero || defender instanceof Cover) {
+                return ad;
+            } else {
+                return (int) (ad*1.5);
+            }
+        }
+        return 0;
+    }
+
+    public void attack(Direction d) throws NotEnoughResourcesException {
+        Champion champ = getCurrentChampion();
+        int action = champ.getCurrentActionPoints();
+        Point location = champ.getLocation();
+        int range = champ.getAttackRange();
+        if (action <= 1)
+            throw new NotEnoughResourcesException();
+        else {
+            champ.setCurrentActionPoints(action - 2);
+            switch (d) {
+                case UP:
+                    for (int i = 1; i <= range; i++) {
+                        Object tile = board[location.x][location.y+i];
+                        if (tile instanceof Damageable) {
+                            Damageable dmg = (Damageable) tile;
+                            dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
+                            break;
+                        }
+                    }
+                    break;
+                case DOWN:
+                    for (int i = 1; i <= range; i++) {
+                        Object tile = board[location.x][location.y-i];
+                        if (tile instanceof Damageable) {
+                            Damageable dmg = (Damageable) tile;
+                            dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
+                            break;
+                        }
+                    }
+                    break;
+                case LEFT:
+                    for (int i = 1; i <= range; i++) {
+                        Object tile = board[location.x-i][location.y];
+                        if (tile instanceof Damageable) {
+                            Damageable dmg = (Damageable) tile;
+                            dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
+                            break;
+                        }
+                    }
+                    break;
+                case RIGHT:
+                    for (int i = 1; i <= range; i++) {
+                        Object tile = board[location.x+i][location.y];
+                        if (tile instanceof Damageable) {
+                            Damageable dmg = (Damageable) tile;
+                            dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
+                            break;
+                        }
+                    }
+                    break;
+            }
+        }
     }
 }
