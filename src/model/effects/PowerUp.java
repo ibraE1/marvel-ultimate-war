@@ -22,6 +22,8 @@ public class PowerUp extends Effect {
                 ((HealingAbility) currAbility).setHealAmount((int) (((HealingAbility) currAbility).getHealAmount() * 1.2));
             }
         }
+
+        c.getAppliedEffects().add(this);
     }
 
     public void remove(Champion c) {
@@ -34,5 +36,6 @@ public class PowerUp extends Effect {
                 ((HealingAbility) currAbility).setHealAmount((int) (((HealingAbility) currAbility).getHealAmount() / 1.2));
             }
         }
+        c.getAppliedEffects().remove(this);
     }
 }

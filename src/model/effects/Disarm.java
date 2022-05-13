@@ -13,18 +13,14 @@ public class Disarm extends Effect {
     }
 
     public void apply(Champion c) {
-        int dmg = c.getAttackDamage();
-        c.setAttackDamage(0);
         DamagingAbility punch = new DamagingAbility("Punch", 0,1,1, AreaOfEffect.SINGLETARGET,1,50);
         c.getAbilities().add(punch);
-        if (p.getCurrentCooldown() == 0) {
-
-        }
+        c.getAppliedEffects().add(this);
     }
 
-    public void remove(Champion c, int dmg) {
+    public void remove(Champion c) {
         c.getAbilities().remove(c.getAbilities().size()-1);
-        // c.setAttackDamage();
+        c.getAppliedEffects().remove(this);
     }
 
 }

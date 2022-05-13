@@ -11,9 +11,11 @@ public class Root extends Effect {
 
     public void apply(Champion c) {
         c.setCondition(Condition.ROOTED);
+        c.getAppliedEffects().add(this);
     }
 
     public void remove(Champion c) {
         c.setCondition(Condition.ACTIVE);
+        c.getAppliedEffects().remove(this);
     }
 }

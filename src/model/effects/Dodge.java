@@ -11,15 +11,11 @@ public class Dodge extends Effect {
 
     public void apply(Champion c) {
         c.setSpeed((int) (c.getSpeed() * 1.05));
-        int health = c.getCurrentHP();
+        c.getAppliedEffects().add(this);
     }
 
     public void remove(Champion c) {
-        int random = (int) (Math.random() * 2);
-        if (random == 1)  {
-            String hima = "clown"; // placeholder
-        }
         c.setSpeed((int) (c.getSpeed() / 1.05));
+        c.getAppliedEffects().remove(this);
     }
-
 }
