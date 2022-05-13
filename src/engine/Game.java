@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import exceptions.ChampionDisarmedException;
 import exceptions.NotEnoughResourcesException;
 import model.abilities.*;
 import model.effects.*;
@@ -276,33 +277,51 @@ public class Game {
 
     public int calculateDamage(Champion attacker, Damageable defender) {
         int ad  = attacker.getAttackDamage();
-        if (attacker instanceof Hero) {
-            if (defender instanceof Hero || defender instanceof Cover) {
-                return ad;
-            } else {
-                return (int) (ad*1.5);
+        if (defender instanceof Cover)
+            return ad;
+        Champion def = (Champion) defender;
+        for (Effect eft : def.getAppliedEffects()) {
+            if (eft instanceof Shield) {
+                eft.remove(def);
+                return 0;
             }
-        } else if (attacker instanceof Villain) {
-            if (defender instanceof Villain || defender instanceof Cover) {
-                return ad;
-            } else {
-                return (int) (ad*1.5);
-            }
-        } else if (attacker instanceof AntiHero) {
-            if (defender instanceof AntiHero || defender instanceof Cover) {
-                return ad;
-            } else {
-                return (int) (ad*1.5);
+            if (eft instanceof Dodge) {
+                if (Math.random() < 0.5)
+                    return 0;
             }
         }
-        return 0;
+        int damage = 0;
+        if (attacker instanceof Hero) {
+            if (def instanceof Hero) {
+                damage += ad;
+            } else {
+                damage += (int) (ad*1.5);
+            }
+        } else if (attacker instanceof Villain) {
+            if (def instanceof Villain) {
+                damage += ad;
+            } else {
+                damage += (int) (ad*1.5);
+            }
+        } else if (attacker instanceof AntiHero) {
+            if (def instanceof AntiHero) {
+                damage += ad;
+            } else {
+                damage += (int) (ad*1.5);
+            }
+        }
+        return damage;
     }
 
-    public void attack(Direction d) throws NotEnoughResourcesException {
+    public void attack(Direction d) throws NotEnoughResourcesException, ChampionDisarmedException {
         Champion champ = getCurrentChampion();
         int action = champ.getCurrentActionPoints();
         Point location = champ.getLocation();
         int range = champ.getAttackRange();
+        for (Effect eft : champ.getAppliedEffects()) {
+            if (eft instanceof Disarm)
+                throw new ChampionDisarmedException();
+        }
         if (action <= 1)
             throw new NotEnoughResourcesException();
         else {
