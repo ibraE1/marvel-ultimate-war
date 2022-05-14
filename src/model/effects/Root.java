@@ -9,13 +9,23 @@ public class Root extends Effect {
         super("Root", duration, EffectType.DEBUFF);
     }
 
+    @Override
     public void apply(Champion c) {
-        c.setCondition(Condition.ROOTED);
-        c.getAppliedEffects().add(this);
+        if (c.getCondition() != Condition.INACTIVE) {
+            c.setCondition(Condition.ROOTED);
+        }
     }
 
+    @Override
     public void remove(Champion c) {
-        c.setCondition(Condition.ACTIVE);
-        c.getAppliedEffects().remove(this);
+        for (int i = c.getAppliedEffects().size() - 1; i >= 0; i--) {
+            if (c.getAppliedEffects().get(i) instanceof Stun) {
+                c.setCondition(Condition.INACTIVE);
+            } else if (c.getAppliedEffects().get(i) instanceof Root) {
+                c.setCondition(Condition.ROOTED);
+            } else if (!(c.getAppliedEffects().get(i) instanceof Stun) && !(c.getAppliedEffects().get(i) instanceof Root)) {
+                c.setCondition(Condition.ACTIVE);
+            }
+        }
     }
 }
