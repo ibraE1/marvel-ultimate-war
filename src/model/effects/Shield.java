@@ -8,13 +8,13 @@ public class Shield extends Effect {
         super("Shield", duration, EffectType.BUFF);
     }
 
+    @Override
     public void apply(Champion c) {
         c.setSpeed((int) (c.getSpeed() * 1.02));
-        c.getAppliedEffects().add(this);
     }
 
+    @Override
     public void remove(Champion c) {
         c.setSpeed((int) (c.getSpeed() / 1.02));
-        c.getAppliedEffects().remove(this);
     }
 }

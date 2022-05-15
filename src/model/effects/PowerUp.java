@@ -8,10 +8,12 @@ import model.world.Champion;
 import java.util.ArrayList;
 
 public class PowerUp extends Effect {
+
     public PowerUp(int duration) {
         super("PowerUp", duration, EffectType.BUFF);
     }
 
+    @Override
     public void apply(Champion c) {
         ArrayList<Ability> a = c.getAbilities();
         for (int i = 0; i < a.size(); i++) {
@@ -26,6 +28,7 @@ public class PowerUp extends Effect {
         c.getAppliedEffects().add(this);
     }
 
+    @Override
     public void remove(Champion c) {
         ArrayList<Ability> a = c.getAbilities();
         for (int i = 0; i < a.size(); i++) {

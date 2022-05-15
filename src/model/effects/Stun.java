@@ -3,19 +3,28 @@ package model.effects;
 import model.world.Champion;
 import model.world.Condition;
 
+import java.util.Collection;
+
 public class Stun extends Effect {
 
     public Stun(int duration) {
         super("Stun", duration, EffectType.DEBUFF);
     }
 
+    @Override
     public void apply(Champion c) {
         c.setCondition(Condition.INACTIVE);
-        c.getAppliedEffects().add(this);
     }
 
+    @Override
     public void remove(Champion c) {
         c.setCondition(Condition.ACTIVE);
-        c.getAppliedEffects().remove(this);
+        for (int i = c.getAppliedEffects().size() - 1; i >= 0; i--) {
+            if (c.getAppliedEffects().get(i) instanceof Stun) {
+                c.setCondition(Condition.INACTIVE);
+            } else if (c.getAppliedEffects().get(i) instanceof Root) {
+                c.setCondition(Condition.ROOTED);
+            }
+        }
     }
 }
