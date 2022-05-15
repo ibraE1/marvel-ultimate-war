@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import model.abilities.Ability;
 import model.effects.Effect;
 
-public class Champion implements Damageable {
+public abstract class Champion implements Damageable, Comparable {
     private String name;
     private int maxHP;
     private int currentHP;
@@ -131,4 +131,15 @@ public class Champion implements Damageable {
     public void setMaxActionPointsPerTurn(int maxActionPointsPerTurn) {
         this.maxActionPointsPerTurn = maxActionPointsPerTurn;
     }
+
+    public int compareTo(Object obj) {
+        Champion champ = (Champion) obj;
+        if (champ.speed < speed)
+            return -1;
+        else if (champ.speed > speed)
+            return 1;
+        return name.compareTo(champ.name);
+    }
+
+    public abstract void useLeaderAbility(ArrayList<Champion> targets);
 }
