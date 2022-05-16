@@ -370,4 +370,53 @@ public class Game {
             }
         }
     }
+
+    public void castAbility(Ability a) throws NotEnoughResourcesException {
+        if (getCurrentChampion().getCurrentActionPoints() < a.getRequiredActionPoints())
+            throw new NotEnoughResourcesException();
+        getCurrentChampion().setMana(getCurrentChampion().getMana() - a.getManaCost());
+        getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()
+                - a.getRequiredActionPoints());
+        ArrayList<Damageable> targets = new ArrayList<Damageable>();
+        switch (a.getCastArea()) {
+            case SELFTARGET:
+                targets.add(getCurrentChampion());
+                break;
+            case TEAMTARGET:
+                ArrayList<Champion> firstTeam = firstPlayer.getTeam();
+                ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+                if (firstTeam.contains(getCurrentChampion())) {
+                    for (Damageable d : firstTeam) {
+                        targets.add(d);
+                    }
+                } else {
+                    for (Damageable d : secondTeam) {
+                        targets.add(d);
+                    }
+                }
+                break;
+            case SURROUND:
+                int x = getCurrentChampion().getLocation().x;
+                int y = getCurrentChampion().getLocation().y;
+                if (board[x+1][y] instanceof Damageable)
+                    targets.add((Damageable) board[x+1][y]);
+                if (board[x+1][y+1] instanceof Damageable)
+                    targets.add((Damageable) board[x+1][y]);
+                if (board[x+1][y-1] instanceof Damageable)
+                    targets.add((Damageable) board[x+1][y]);
+                if (board[x-1][y] instanceof Damageable)
+                    targets.add((Damageable) board[x+1][y]);
+                if (board[x-1][y+1] instanceof Damageable)
+                    targets.add((Damageable) board[x+1][y]);
+                if (board[x-1][y-1] instanceof Damageable)
+                    targets.add((Damageable) board[x+1][y]);
+                if (board[x][y+1] instanceof Damageable)
+                    targets.add((Damageable) board[x+1][y]);
+                if (board[x][y-1] instanceof Damageable)
+                    targets.add((Damageable) board[x+1][y]);
+                break;
+        }
+        if (!targets.isEmpty())
+            a.execute(targets);
+    }
 }
