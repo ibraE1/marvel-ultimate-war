@@ -5,8 +5,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import exceptions.ChampionDisarmedException;
+import exceptions.LeaderNotCurrentException;
 import exceptions.NotEnoughResourcesException;
 import exceptions.UnallowedMovementException;
 import model.abilities.*;
@@ -541,7 +543,7 @@ public class Game {
                     }
 
                     if (x != 0) {
-                        if (x != 0 && board[x-1][y] instanceof Champion && enemyTeam.contains((Champion) board[x-1][y])) {
+                        if (board[x-1][y] instanceof Champion && enemyTeam.contains((Champion) board[x-1][y])) {
                             for (Effect e : ((Champion) board[x-1][y]).getAppliedEffects()) {
                                 if (e instanceof Shield) {
                                     ((Champion) board[x-1][y]).getAppliedEffects().remove(e);
@@ -623,5 +625,25 @@ public class Game {
         if (!targets.isEmpty()) {
             a.execute(targets);
         }
+    }
+
+    public void useLeaderAbility() throws LeaderNotCurrentException {
+        ArrayList<Champion> targets = new ArrayList<Champion>();
+        ArrayList<Champion> firstTeam = firstPlayer.getTeam();
+        ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+
+        if (getCurrentChampion() == firstPlayer.getLeader() || getCurrentChampion() == secondPlayer.getLeader()) {
+            if (getCurrentChampion() == firstPlayer.getLeader()) {
+                targets.addAll(secondTeam);
+            } else if (getCurrentChampion() == secondPlayer.getLeader()) {
+                targets.addAll(firstTeam);
+            }
+            getCurrentChampion().useLeaderAbility(targets);
+        } else {
+            throw new LeaderNotCurrentException();
+        }
+
+
+
     }
 }
