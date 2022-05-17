@@ -4,13 +4,11 @@ import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import exceptions.ChampionDisarmedException;
-import exceptions.LeaderNotCurrentException;
-import exceptions.NotEnoughResourcesException;
-import exceptions.UnallowedMovementException;
+import exceptions.*;
 import model.abilities.*;
 import model.effects.*;
 import model.world.*;
@@ -634,6 +632,100 @@ public class Game {
                 getCurrentChampion().setMana(getCurrentChampion().getMana() - a.getManaCost());
                 getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()
                         - a.getRequiredActionPoints());
+
+                ArrayList<Damageable> targets = new ArrayList<Damageable>();
+                ArrayList<Champion> firstTeam = firstPlayer.getTeam();
+                ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+                ArrayList<Champion> champTeam = new ArrayList<>();
+                ArrayList<Champion> enemyTeam = new ArrayList<>();
+
+                if (firstTeam.contains(getCurrentChampion())) {
+                    champTeam = firstTeam;
+                    enemyTeam = secondTeam;
+                } else if (secondTeam.contains(getCurrentChampion())){
+                    champTeam = secondTeam;
+                    enemyTeam = firstTeam;
+                }
+                int x = getCurrentChampion().getLocation().x;
+                int y = getCurrentChampion().getLocation().y;
+
+                switch (d) {
+                    case UP:
+                        for (int i = y; i <= y + a.getCastRange() || i == getBoardheight(); i++) {
+                            if (board[x][i] instanceof Damageable) {
+                                if (board[x][i] instanceof Champion && enemyTeam.contains((Champion) board[x][i])) {
+                                    for (Effect e : ((Champion) board[x][i]).getAppliedEffects()) {
+                                        if (e instanceof Shield) {
+                                            ((Champion) board[x][i]).getAppliedEffects().remove(e);
+                                        } else {
+                                            targets.add((Damageable) board[x][i]);
+                                        }
+                                    }
+                                } else if ((board[x][i] instanceof Champion && !enemyTeam.contains((Champion) board[x][i])) || board[x][i] instanceof Cover) {
+                                    targets.add((Damageable) board[x][i]);
+                                }
+                            }
+                        }
+                        break;
+
+                    case RIGHT:
+                        for (int i = x; i <= x + a.getCastRange() || i == getBoardwidth(); i++) {
+                            if (board[i][y] instanceof Damageable) {
+                                if (board[i][y] instanceof Champion && enemyTeam.contains((Champion) board[i][y])) {
+                                    for (Effect e : ((Champion) board[i][y]).getAppliedEffects()) {
+                                        if (e instanceof Shield) {
+                                            ((Champion) board[i][y]).getAppliedEffects().remove(e);
+                                        } else {
+                                            targets.add((Damageable) board[i][y]);
+                                        }
+                                    }
+                                } else if ((board[i][y] instanceof Champion && !enemyTeam.contains((Champion) board[i][y])) || board[i][y] instanceof Cover) {
+                                    targets.add((Damageable) board[i][y]);
+                                }
+                            }
+                        }
+                        break;
+
+                    case DOWN:
+                        for (int i = y; i >= y - a.getCastRange() || i == 0; i--) {
+                            if (board[x][i] instanceof Damageable) {
+                                if (board[x][i] instanceof Champion && enemyTeam.contains((Champion) board[x][i])) {
+                                    for (Effect e : ((Champion) board[x][i]).getAppliedEffects()) {
+                                        if (e instanceof Shield) {
+                                            ((Champion) board[x][i]).getAppliedEffects().remove(e);
+                                        } else {
+                                            targets.add((Damageable) board[x][i]);
+                                        }
+                                    }
+                                } else if ((board[x][i] instanceof Champion && !enemyTeam.contains((Champion) board[x][i])) || board[x][i] instanceof Cover) {
+                                    targets.add((Damageable) board[x][i]);
+                                }
+                            }
+                        }
+                        break;
+
+                    case LEFT:
+                        for (int i = x; i >= x - a.getCastRange() || i == 0; i--) {
+                            if (board[i][y] instanceof Damageable) {
+                                if (board[i][y] instanceof Champion && enemyTeam.contains((Champion) board[i][y])) {
+                                    for (Effect e : ((Champion) board[i][y]).getAppliedEffects()) {
+                                        if (e instanceof Shield) {
+                                            ((Champion) board[i][y]).getAppliedEffects().remove(e);
+                                        } else {
+                                            targets.add((Damageable) board[i][y]);
+                                        }
+                                    }
+                                } else if ((board[i][y] instanceof Champion && !enemyTeam.contains((Champion) board[i][y])) || board[i][y] instanceof Cover) {
+                                    targets.add((Damageable) board[i][y]);
+                                }
+                            }
+                        }
+                        break;
+                }
+
+                if (!targets.isEmpty()) {
+                    a.execute(targets);
+                }
             }
         }
     }
@@ -650,20 +742,31 @@ public class Game {
         }
     }
 
-    public void useLeaderAbility() throws LeaderNotCurrentException {
+    public void useLeaderAbility() throws LeaderNotCurrentException, LeaderAbilityAlreadyUsedException {
         ArrayList<Champion> targets = new ArrayList<Champion>();
         ArrayList<Champion> firstTeam = firstPlayer.getTeam();
         ArrayList<Champion> secondTeam = secondPlayer.getTeam();
 
-        if (getCurrentChampion() == firstPlayer.getLeader() || getCurrentChampion() == secondPlayer.getLeader()) {
-            if (getCurrentChampion() == firstPlayer.getLeader()) {
-                targets.addAll(secondTeam);
-            } else if (getCurrentChampion() == secondPlayer.getLeader()) {
-                targets.addAll(firstTeam);
-            }
-            getCurrentChampion().useLeaderAbility(targets);
+        if ((firstTeam.contains(getCurrentChampion()) && firstLeaderAbilityUsed) || (secondTeam.contains(getCurrentChampion()) && secondLeaderAbilityUsed)) {
+            throw new LeaderAbilityAlreadyUsedException();
         } else {
-            throw new LeaderNotCurrentException();
+            if (getCurrentChampion() == firstPlayer.getLeader() || getCurrentChampion() == secondPlayer.getLeader()) {
+                if (getCurrentChampion() == firstPlayer.getLeader()) {
+                    targets.addAll(secondTeam);
+                } else if (getCurrentChampion() == secondPlayer.getLeader()) {
+                    targets.addAll(firstTeam);
+                }
+                getCurrentChampion().useLeaderAbility(targets);
+
+                if (getCurrentChampion() == firstPlayer.getLeader()) {
+                    firstLeaderAbilityUsed = true;
+                } else {
+                    secondLeaderAbilityUsed = true;
+                }
+
+            } else {
+                throw new LeaderNotCurrentException();
+            }
         }
     }
 
