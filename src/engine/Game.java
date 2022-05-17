@@ -374,6 +374,52 @@ public class Game {
         }
     }
 
+    public void executeHelper (Ability a, ArrayList<Damageable> targets) {
+
+        ArrayList<Champion> firstTeam = firstPlayer.getTeam();
+        ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+        ArrayList<Damageable> enemies = new ArrayList<>();
+        ArrayList<Damageable> covers = new ArrayList<>();
+        ArrayList<Damageable> friendly = new ArrayList<>();
+        ArrayList<Champion> champTeam = new ArrayList<>();
+        ArrayList<Champion> enemyTeam = new ArrayList<>();
+
+        if (firstTeam.contains(getCurrentChampion())) {
+            champTeam = firstTeam;
+            enemyTeam = secondTeam;
+        } else if (secondTeam.contains(getCurrentChampion())){
+            champTeam = secondTeam;
+            enemyTeam = firstTeam;
+        }
+
+        for (Damageable d : targets) {
+            if (d instanceof Cover) {
+                covers.add(d);
+            } else if (champTeam.contains((Champion) d)) {
+                friendly.add(d);
+            } else if (enemyTeam.contains((Champion) d)) {
+                enemies.add(d);
+            }
+        }
+
+        if (a instanceof DamagingAbility || (a instanceof CrowdControlAbility && (((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF))) {
+            if (!enemies.isEmpty()) {
+                a.execute(enemies);
+            }
+            if (!covers.isEmpty()) {
+                a.execute(covers);
+            }
+        } else if (a instanceof HealingAbility){
+            if (!friendly.isEmpty()) {
+                a.execute(friendly);
+            }
+        } else if (a instanceof CrowdControlAbility && (((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF)) {
+            if (!friendly.isEmpty()) {
+                a.execute(friendly);
+            }
+        }
+    }
+
     public void castAbility(Ability a) throws NotEnoughResourcesException {
         if (getCurrentChampion().getCurrentActionPoints() < a.getRequiredActionPoints()) {
             throw new NotEnoughResourcesException();
@@ -616,10 +662,7 @@ public class Game {
                     }
                     break;
             }
-
-            if (!targets.isEmpty()) {
-                a.execute(targets);
-            }
+            executeHelper(a, targets);
         }
     }
 
@@ -650,7 +693,7 @@ public class Game {
 
                 switch (d) {
                     case UP:
-                        for (int i = y; i <= y + a.getCastRange() || i == getBoardheight(); i++) {
+                        for (int i = y; i <= y + a.getCastRange() || i < getBoardheight(); i++) {
                             if (board[x][i] instanceof Damageable) {
                                 if (board[x][i] instanceof Champion && enemyTeam.contains((Champion) board[x][i])) {
                                     for (Effect e : ((Champion) board[x][i]).getAppliedEffects()) {
@@ -668,7 +711,7 @@ public class Game {
                         break;
 
                     case RIGHT:
-                        for (int i = x; i <= x + a.getCastRange() || i == getBoardwidth(); i++) {
+                        for (int i = x; i <= x + a.getCastRange() || i < getBoardwidth(); i++) {
                             if (board[i][y] instanceof Damageable) {
                                 if (board[i][y] instanceof Champion && enemyTeam.contains((Champion) board[i][y])) {
                                     for (Effect e : ((Champion) board[i][y]).getAppliedEffects()) {
@@ -686,7 +729,7 @@ public class Game {
                         break;
 
                     case DOWN:
-                        for (int i = y; i >= y - a.getCastRange() || i == 0; i--) {
+                        for (int i = y; i >= y - a.getCastRange() || i > 0; i--) {
                             if (board[x][i] instanceof Damageable) {
                                 if (board[x][i] instanceof Champion && enemyTeam.contains((Champion) board[x][i])) {
                                     for (Effect e : ((Champion) board[x][i]).getAppliedEffects()) {
@@ -704,7 +747,7 @@ public class Game {
                         break;
 
                     case LEFT:
-                        for (int i = x; i >= x - a.getCastRange() || i == 0; i--) {
+                        for (int i = x; i >= x - a.getCastRange() || i > 0; i--) {
                             if (board[i][y] instanceof Damageable) {
                                 if (board[i][y] instanceof Champion && enemyTeam.contains((Champion) board[i][y])) {
                                     for (Effect e : ((Champion) board[i][y]).getAppliedEffects()) {
@@ -721,10 +764,7 @@ public class Game {
                         }
                         break;
                 }
-
-                if (!targets.isEmpty()) {
-                    a.execute(targets);
-                }
+                executeHelper(a, targets);
             }
         }
     }
@@ -770,10 +810,7 @@ public class Game {
                         targets.add((Damageable) board[x][y]);
                     }
                 }
-
-                if (!targets.isEmpty()) {
-                    a.execute(targets);
-                }
+                executeHelper(a, targets);
             }
         }
     }
