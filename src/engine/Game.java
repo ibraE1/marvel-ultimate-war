@@ -379,251 +379,274 @@ public class Game {
     public void castAbility(Ability a) throws NotEnoughResourcesException {
         if (getCurrentChampion().getCurrentActionPoints() < a.getRequiredActionPoints()) {
             throw new NotEnoughResourcesException();
-        }
-        getCurrentChampion().setMana(getCurrentChampion().getMana() - a.getManaCost());
-        getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()
-                - a.getRequiredActionPoints());
+        } else {
+            getCurrentChampion().setMana(getCurrentChampion().getMana() - a.getManaCost());
+            getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()
+                    - a.getRequiredActionPoints());
 
-        ArrayList<Damageable> targets = new ArrayList<Damageable>();
-        ArrayList<Champion> firstTeam = firstPlayer.getTeam();
-        ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+            ArrayList<Damageable> targets = new ArrayList<Damageable>();
+            ArrayList<Champion> firstTeam = firstPlayer.getTeam();
+            ArrayList<Champion> secondTeam = secondPlayer.getTeam();
 
 
-        switch (a.getCastArea()) {
+            switch (a.getCastArea()) {
 
-            case TEAMTARGET:
-                if (a instanceof CrowdControlAbility) {
+                case TEAMTARGET:
+                    if (a instanceof CrowdControlAbility) {
 
-                    if (((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF) {
+                        if (((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF) {
 
+                            if (firstTeam.contains(getCurrentChampion())) {
+                                targets.addAll(secondTeam);
+                            } else {
+                                targets.addAll(firstTeam);
+                            }
+
+                        } else {
+
+                            if (firstTeam.contains(getCurrentChampion())) {
+                                for (Damageable d : secondTeam) {
+                                    Champion c = (Champion) d;
+                                    for (Effect e : c.getAppliedEffects()) {
+                                        if (e instanceof Shield) {
+                                            c.getAppliedEffects().remove(e);
+                                        } else {
+                                            targets.add(d);
+                                        }
+                                    }
+                                }
+                            } else {
+                                for (Damageable d : firstTeam) {
+                                    Champion c = (Champion) d;
+                                    for (Effect e : c.getAppliedEffects()) {
+                                        if (e instanceof Shield) {
+                                            c.getAppliedEffects().remove(e);
+                                        } else {
+                                            targets.add(d);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else if (a instanceof HealingAbility) {
+                        if (firstTeam.contains(getCurrentChampion())) {
+                            targets.addAll(firstTeam);
+                        } else {
+                            targets.addAll(secondTeam);
+                        }
+                    } else {
                         if (firstTeam.contains(getCurrentChampion())) {
                             targets.addAll(secondTeam);
                         } else {
                             targets.addAll(firstTeam);
                         }
-
-                    } else {
-
-                        if (firstTeam.contains(getCurrentChampion())) {
-                            for (Damageable d : secondTeam) {
-                                Champion c = (Champion) d;
-                                for (Effect e : c.getAppliedEffects()) {
-                                    if (e instanceof Shield) {
-                                        c.getAppliedEffects().remove(e);
-                                    } else {
-                                        targets.add(d);
-                                    }
-                                }
-                            }
-                        } else {
-                            for (Damageable d : firstTeam) {
-                                Champion c = (Champion) d;
-                                for (Effect e : c.getAppliedEffects()) {
-                                    if (e instanceof Shield) {
-                                        c.getAppliedEffects().remove(e);
-                                    } else {
-                                        targets.add(d);
-                                    }
-                                }
-                            }
-                        }
                     }
-                } else if (a instanceof HealingAbility) {
+                    break;
+
+
+                case SELFTARGET:
+                    if ((a instanceof CrowdControlAbility && ((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF) ||
+                            a instanceof HealingAbility) {
+                        targets.add(getCurrentChampion());
+                    }
+                    break;
+
+
+                case SURROUND:
+                    int x = getCurrentChampion().getLocation().x;
+                    int y = getCurrentChampion().getLocation().y;
+                    ArrayList<Champion> champTeam = new ArrayList<>();
+                    ArrayList<Champion> enemyTeam = new ArrayList<>();
+
                     if (firstTeam.contains(getCurrentChampion())) {
-                        targets.addAll(firstTeam);
-                    } else {
-                        targets.addAll(secondTeam);
-                    }
-                } else {
-                    if (firstTeam.contains(getCurrentChampion())) {
-                        targets.addAll(secondTeam);
-                    } else {
-                        targets.addAll(firstTeam);
-                    }
-                }
-                break;
-
-
-            case SELFTARGET:
-                if ((a instanceof CrowdControlAbility && ((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF) ||
-                a instanceof HealingAbility) {
-                    targets.add(getCurrentChampion());
-                }
-                break;
-
-
-            case SURROUND:
-                int x = getCurrentChampion().getLocation().x;
-                int y = getCurrentChampion().getLocation().y;
-
-                ArrayList<Champion> champTeam = new ArrayList<>();
-                ArrayList<Champion> enemyTeam = new ArrayList<>();
-                if (firstTeam.contains(getCurrentChampion())) {
-                    champTeam = firstTeam;
-                    enemyTeam = secondTeam;
-                } else if (secondTeam.contains(getCurrentChampion())){
-                    champTeam = secondTeam;
-                    enemyTeam = firstTeam;
-                }
-
-                if ((a instanceof CrowdControlAbility && ((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF) || a instanceof HealingAbility) { // Player Team
-
-                    if (x != 4 && board[x+1][y] instanceof Damageable && ((champTeam.contains((Champion) board[x+1][y])) || board[x+1][y] instanceof Cover))
-                        targets.add((Damageable) board[x+1][y]);
-
-                    if (x != 4 && y != 4 && board[x+1][y+1] instanceof Damageable && ((champTeam.contains((Champion) board[x+1][y+1])) || board[x+1][y+1] instanceof Cover))
-                        targets.add((Damageable) board[x+1][y+1]);
-
-                    if (x != 4 && y != 0 && board[x+1][y-1] instanceof Damageable && ((champTeam.contains((Champion) board[x+1][y-1]) || board[x+1][y-1] instanceof Cover)))
-                        targets.add((Damageable) board[x+1][y-1]);
-
-                    if (x != 0 && board[x-1][y] instanceof Damageable && ((champTeam.contains((Champion) board[x-1][y]) || board[x-1][y] instanceof Cover)))
-                        targets.add((Damageable) board[x-1][y]);
-
-                    if (x != 0 && y != 4 && board[x-1][y+1] instanceof Damageable && ((champTeam.contains((Champion) board[x-1][y+1]) || board[x-1][y+1] instanceof Cover)))
-                        targets.add((Damageable) board[x-1][y+1]);
-
-                    if (x != 0 && y != 0 && board[x-1][y-1] instanceof Damageable && ((champTeam.contains((Champion) board[x-1][y-1]) || board[x-1][y-1] instanceof Cover)))
-                        targets.add((Damageable) board[x-1][y-1]);
-
-                    if (y != 4 && board[x][y+1] instanceof Damageable && ((champTeam.contains((Champion) board[x+1][y]) || board[x+1][y] instanceof Cover)))
-                        targets.add((Damageable) board[x+1][y]);
-
-                    if (y != 0 && board[x][y-1] instanceof Damageable && ((champTeam.contains((Champion) board[x][y-1]) || board[x][y-1] instanceof Cover)))
-                        targets.add((Damageable) board[x][y-1]);
-
-                }
-
-                if ((a instanceof CrowdControlAbility && ((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF) || a instanceof DamagingAbility) { // Enemy Team
-
-                    if (x != 4) {
-                        if (board[x+1][y] instanceof Champion && enemyTeam.contains((Champion) board[x+1][y])) {
-                            for (Effect e : ((Champion) board[x + 1][y]).getAppliedEffects()) {
-                                if (e instanceof Shield) {
-                                    ((Champion) board[x + 1][y]).getAppliedEffects().remove(e);
-                                } else {
-                                    targets.add((Damageable) board[x + 1][y]);
-                                }
-                            }
-                        }
-                        if (board[x+1][y] instanceof Cover) {
-                            targets.add((Damageable) board[x + 1][y]);
-                        }
+                        champTeam = firstTeam;
+                        enemyTeam = secondTeam;
+                    } else if (secondTeam.contains(getCurrentChampion())){
+                        champTeam = secondTeam;
+                        enemyTeam = firstTeam;
                     }
 
-                    if (x != 4 && y != 4) {
-                        if (board[x+1][y+1] instanceof Champion && enemyTeam.contains((Champion) board[x+1][y+1])) {
-                            for (Effect e : ((Champion) board[x+1][y+1]).getAppliedEffects()) {
-                                if (e instanceof Shield) {
-                                    ((Champion) board[x+1][y+1]).getAppliedEffects().remove(e);
-                                } else {
-                                    targets.add((Damageable) board[x+1][y+1]);
-                                }
-                            }
-                        }
-                        if (board[x+1][y+1] instanceof Cover) {
+                    if ((a instanceof CrowdControlAbility && ((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF) || a instanceof HealingAbility) { // Player Team
+
+                        if (x != 4 && board[x+1][y] instanceof Damageable && ((champTeam.contains((Champion) board[x+1][y])) || board[x+1][y] instanceof Cover))
+                            targets.add((Damageable) board[x+1][y]);
+
+                        if (x != 4 && y != 4 && board[x+1][y+1] instanceof Damageable && ((champTeam.contains((Champion) board[x+1][y+1])) || board[x+1][y+1] instanceof Cover))
                             targets.add((Damageable) board[x+1][y+1]);
-                        }
-                    }
 
-
-                    if (x != 4 && y != 0) {
-                        if (board[x+1][y-1] instanceof Champion && enemyTeam.contains((Champion) board[x+1][y-1])) {
-                            for (Effect e : ((Champion) board[x+1][y-1]).getAppliedEffects()) {
-                                if (e instanceof Shield) {
-                                    ((Champion) board[x+1][y-1]).getAppliedEffects().remove(e);
-                                } else {
-                                    targets.add((Damageable) board[x+1][y-1]);
-                                }
-                            }
-                        }
-                        if (board[x+1][y-1] instanceof Cover) {
+                        if (x != 4 && y != 0 && board[x+1][y-1] instanceof Damageable && ((champTeam.contains((Champion) board[x+1][y-1]) || board[x+1][y-1] instanceof Cover)))
                             targets.add((Damageable) board[x+1][y-1]);
-                        }
-                    }
 
-                    if (x != 0) {
-                        if (board[x-1][y] instanceof Champion && enemyTeam.contains((Champion) board[x-1][y])) {
-                            for (Effect e : ((Champion) board[x-1][y]).getAppliedEffects()) {
-                                if (e instanceof Shield) {
-                                    ((Champion) board[x-1][y]).getAppliedEffects().remove(e);
-                                } else {
-                                    targets.add((Damageable) board[x-1][y]);
-                                }
-                            }
-                        }
-                        if (board[x-1][y] instanceof Cover) {
+                        if (x != 0 && board[x-1][y] instanceof Damageable && ((champTeam.contains((Champion) board[x-1][y]) || board[x-1][y] instanceof Cover)))
                             targets.add((Damageable) board[x-1][y]);
-                        }
-                    }
 
-                    if (x != 0 && y != 4 ) {
-                        if (board[x-1][y+1] instanceof Champion && enemyTeam.contains((Champion) board[x-1][y+1])) {
-                            for (Effect e : ((Champion) board[x-1][y+1]).getAppliedEffects()) {
-                                if (e instanceof Shield) {
-                                    ((Champion) board[x-1][y+1]).getAppliedEffects().remove(e);
-                                } else {
-                                    targets.add((Damageable) board[x-1][y+1]);
-                                }
-                            }
-                        }
-                        if (board[x-1][y+1] instanceof Cover) {
+                        if (x != 0 && y != 4 && board[x-1][y+1] instanceof Damageable && ((champTeam.contains((Champion) board[x-1][y+1]) || board[x-1][y+1] instanceof Cover)))
                             targets.add((Damageable) board[x-1][y+1]);
-                        }
-                    }
 
-                    if (x != 0 && y != 0) {
-                        if (board[x-1][y-1] instanceof Champion && enemyTeam.contains((Champion) board[x-1][y-1])) {
-                            for (Effect e : ((Champion) board[x-1][y-1]).getAppliedEffects()){
-                                if (e instanceof Shield){
-                                    ((Champion) board[x-1][y-1]).getAppliedEffects().remove(e);
-                                } else {
-                                    targets.add((Damageable) board[x-1][y-1]);
-                                }
-                            }
-                        }
-                        if (board[x-1][y-1] instanceof Cover) {
+                        if (x != 0 && y != 0 && board[x-1][y-1] instanceof Damageable && ((champTeam.contains((Champion) board[x-1][y-1]) || board[x-1][y-1] instanceof Cover)))
                             targets.add((Damageable) board[x-1][y-1]);
-                        }
-                    }
 
-                    if (y != 4) {
-                        if (board[x][y+1] instanceof Champion && enemyTeam.contains((Champion) board[x][y+1])) {
-                            for (Effect e : ((Champion) board[x][y+1]).getAppliedEffects()){
-                                if (e instanceof Shield){
-                                    ((Champion) board[x][y+1]).getAppliedEffects().remove(e);
-                                } else {
-                                    targets.add((Damageable) board[x][y+1]);
-                                }
-                            }
-                        }
-                        if (board[x][y+1] instanceof Cover) {
-                            targets.add((Damageable) board[x][y+1]);
-                        }
-                    }
+                        if (y != 4 && board[x][y+1] instanceof Damageable && ((champTeam.contains((Champion) board[x+1][y]) || board[x+1][y] instanceof Cover)))
+                            targets.add((Damageable) board[x+1][y]);
 
-                    if (y != 0) {
-                        if (board[x][y-1] instanceof Champion && enemyTeam.contains((Champion) board[x][y-1])) {
-                            for (Effect e : ((Champion) board[x][y-1]).getAppliedEffects()){
-                                if (e instanceof Shield){
-                                    ((Champion) board[x][y-1]).getAppliedEffects().remove(e);
-                                } else {
-                                    targets.add((Damageable) board[x][y-1]);
-                                }
-                            }
-                        }
-                        if (board[x][y-1] instanceof Cover) {
+                        if (y != 0 && board[x][y-1] instanceof Damageable && ((champTeam.contains((Champion) board[x][y-1]) || board[x][y-1] instanceof Cover)))
                             targets.add((Damageable) board[x][y-1]);
+
+                    }
+
+                    if ((a instanceof CrowdControlAbility && ((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF) || a instanceof DamagingAbility) { // Enemy Team
+
+                        if (x != 4) {
+                            if (board[x+1][y] instanceof Champion && enemyTeam.contains((Champion) board[x+1][y])) {
+                                for (Effect e : ((Champion) board[x + 1][y]).getAppliedEffects()) {
+                                    if (e instanceof Shield) {
+                                        ((Champion) board[x + 1][y]).getAppliedEffects().remove(e);
+                                    } else {
+                                        targets.add((Damageable) board[x + 1][y]);
+                                    }
+                                }
+                            }
+                            if (board[x+1][y] instanceof Cover) {
+                                targets.add((Damageable) board[x + 1][y]);
+                            }
+                        }
+
+                        if (x != 4 && y != 4) {
+                            if (board[x+1][y+1] instanceof Champion && enemyTeam.contains((Champion) board[x+1][y+1])) {
+                                for (Effect e : ((Champion) board[x+1][y+1]).getAppliedEffects()) {
+                                    if (e instanceof Shield) {
+                                        ((Champion) board[x+1][y+1]).getAppliedEffects().remove(e);
+                                    } else {
+                                        targets.add((Damageable) board[x+1][y+1]);
+                                    }
+                                }
+                            }
+                            if (board[x+1][y+1] instanceof Cover) {
+                                targets.add((Damageable) board[x+1][y+1]);
+                            }
+                        }
+
+
+                        if (x != 4 && y != 0) {
+                            if (board[x+1][y-1] instanceof Champion && enemyTeam.contains((Champion) board[x+1][y-1])) {
+                                for (Effect e : ((Champion) board[x+1][y-1]).getAppliedEffects()) {
+                                    if (e instanceof Shield) {
+                                        ((Champion) board[x+1][y-1]).getAppliedEffects().remove(e);
+                                    } else {
+                                        targets.add((Damageable) board[x+1][y-1]);
+                                    }
+                                }
+                            }
+                            if (board[x+1][y-1] instanceof Cover) {
+                                targets.add((Damageable) board[x+1][y-1]);
+                            }
+                        }
+
+                        if (x != 0) {
+                            if (board[x-1][y] instanceof Champion && enemyTeam.contains((Champion) board[x-1][y])) {
+                                for (Effect e : ((Champion) board[x-1][y]).getAppliedEffects()) {
+                                    if (e instanceof Shield) {
+                                        ((Champion) board[x-1][y]).getAppliedEffects().remove(e);
+                                    } else {
+                                        targets.add((Damageable) board[x-1][y]);
+                                    }
+                                }
+                            }
+                            if (board[x-1][y] instanceof Cover) {
+                                targets.add((Damageable) board[x-1][y]);
+                            }
+                        }
+
+                        if (x != 0 && y != 4 ) {
+                            if (board[x-1][y+1] instanceof Champion && enemyTeam.contains((Champion) board[x-1][y+1])) {
+                                for (Effect e : ((Champion) board[x-1][y+1]).getAppliedEffects()) {
+                                    if (e instanceof Shield) {
+                                        ((Champion) board[x-1][y+1]).getAppliedEffects().remove(e);
+                                    } else {
+                                        targets.add((Damageable) board[x-1][y+1]);
+                                    }
+                                }
+                            }
+                            if (board[x-1][y+1] instanceof Cover) {
+                                targets.add((Damageable) board[x-1][y+1]);
+                            }
+                        }
+
+                        if (x != 0 && y != 0) {
+                            if (board[x-1][y-1] instanceof Champion && enemyTeam.contains((Champion) board[x-1][y-1])) {
+                                for (Effect e : ((Champion) board[x-1][y-1]).getAppliedEffects()){
+                                    if (e instanceof Shield){
+                                        ((Champion) board[x-1][y-1]).getAppliedEffects().remove(e);
+                                    } else {
+                                        targets.add((Damageable) board[x-1][y-1]);
+                                    }
+                                }
+                            }
+                            if (board[x-1][y-1] instanceof Cover) {
+                                targets.add((Damageable) board[x-1][y-1]);
+                            }
+                        }
+
+                        if (y != 4) {
+                            if (board[x][y+1] instanceof Champion && enemyTeam.contains((Champion) board[x][y+1])) {
+                                for (Effect e : ((Champion) board[x][y+1]).getAppliedEffects()){
+                                    if (e instanceof Shield){
+                                        ((Champion) board[x][y+1]).getAppliedEffects().remove(e);
+                                    } else {
+                                        targets.add((Damageable) board[x][y+1]);
+                                    }
+                                }
+                            }
+                            if (board[x][y+1] instanceof Cover) {
+                                targets.add((Damageable) board[x][y+1]);
+                            }
+                        }
+
+                        if (y != 0) {
+                            if (board[x][y-1] instanceof Champion && enemyTeam.contains((Champion) board[x][y-1])) {
+                                for (Effect e : ((Champion) board[x][y-1]).getAppliedEffects()){
+                                    if (e instanceof Shield){
+                                        ((Champion) board[x][y-1]).getAppliedEffects().remove(e);
+                                    } else {
+                                        targets.add((Damageable) board[x][y-1]);
+                                    }
+                                }
+                            }
+                            if (board[x][y-1] instanceof Cover) {
+                                targets.add((Damageable) board[x][y-1]);
+                            }
                         }
                     }
-                }
+                    break;
+            }
 
-                break;
-
+            if (!targets.isEmpty()) {
+                a.execute(targets);
+            }
         }
+    }
 
-        if (!targets.isEmpty()) {
-            a.execute(targets);
+    public void castAbility(Ability a, Direction d) throws NotEnoughResourcesException {
+        if (a.getCastArea() == AreaOfEffect.DIRECTIONAL) {
+            if (getCurrentChampion().getCurrentActionPoints() < a.getRequiredActionPoints()) {
+                throw new NotEnoughResourcesException();
+            } else { // <<<<<< ELSE ? >>>>>>>
+                getCurrentChampion().setMana(getCurrentChampion().getMana() - a.getManaCost());
+                getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()
+                        - a.getRequiredActionPoints());
+            }
+        }
+    }
+
+    public void castAbility(Ability a, int x, int y) throws NotEnoughResourcesException {
+        if (a.getCastArea() == AreaOfEffect.SINGLETARGET) {
+            if (getCurrentChampion().getCurrentActionPoints() < a.getRequiredActionPoints()) {
+                throw new NotEnoughResourcesException();
+            } else { // <<<<<< ELSE ? >>>>>>>
+                getCurrentChampion().setMana(getCurrentChampion().getMana() - a.getManaCost());
+                getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()
+                        - a.getRequiredActionPoints());
+            }
         }
     }
 
