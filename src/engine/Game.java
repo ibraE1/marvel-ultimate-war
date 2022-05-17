@@ -382,10 +382,14 @@ public class Game {
             getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()
                     - a.getRequiredActionPoints());
 
-            ArrayList<Damageable> targets = new ArrayList<Damageable>();
+            ArrayList<Damageable> targets = new ArrayList<>();
             ArrayList<Champion> firstTeam = firstPlayer.getTeam();
             ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+            ArrayList<Champion> champTeam = new ArrayList<>();
+            ArrayList<Champion> enemyTeam = new ArrayList<>();
 
+            int x = getCurrentChampion().getLocation().x;
+            int y = getCurrentChampion().getLocation().y;
 
             switch (a.getCastArea()) {
 
@@ -451,11 +455,6 @@ public class Game {
 
 
                 case SURROUND:
-                    int x = getCurrentChampion().getLocation().x;
-                    int y = getCurrentChampion().getLocation().y;
-                    ArrayList<Champion> champTeam = new ArrayList<>();
-                    ArrayList<Champion> enemyTeam = new ArrayList<>();
-
                     if (firstTeam.contains(getCurrentChampion())) {
                         champTeam = firstTeam;
                         enemyTeam = secondTeam;
@@ -633,7 +632,7 @@ public class Game {
                 getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()
                         - a.getRequiredActionPoints());
 
-                ArrayList<Damageable> targets = new ArrayList<Damageable>();
+                ArrayList<Damageable> targets = new ArrayList<>();
                 ArrayList<Champion> firstTeam = firstPlayer.getTeam();
                 ArrayList<Champion> secondTeam = secondPlayer.getTeam();
                 ArrayList<Champion> champTeam = new ArrayList<>();
@@ -738,6 +737,43 @@ public class Game {
                 getCurrentChampion().setMana(getCurrentChampion().getMana() - a.getManaCost());
                 getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getCurrentActionPoints()
                         - a.getRequiredActionPoints());
+
+                ArrayList<Damageable> targets = new ArrayList<>();
+                ArrayList<Champion> firstTeam = firstPlayer.getTeam();
+                ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+                ArrayList<Champion> champTeam = new ArrayList<>();
+                ArrayList<Champion> enemyTeam = new ArrayList<>();
+
+
+                if (firstTeam.contains(getCurrentChampion())) {
+                    champTeam = firstTeam;
+                    enemyTeam = secondTeam;
+                } else if (secondTeam.contains(getCurrentChampion())){
+                    champTeam = secondTeam;
+                    enemyTeam = firstTeam;
+                }
+                int x0 = getCurrentChampion().getLocation().x;
+                int y0 = getCurrentChampion().getLocation().y;
+
+                int distance = Math.abs(x-x0) + Math.abs(y-y0);
+
+                if (distance <= a.getCastRange()) {
+                    if (board[x][y] instanceof Champion && enemyTeam.contains((Champion) board[x][y])) {
+                        for (Effect e : ((Champion) board[x][y]).getAppliedEffects()) {
+                            if (e instanceof Shield) {
+                                ((Champion) board[x][y]).getAppliedEffects().remove(e);
+                            } else {
+                                targets.add((Damageable) board[x][y]);
+                            }
+                        }
+                    } else if ((board[x][y] instanceof Champion && !enemyTeam.contains((Champion) board[x][y])) || board[x][y] instanceof Cover) {
+                        targets.add((Damageable) board[x][y]);
+                    }
+                }
+
+                if (!targets.isEmpty()) {
+                    a.execute(targets);
+                }
             }
         }
     }
