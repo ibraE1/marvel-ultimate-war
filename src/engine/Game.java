@@ -642,8 +642,34 @@ public class Game {
         } else {
             throw new LeaderNotCurrentException();
         }
+    }
 
+    public void endTurn() {
+        turnOrder.remove();
+        if (turnOrder.isEmpty()) {
+            prepareChampionTurns();
+        } else while (((Champion) turnOrder.peekMin()).getCondition() == Condition.INACTIVE) {
+            turnOrder.remove();
+            if (turnOrder.isEmpty())
+                prepareChampionTurns();
+        }
+        getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getMaxActionPointsPerTurn());
+        getCurrentChampion().getAppliedEffects().clear();
+        for (Ability a : getCurrentChampion().getAbilities()) {
+            a.setCurrentCooldown(0);
+        }
+    }
 
-
+    private void prepareChampionTurns() {
+        ArrayList<Champion> firstTeam = firstPlayer.getTeam();
+        ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+        for (Champion champ : firstTeam) {
+            if (champ.getCondition() != Condition.KNOCKEDOUT)
+                turnOrder.insert(champ);
+        }
+        for (Champion champ : secondTeam) {
+            if (champ.getCondition() != Condition.KNOCKEDOUT)
+                turnOrder.insert(champ);
+        }
     }
 }
