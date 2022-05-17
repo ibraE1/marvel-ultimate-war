@@ -235,30 +235,80 @@ public class Game {
         return null;
     }
 
+    public boolean checkBorderMove(Point location, Direction d) {
+        switch (d) {
+            case UP:
+                if (location.x == 4)
+                    return true;
+                break;
+            case DOWN:
+                if (location.x == 0)
+                    return true;
+                break;
+            case LEFT:
+                if (location.y == 0)
+                    return true;
+                break;
+            case RIGHT:
+                if (location.y == 4)
+                    return true;
+                break;
+        }
+        return false;
+    }
+
+    public boolean checkEmptyCell(Point location, Direction d) {
+        switch (d) {
+            case UP:
+                if (board[location.x + 1][location.y] instanceof Damageable)
+                    return false;
+                break;
+            case DOWN:
+                if (board[location.x - 1][location.y] instanceof Damageable)
+                    return false;
+                break;
+            case LEFT:
+                if (board[location.x][location.y - 1] instanceof Damageable)
+                    return false;
+                break;
+            case RIGHT:
+                if (board[location.x][location.y + 1] instanceof Damageable)
+                    return false;
+                break;
+        }
+        return true;
+    }
+
     public void move(Direction d) throws NotEnoughResourcesException, UnallowedMovementException {
         Champion champ = getCurrentChampion();
         int action = champ.getCurrentActionPoints();
         Point location = champ.getLocation();
         if (action <= 0)
             throw new NotEnoughResourcesException();
-        else if (champ.getCondition() == Condition.ROOTED) {
+        else if (champ.getCondition() == Condition.ROOTED || checkBorderMove(location, d)
+                || !checkEmptyCell(location, d))
             throw new UnallowedMovementException();
-        } else {
+        else {
             champ.setCurrentActionPoints(action - 1);
             switch (d) {
                 case UP:
-                    champ.setLocation(new Point(location.x, location.y + 1));
+                    champ.setLocation(new Point(location.x + 1, location.y));
+                    board[location.x + 1][location.y] = champ;
                     break;
                 case DOWN:
-                    champ.setLocation(new Point(location.x, location.y - 1));
+                    champ.setLocation(new Point(location.x - 1, location.y));
+                    board[location.x - 1][location.y] = champ;
                     break;
                 case LEFT:
-                    champ.setLocation(new Point(location.x - 1, location.y));
+                    champ.setLocation(new Point(location.x, location.y - 1));
+                    board[location.x][location.y - 1] = champ;
                     break;
                 case RIGHT:
-                    champ.setLocation(new Point(location.x + 1, location.y - 1));
+                    champ.setLocation(new Point(location.x, location.y + 1));
+                    board[location.x][location.y + 1] = champ;
                     break;
             }
+            board[location.x][location.y] = null;
         }
     }
 
@@ -304,7 +354,7 @@ public class Game {
         Champion def = (Champion) defender;
         ArrayList<Champion> allies;
         if (firstPlayer.getTeam().contains(attacker))
-             allies = firstPlayer.getTeam();
+            allies = firstPlayer.getTeam();
         else
             allies = secondPlayer.getTeam();
         if (allies.contains(def))
