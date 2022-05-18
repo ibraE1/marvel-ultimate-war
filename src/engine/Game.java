@@ -428,7 +428,7 @@ public class Game {
         }
     }
 
-    public void executeHelper(Ability a, ArrayList<Damageable> targets) {
+    public void executeHelper(Ability a, ArrayList<Damageable> targets) throws CloneNotSupportedException {
         ArrayList<Champion> firstTeam = firstPlayer.getTeam();
         ArrayList<Champion> secondTeam = secondPlayer.getTeam();
         ArrayList<Damageable> enemies = new ArrayList<>();
@@ -459,6 +459,10 @@ public class Game {
             if (!covers.isEmpty()) {
                 a.execute(covers);
             }
+            for (Damageable d : enemies) {
+                Champion c = (Champion) d;
+                c.getAppliedEffects().add(((CrowdControlAbility) a).getEffect());
+            }
         } else if (a instanceof HealingAbility) {
             if (!friendly.isEmpty()) {
                 a.execute(friendly);
@@ -467,10 +471,14 @@ public class Game {
             if (!friendly.isEmpty()) {
                 a.execute(friendly);
             }
+            for (Damageable d : friendly) {
+                Champion c = (Champion) d;
+                c.getAppliedEffects().add(((CrowdControlAbility) a).getEffect());
+            }
         }
     }
 
-    public void castAbility(Ability a) throws NotEnoughResourcesException {
+    public void castAbility(Ability a) throws NotEnoughResourcesException, CloneNotSupportedException {
         if (getCurrentChampion().getCurrentActionPoints() < a.getRequiredActionPoints()) {
             throw new NotEnoughResourcesException();
         } else {
@@ -684,7 +692,7 @@ public class Game {
         }
     }
 
-    public void castAbility(Ability a, Direction d) throws NotEnoughResourcesException {
+    public void castAbility(Ability a, Direction d) throws NotEnoughResourcesException, CloneNotSupportedException {
         if (a.getCastArea() == AreaOfEffect.DIRECTIONAL) {
             if (getCurrentChampion().getCurrentActionPoints() < a.getRequiredActionPoints()) {
                 throw new NotEnoughResourcesException();
@@ -778,7 +786,7 @@ public class Game {
         }
     }
 
-    public void castAbility(Ability a, int x, int y) throws NotEnoughResourcesException {
+    public void castAbility(Ability a, int x, int y) throws NotEnoughResourcesException, CloneNotSupportedException {
         if (a.getCastArea() == AreaOfEffect.SINGLETARGET) {
             if (getCurrentChampion().getCurrentActionPoints() < a.getRequiredActionPoints()) {
                 throw new NotEnoughResourcesException();
@@ -844,10 +852,17 @@ public class Game {
     }
 
     public void endTurn() {
-        turnOrder.remove();
+        Champion champ = (Champion) turnOrder.peekMin();
+        for (Effect eff : getCurrentChampion().getAppliedEffects()) {
+            if (eff.getDuration() == 0) {
+                getCurrentChampion().getAppliedEffects().remove(eff);
+            } else {
+                eff.setDuration(eff.getDuration() - 1);
+            }
+        }
         if (turnOrder.isEmpty()) {
             prepareChampionTurns();
-        } else while (((Champion) turnOrder.peekMin()).getCondition() == Condition.INACTIVE) {
+        } else while (champ.getCondition() == Condition.INACTIVE) {
             turnOrder.remove();
             if (turnOrder.isEmpty())
                 prepareChampionTurns();
