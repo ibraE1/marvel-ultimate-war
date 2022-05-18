@@ -24,8 +24,6 @@ public class PowerUp extends Effect {
                 ((HealingAbility) currAbility).setHealAmount((int) (((HealingAbility) currAbility).getHealAmount() * 1.2));
             }
         }
-
-        c.getAppliedEffects().add(this);
     }
 
     @Override
@@ -39,6 +37,5 @@ public class PowerUp extends Effect {
                 ((HealingAbility) currAbility).setHealAmount((int) (((HealingAbility) currAbility).getHealAmount() / 1.2));
             }
         }
-        c.getAppliedEffects().remove(this);
     }
 }

@@ -23,6 +23,7 @@ public class CrowdControlAbility extends Ability {
         for (Damageable target : targets) {
             Champion champ = (Champion) target;
             Effect eff = (Effect) effect.clone();
+            champ.getAppliedEffects().add(eff);
             eff.apply(champ);
         }
     }
