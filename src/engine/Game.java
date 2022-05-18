@@ -320,11 +320,15 @@ public class Game {
         for (Effect eft : def.getAppliedEffects()) {
             if (eft instanceof Shield) {
                 eft.remove(def);
+                def.getAppliedEffects().remove(eft);
                 return 0;
             }
             if (eft instanceof Dodge) {
-                if (Math.random() < 0.5)
+                if ( (int) (Math.random() * 2) == 0) {
+                    eft.remove(def);
+                    def.getAppliedEffects().remove(eft);
                     return 0;
+                }
             }
         }
         int damage = 0;
@@ -350,19 +354,47 @@ public class Game {
         return damage;
     }
 
-    public boolean checkFriendlyFire(Champion attacker, Damageable defender) {
-        Champion def = (Champion) defender;
-        ArrayList<Champion> allies;
-        if (firstPlayer.getTeam().contains(attacker))
-            allies = firstPlayer.getTeam();
-        else
-            allies = secondPlayer.getTeam();
-        if (allies.contains(def))
+    public boolean checkNotFriendlyFire(Champion attacker, Damageable defender) {
+        if (defender instanceof Cover)
             return true;
-        return false;
+        else {
+            Champion def = (Champion) defender;
+            ArrayList<Champion> allies;
+            if (firstPlayer.getTeam().contains(attacker))
+                allies = firstPlayer.getTeam();
+            else
+                allies = secondPlayer.getTeam();
+            return !allies.contains(def);
+        }
     }
 
-    public void attack(Direction d) throws NotEnoughResourcesException, ChampionDisarmedException, InvalidTargetException {
+    public void handleKnockouts(Damageable dmg) {
+        Point location = dmg.getLocation();
+        PriorityQueue order = getTurnOrder();
+        if (dmg.getCurrentHP() == 0) {
+            board[location.x][location.y] = null;
+            if (dmg instanceof Champion) {
+                Champion champ = (Champion) dmg;
+                PriorityQueue pq = new PriorityQueue(order.size()-1);
+                int size1 = order.size();
+                for (int i = 0; i < size1; i++) {
+                    Champion temp = (Champion) order.remove();
+                    if (temp != champ)
+                        pq.insert(temp);
+                }
+                int size2 = pq.size();
+                for (int i = 0; i < size2; i++) {
+                    order.insert(pq.remove());
+                }
+                if (firstPlayer.getTeam().contains(champ))
+                    firstPlayer.getTeam().remove(champ);
+                else
+                    secondPlayer.getTeam().remove(champ);
+            }
+        }
+    }
+
+    public void attack(Direction d) throws NotEnoughResourcesException, ChampionDisarmedException {
         Champion champ = getCurrentChampion();
         int action = champ.getCurrentActionPoints();
         Point location = champ.getLocation();
@@ -374,57 +406,62 @@ public class Game {
         if (action <= 1)
             throw new NotEnoughResourcesException();
         else {
+            champ.setCurrentActionPoints(action - 2);
             switch (d) {
                 case UP:
-                    for (int i = 1; i <= range; i++) {
-                        Object tile = board[location.x][location.y + i];
+                    for (int i = 1; i <= range && location.x + i < 5; i++) {
+                        Object tile = board[location.x + i][location.y];
                         if (tile instanceof Damageable) {
                             Damageable dmg = (Damageable) tile;
-                            if (checkFriendlyFire(champ, (Champion) dmg))
-                                throw new InvalidTargetException();
-                            dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
-                            break;
+                            if (checkNotFriendlyFire(champ, dmg)) {
+                                dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
+                                handleKnockouts(dmg);
+                                break;
+                            }
                         }
                     }
                     break;
                 case DOWN:
-                    for (int i = 1; i <= range; i++) {
-                        Object tile = board[location.x][location.y - i];
+                    for (int i = 1; i <= range && location.x - i > -1; i++) {
+                        Object tile = board[location.x - i][location.y];
                         if (tile instanceof Damageable) {
                             Damageable dmg = (Damageable) tile;
-                            if (checkFriendlyFire(champ, (Champion) dmg))
-                                throw new InvalidTargetException();
-                            dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
-                            break;
+                            if (checkNotFriendlyFire(champ, dmg)){
+                                dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
+                                handleKnockouts(dmg);
+                                break;
+                            }
                         }
                     }
                     break;
                 case LEFT:
-                    for (int i = 1; i <= range; i++) {
-                        Object tile = board[location.x - i][location.y];
+                    for (int i = 1; i <= range && location.y - i > -1; i++) {
+                        Object tile = board[location.x][location.y - i];
                         if (tile instanceof Damageable) {
                             Damageable dmg = (Damageable) tile;
-                            if (checkFriendlyFire(champ, (Champion) dmg))
-                                throw new InvalidTargetException();
-                            dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
-                            break;
+                            if (checkNotFriendlyFire(champ, dmg)) {
+                                dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
+                                handleKnockouts(dmg);
+                                break;
+                            }
                         }
                     }
                     break;
                 case RIGHT:
-                    for (int i = 1; i <= range; i++) {
-                        Object tile = board[location.x + i][location.y];
+                    for (int i = 1; i <= range && location.y + i < 5; i++) {
+                        Object tile = board[location.x][location.y + i];
                         if (tile instanceof Damageable) {
                             Damageable dmg = (Damageable) tile;
-                            if (checkFriendlyFire(champ, (Champion) dmg))
-                                throw new InvalidTargetException();
-                            dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
-                            break;
+                            if (checkNotFriendlyFire(champ, dmg)) {
+                                dmg.setCurrentHP(dmg.getCurrentHP() - calculateDamage(champ, dmg));
+                                handleKnockouts(dmg);
+                                break;
+                            }
                         }
                     }
                     break;
             }
-            champ.setCurrentActionPoints(action - 2);
+
         }
     }
 
