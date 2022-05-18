@@ -852,26 +852,27 @@ public class Game {
     }
 
     public void endTurn() {
-        Champion champ = (Champion) turnOrder.peekMin();
+        turnOrder.remove();
         for (Effect eff : getCurrentChampion().getAppliedEffects()) {
-            if (eff.getDuration() == 0) {
-                getCurrentChampion().getAppliedEffects().remove(eff);
-            } else {
+            if (!getCurrentChampion().getAppliedEffects().isEmpty()) {
                 eff.setDuration(eff.getDuration() - 1);
+                if (eff.getDuration() == 0) {
+                    eff.remove(getCurrentChampion());
+                }
             }
         }
+        for (Ability a : getCurrentChampion().getAbilities()) {
+            a.setCurrentCooldown(0);
+        }
+
         if (turnOrder.isEmpty()) {
             prepareChampionTurns();
-        } else while (champ.getCondition() == Condition.INACTIVE) {
+        } else while (getCurrentChampion().getCondition() == Condition.INACTIVE) {
             turnOrder.remove();
             if (turnOrder.isEmpty())
                 prepareChampionTurns();
         }
         getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getMaxActionPointsPerTurn());
-        getCurrentChampion().getAppliedEffects().clear();
-        for (Ability a : getCurrentChampion().getAbilities()) {
-            a.setCurrentCooldown(0);
-        }
     }
 
     private void prepareChampionTurns() {
