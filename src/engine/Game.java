@@ -850,59 +850,80 @@ public class Game {
         champ.setMana(champ.getMana() - a.getManaCost());
     }
 
-    public void useLeaderAbility() throws LeaderNotCurrentException, LeaderAbilityAlreadyUsedException {
+    public void useLeaderAbility() throws LeaderNotCurrentException, LeaderAbilityAlreadyUsedException, CloneNotSupportedException {
         ArrayList<Champion> targets = new ArrayList<Champion>();
         ArrayList<Champion> firstTeam = firstPlayer.getTeam();
         ArrayList<Champion> secondTeam = secondPlayer.getTeam();
         if ((firstTeam.contains(getCurrentChampion()) && firstLeaderAbilityUsed) || (secondTeam.contains(getCurrentChampion()) && secondLeaderAbilityUsed)) {
             throw new LeaderAbilityAlreadyUsedException();
         } else {
-            if (getCurrentChampion() == firstPlayer.getLeader() || getCurrentChampion() == secondPlayer.getLeader()) {
+            if (getCurrentChampion() != firstPlayer.getLeader() && getCurrentChampion() != secondPlayer.getLeader()) {
+                throw new LeaderNotCurrentException();
+            } else {
                 if (getCurrentChampion() == firstPlayer.getLeader()) {
-                    targets.addAll(secondTeam);
+                    if (firstPlayer.getLeader() instanceof Hero)
+                        targets.addAll(firstTeam);
+                    else if (firstPlayer.getLeader() instanceof Villain)
+                        targets.addAll(secondTeam);
+                    else {
+                        for (Champion c : firstTeam) {
+                            if (c != firstPlayer.getLeader())
+                                targets.add(c);
+                        }
+                        for (Champion c : secondTeam) {
+                            if (c != secondPlayer.getLeader())
+                                targets.add(c);
+                        }
+                    }
                 } else if (getCurrentChampion() == secondPlayer.getLeader()) {
-                    targets.addAll(firstTeam);
+                    if (firstPlayer.getLeader() instanceof Hero)
+                        targets.addAll(secondTeam);
+                    else if (firstPlayer.getLeader() instanceof Villain)
+                        targets.addAll(firstTeam);
+                    else {
+                        for (Champion c : firstTeam) {
+                            if (c != firstPlayer.getLeader())
+                                targets.add(c);
+                        }
+                        for (Champion c : secondTeam) {
+                            if (c != secondPlayer.getLeader())
+                                targets.add(c);
+                        }
+                    }
                 }
                 getCurrentChampion().useLeaderAbility(targets);
-
                 if (getCurrentChampion() == firstPlayer.getLeader()) {
                     firstLeaderAbilityUsed = true;
                 } else {
                     secondLeaderAbilityUsed = true;
                 }
-
-            } else {
-                throw new LeaderNotCurrentException();
             }
         }
     }
 
     public void endTurn() {
         turnOrder.remove();
-        for (Effect eff : getCurrentChampion().getAppliedEffects()) {
-            if (!getCurrentChampion().getAppliedEffects().isEmpty()) {
-                eff.setDuration(eff.getDuration() - 1);
-                if (eff.getDuration() == 0) {
-                    eff.remove(getCurrentChampion());
-                }
-            }
-        }
-        for (Ability a : getCurrentChampion().getAbilities()) {
-            if (a.getCurrentCooldown() > 0) {
-                a.setCurrentCooldown(a.getCurrentCooldown() - 1);
-            } else {
-                a.setCurrentCooldown(0);
-            }
-        }
-
-        if (turnOrder.isEmpty()) {
+        if (turnOrder.isEmpty())
             prepareChampionTurns();
-        } else while (getCurrentChampion().getCondition() == Condition.INACTIVE) {
-            turnOrder.remove();
-            if (turnOrder.isEmpty())
-                prepareChampionTurns();
+        Champion champ = getCurrentChampion();
+        for (int i = 0; i < champ.getAppliedEffects().size(); i++) {
+            Effect eft = champ.getAppliedEffects().get(i);
+            eft.setDuration(eft.getDuration() - 1);
+            if (eft.getDuration() == 0) {
+                eft.remove(champ);
+                champ.getAppliedEffects().remove(eft);
+            }
         }
-        getCurrentChampion().setCurrentActionPoints(getCurrentChampion().getMaxActionPointsPerTurn());
+        for (int i = 0; i < champ.getAbilities().size(); i++) {
+            Ability abt = champ.getAbilities().get(i);
+            abt.setCurrentCooldown(abt.getCurrentCooldown() - 1);
+        }
+        champ.setCurrentActionPoints(champ.getMaxActionPointsPerTurn());
+        while (getCurrentChampion().getCondition() == Condition.INACTIVE && !turnOrder.isEmpty()) {
+            turnOrder.remove();
+        }
+        if (turnOrder.isEmpty())
+            prepareChampionTurns();
     }
 
     private void prepareChampionTurns() {

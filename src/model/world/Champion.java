@@ -141,5 +141,5 @@ public abstract class Champion implements Damageable, Comparable {
         return name.compareTo(champ.name);
     }
 
-    public abstract void useLeaderAbility(ArrayList<Champion> targets);
+    public abstract void useLeaderAbility(ArrayList<Champion> targets) throws CloneNotSupportedException;
 }

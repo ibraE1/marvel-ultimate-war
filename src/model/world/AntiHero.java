@@ -9,10 +9,11 @@ public class AntiHero extends Champion {
         super(name, maxHP, maxMana, actions, speed, attackRange, attackDamage);
     }
 
-    public void useLeaderAbility(ArrayList<Champion> targets) {
+    public void useLeaderAbility(ArrayList<Champion> targets) throws CloneNotSupportedException {
         Stun stn = new Stun(2);
         for (Champion target : targets) {
             stn.apply(target);
+            target.getAppliedEffects().add(stn);
         }
     }
 }
