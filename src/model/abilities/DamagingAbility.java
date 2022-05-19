@@ -1,7 +1,10 @@
 package model.abilities;
 
-import model.world.Cover;
+import model.effects.Effect;
+import model.effects.Shield;
+import model.world.Champion;
 import model.world.Damageable;
+
 
 import java.util.ArrayList;
 
@@ -23,7 +26,21 @@ public class DamagingAbility extends Ability {
 
     public void execute(ArrayList<Damageable> targets) {
         for (Damageable target : targets) {
-            target.setCurrentHP(target.getCurrentHP() - damageAmount);
+            boolean shield = false;
+            if (target instanceof Champion) {
+                Champion t = (Champion) target;
+                for (int i = 0; i < t.getAppliedEffects().size(); i++) {
+                    Effect eft = t.getAppliedEffects().get(i);
+                    if (eft instanceof Shield) {
+                        i--;
+                        eft.remove(t);
+                        t.getAppliedEffects().remove(eft);
+                        shield = true;
+                    }
+                }
+            }
+            if (!shield)
+                target.setCurrentHP(target.getCurrentHP() - damageAmount);
         }
     }
 }
