@@ -850,6 +850,33 @@ public class Game {
         champ.setMana(champ.getMana() - a.getManaCost());
     }
 
+    public void useLeaderAbility() throws LeaderNotCurrentException, LeaderAbilityAlreadyUsedException {
+        ArrayList<Champion> targets = new ArrayList<Champion>();
+        ArrayList<Champion> firstTeam = firstPlayer.getTeam();
+        ArrayList<Champion> secondTeam = secondPlayer.getTeam();
+        if ((firstTeam.contains(getCurrentChampion()) && firstLeaderAbilityUsed) || (secondTeam.contains(getCurrentChampion()) && secondLeaderAbilityUsed)) {
+            throw new LeaderAbilityAlreadyUsedException();
+        } else {
+            if (getCurrentChampion() == firstPlayer.getLeader() || getCurrentChampion() == secondPlayer.getLeader()) {
+                if (getCurrentChampion() == firstPlayer.getLeader()) {
+                    targets.addAll(secondTeam);
+                } else if (getCurrentChampion() == secondPlayer.getLeader()) {
+                    targets.addAll(firstTeam);
+                }
+                getCurrentChampion().useLeaderAbility(targets);
+
+                if (getCurrentChampion() == firstPlayer.getLeader()) {
+                    firstLeaderAbilityUsed = true;
+                } else {
+                    secondLeaderAbilityUsed = true;
+                }
+
+            } else {
+                throw new LeaderNotCurrentException();
+            }
+        }
+    }
+
     public void endTurn() {
         turnOrder.remove();
         for (Effect eff : getCurrentChampion().getAppliedEffects()) {
