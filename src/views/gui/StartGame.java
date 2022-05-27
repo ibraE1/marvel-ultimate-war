@@ -111,7 +111,6 @@ public class StartGame extends Application {
         p1.setPromptText("Player 1");
         p2.setPromptText("Player 2");
 
-
         VBox vbox = new VBox();
         vbox.getChildren().add(p1);
         vbox.getChildren().add(p2);
@@ -159,7 +158,6 @@ public class StartGame extends Application {
         });
 
         start.requestFocus();
-
         startMenu.setResizable(false);
         startMenu.setX((screenSize.getWidth() / 2) - 640);
         startMenu.setY((screenSize.getHeight() / 2) - 360);
@@ -167,7 +165,6 @@ public class StartGame extends Application {
         startMenu.setTitle("Marvel Ultimate War");
         startMenu.setScene(scene);
         startMenu.show();
-
     }
 
     public String getPlayer1() {

@@ -52,8 +52,15 @@ public class MainMenu extends Application {
         champions.setPrefSize(300,50);
         champions.setFont(Font.font("Georgia" , 26));
 
-//        champions.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-//        });
+        champions.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            try {
+                new AvailableChampions();
+                main.close();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
 
         Button quit = new Button("Quit");
