@@ -1,7 +1,6 @@
 package views.gui;
 
 import javafx.application.Application;
-import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,6 +13,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class MainMenu extends Application {
 
@@ -56,7 +56,6 @@ public class MainMenu extends Application {
             try {
                 new AvailableChampions();
                 main.close();
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -91,30 +90,7 @@ public class MainMenu extends Application {
 
         Scene scene = new Scene(root, 1280,720, Color.rgb(33,41,50));
 
-        play.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-            scene.setCursor(Cursor.HAND);
-        });
-
-        play.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            scene.setCursor(Cursor.DEFAULT);
-        });
-
-        champions.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-            scene.setCursor(Cursor.HAND);
-        });
-
-        champions.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            scene.setCursor(Cursor.DEFAULT);
-        });
-
-        quit.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-            scene.setCursor(Cursor.HAND);
-        });
-
-        quit.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            scene.setCursor(Cursor.DEFAULT);
-        });
-
+        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("style.css")).toExternalForm());
         main.setResizable(false);
         main.setX((screenSize.getWidth() / 2) - 640);
         main.setY((screenSize.getHeight() / 2) - 360);

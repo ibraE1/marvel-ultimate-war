@@ -2,7 +2,6 @@ package views.gui;
 
 import exceptions.ShortNameException;
 import javafx.application.Application;
-import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -16,6 +15,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class StartGame extends Application {
 
@@ -133,30 +133,7 @@ public class StartGame extends Application {
         vbox.getParent().requestFocus();
         Scene scene = new Scene(root, 1280,720, Color.rgb(33,41,50));
 
-        start.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-            scene.setCursor(javafx.scene.Cursor.HAND);
-        });
-
-        start.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            scene.setCursor(Cursor.DEFAULT);
-        });
-
-        back.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-            scene.setCursor(Cursor.HAND);
-        });
-
-        back.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            scene.setCursor(Cursor.DEFAULT);
-        });
-
-        quit.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
-            scene.setCursor(Cursor.HAND);
-        });
-
-        quit.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
-            scene.setCursor(Cursor.DEFAULT);
-        });
-
+        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("style.css")).toExternalForm());
         start.requestFocus();
         startMenu.setResizable(false);
         startMenu.setX((screenSize.getWidth() / 2) - 640);
