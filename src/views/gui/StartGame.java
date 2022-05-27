@@ -2,6 +2,7 @@ package views.gui;
 
 import exceptions.ShortNameException;
 import javafx.application.Application;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -57,12 +58,11 @@ public class StartGame extends Application {
             }
         });
 
-
         Button back = new Button("Main Menu");
-        back.setPrefSize(100,25);
+        back.setPrefSize(300,50);
         back.setLayoutX(20);
         back.setLayoutY(10);
-        back.setFont(Font.font("Georgia"));
+        back.setFont(Font.font("Georgia", 26));
 
         back.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             p1.clear();
@@ -81,9 +81,8 @@ public class StartGame extends Application {
             }
         });
 
-
         Button start = new Button("Start");
-        start.setPrefSize(200,50);
+        start.setPrefSize(300,50);
         start.setLayoutX(540);
         start.setLayoutY(550);
         start.setFont(Font.font("Georgia" , 26));
@@ -99,11 +98,8 @@ public class StartGame extends Application {
 
             player1 = p1.getText();
             player2 = p2.getText();
-
             p1.clear();
             p2.clear();
-
-
         });
 
         p1 = new TextField();
@@ -120,25 +116,55 @@ public class StartGame extends Application {
         vbox.getChildren().add(p1);
         vbox.getChildren().add(p2);
         vbox.setLayoutX(540);
-        vbox.setLayoutY(320);
+        vbox.setLayoutY(200);
         vbox.setSpacing(20);
+
+        VBox buttons = new VBox();
+        buttons.getChildren().add(start);
+        buttons.getChildren().add(back);
+        buttons.setLayoutX(490);
+        buttons.setLayoutY(400);
+        buttons.setSpacing(20);
 
         Group root = new Group(logo_view);
         root.getChildren().add(vbox);
-        root.getChildren().add(start);
-        root.getChildren().add(back);
+        root.getChildren().add(buttons);
         root.getChildren().add(quit);
 
         vbox.getParent().requestFocus();
         Scene scene = new Scene(root, 1280,720, Color.rgb(33,41,50));
 
+        start.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+            scene.setCursor(javafx.scene.Cursor.HAND);
+        });
+
+        start.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+            scene.setCursor(Cursor.DEFAULT);
+        });
+
+        back.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+            scene.setCursor(Cursor.HAND);
+        });
+
+        back.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+            scene.setCursor(Cursor.DEFAULT);
+        });
+
+        quit.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+            scene.setCursor(Cursor.HAND);
+        });
+
+        quit.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+            scene.setCursor(Cursor.DEFAULT);
+        });
+
+        start.requestFocus();
+
         startMenu.setResizable(false);
         startMenu.setX((screenSize.getWidth() / 2) - 640);
         startMenu.setY((screenSize.getHeight() / 2) - 360);
-
         startMenu.getIcons().add(icon);
         startMenu.setTitle("Marvel Ultimate War");
-
         startMenu.setScene(scene);
         startMenu.show();
 

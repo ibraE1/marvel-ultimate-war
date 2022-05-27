@@ -1,6 +1,7 @@
 package views.gui;
 
 import javafx.application.Application;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -19,7 +20,9 @@ public class MainMenu extends Application {
     @Override
     public void start(Stage main) throws Exception {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
         Image icon = new Image("views/assets/icon.png");
+        main.getIcons().add(icon);
 
         Image logo = new Image("views/assets/logo.png");
         ImageView logo_view = new ImageView(logo);
@@ -30,8 +33,9 @@ public class MainMenu extends Application {
 
 
         Button play = new Button("Play");
-        play.setPrefSize(200,50);
+        play.setPrefSize(300,50);
         play.setFont(Font.font("Georgia" , 26));
+
 
         play.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             try {
@@ -45,17 +49,32 @@ public class MainMenu extends Application {
 
 
         Button champions = new Button("Champions");
-        champions.setPrefSize(200,50);
+        champions.setPrefSize(300,50);
         champions.setFont(Font.font("Georgia" , 26));
 
 //        champions.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
 //        });
 
+
+        Button quit = new Button("Quit");
+        quit.setPrefSize(300,50);
+        quit.setFont(Font.font("Georgia" , 26));
+
+
+        quit.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            try {
+                System.exit(0);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
         VBox buttons = new VBox();
         buttons.getChildren().add(play);
         buttons.getChildren().add(champions);
-        buttons.setLayoutX(540);
-        buttons.setLayoutY(200);
+        buttons.getChildren().add(quit);
+        buttons.setLayoutX(490);
+        buttons.setLayoutY(300);
         buttons.setSpacing(20);
 
 
@@ -65,13 +84,34 @@ public class MainMenu extends Application {
 
         Scene scene = new Scene(root, 1280,720, Color.rgb(33,41,50));
 
+        play.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+            scene.setCursor(Cursor.HAND);
+        });
+
+        play.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+            scene.setCursor(Cursor.DEFAULT);
+        });
+
+        champions.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+            scene.setCursor(Cursor.HAND);
+        });
+
+        champions.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+            scene.setCursor(Cursor.DEFAULT);
+        });
+
+        quit.addEventFilter(MouseEvent.MOUSE_ENTERED, e -> {
+            scene.setCursor(Cursor.HAND);
+        });
+
+        quit.addEventFilter(MouseEvent.MOUSE_EXITED, e -> {
+            scene.setCursor(Cursor.DEFAULT);
+        });
+
         main.setResizable(false);
         main.setX((screenSize.getWidth() / 2) - 640);
         main.setY((screenSize.getHeight() / 2) - 360);
-
-        main.getIcons().add(icon);
         main.setTitle("Marvel Ultimate War");
-
         main.setScene(scene);
         main.show();
     }
