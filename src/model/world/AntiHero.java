@@ -1,19 +1,23 @@
 package model.world;
 
-import model.effects.Stun;
-
 import java.util.ArrayList;
 
-public class AntiHero extends Champion {
-    public AntiHero(String name, int maxHP, int maxMana, int actions, int speed, int attackRange, int attackDamage) {
-        super(name, maxHP, maxMana, actions, speed, attackRange, attackDamage);
-    }
+import model.effects.Stun;
 
-    public void useLeaderAbility(ArrayList<Champion> targets) throws CloneNotSupportedException {
-        Stun stn = new Stun(2);
-        for (Champion target : targets) {
-            stn.apply(target);
-            target.getAppliedEffects().add(stn);
-        }
-    }
+public class AntiHero extends Champion {
+
+	public AntiHero(String name, int maxHP, int maxMana, int actions, int speed, int attackRange, int attackDamage) {
+		super(name, maxHP, maxMana, actions, speed, attackRange, attackDamage);
+
+	}
+
+	@Override
+	public void useLeaderAbility(ArrayList<Champion> targets) {
+		for (Champion c: targets)
+		{
+			Stun s = new Stun(2);
+			c.getAppliedEffects().add(s);
+			s.apply(c);
+		}
+	}
 }

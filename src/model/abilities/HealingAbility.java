@@ -1,29 +1,33 @@
 package model.abilities;
 
-import model.world.Champion;
-import model.world.Damageable;
-
 import java.util.ArrayList;
 
-public class HealingAbility extends Ability {
-    private int healAmount;
+import model.world.Damageable;
 
-    public HealingAbility(String name, int cost, int baseCoolDown, int castRadius, AreaOfEffect area, int required, int healingAmount) {
-        super(name, cost, baseCoolDown, castRadius, area, required);
-        this.healAmount = healingAmount;
-    }
+public  class HealingAbility extends Ability {
+	private int healAmount;
 
-    public int getHealAmount() {
-        return healAmount;
-    }
+	public HealingAbility(String name,int cost, int baseCoolDown, int castRadius, AreaOfEffect area,int required, int healingAmount) {
+		super(name,cost, baseCoolDown, castRadius, area,required);
+		this.healAmount = healingAmount;
+	}
 
-    public void setHealAmount(int healAmount) {
-        this.healAmount = healAmount;
-    }
+	public int getHealAmount() {
+		return healAmount;
+	}
 
-    public void execute(ArrayList<Damageable> targets) {
-        for (Damageable target : targets) {
-            target.setCurrentHP(target.getCurrentHP() + healAmount);
-        }
-    }
+	public void setHealAmount(int healAmount) {
+		this.healAmount = healAmount;
+	}
+
+	
+	@Override
+	public void execute(ArrayList<Damageable> targets) {
+		for (Damageable d : targets)
+
+			d.setCurrentHP(d.getCurrentHP() + healAmount);
+
+	}
+	
+
 }
