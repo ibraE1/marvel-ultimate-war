@@ -1,6 +1,5 @@
 package views.gui;
 
-import com.sun.tools.javac.Main;
 import exceptions.ShortNameException;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -25,21 +24,30 @@ public class StartGame extends Application {
     private String player1;
     private String player2;
 
-    @Override
-    public void start(Stage main) throws Exception {
+    public StartGame () throws Exception {
+        Stage startMenu = new Stage();
+        start(startMenu);
+    }
 
+    @Override
+    public void start(Stage startMenu) throws Exception {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
         Image icon = new Image("views/assets/icon.png");
+
         Image logo = new Image("views/assets/logo.png");
-        ImageView logoView = new ImageView(logo);
-        logoView.setX(515);
-        logoView.setFitWidth(250);
-        logoView.setPreserveRatio(true);
+        ImageView logo_view = new ImageView(logo);
+        logo_view.setX(440);
+        logo_view.setY(20);
+        logo_view.setFitWidth(400);
+        logo_view.setPreserveRatio(true);
 
         Button quit = new Button("Quit");
         quit.setPrefSize(100,25);
         quit.setLayoutX(1150);
         quit.setLayoutY(680);
+        quit.setFont(Font.font("Georgia"));
+
 
         quit.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             try {
@@ -54,6 +62,7 @@ public class StartGame extends Application {
         back.setPrefSize(100,25);
         back.setLayoutX(20);
         back.setLayoutY(10);
+        back.setFont(Font.font("Georgia"));
 
         back.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             p1.clear();
@@ -63,8 +72,10 @@ public class StartGame extends Application {
             player2 = null;
 
             try {
-                main.close();
-                new MainMenu();
+                startMenu.close();
+                MainMenu m = new MainMenu();
+                Stage main = new Stage();
+                m.start(main);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -75,6 +86,7 @@ public class StartGame extends Application {
         start.setPrefSize(200,50);
         start.setLayoutX(540);
         start.setLayoutY(550);
+        start.setFont(Font.font("Georgia" , 26));
 
         start.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             if (p1.getLength() < 2 || p1.getLength() > 26 || p2.getLength() < 2 || p2.getLength() > 26) {
@@ -94,8 +106,6 @@ public class StartGame extends Application {
 
         });
 
-
-
         p1 = new TextField();
         p2 = new TextField();
         p1.setPrefSize(200,40);
@@ -113,7 +123,7 @@ public class StartGame extends Application {
         vbox.setLayoutY(320);
         vbox.setSpacing(20);
 
-        Group root = new Group(logoView);
+        Group root = new Group(logo_view);
         root.getChildren().add(vbox);
         root.getChildren().add(start);
         root.getChildren().add(back);
@@ -122,15 +132,15 @@ public class StartGame extends Application {
         vbox.getParent().requestFocus();
         Scene scene = new Scene(root, 1280,720, Color.rgb(33,41,50));
 
-        main.setResizable(false);
-        main.setX((screenSize.getWidth() / 2) - 640);
-        main.setY((screenSize.getHeight() / 2) - 360);
+        startMenu.setResizable(false);
+        startMenu.setX((screenSize.getWidth() / 2) - 640);
+        startMenu.setY((screenSize.getHeight() / 2) - 360);
 
-        main.getIcons().add(icon);
-        main.setTitle("Marvel Ultimate War");
+        startMenu.getIcons().add(icon);
+        startMenu.setTitle("Marvel Ultimate War");
 
-        main.setScene(scene);
-        main.show();
+        startMenu.setScene(scene);
+        startMenu.show();
 
     }
 
@@ -140,10 +150,6 @@ public class StartGame extends Application {
 
     public String getPlayer2() {
         return player2;
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
 

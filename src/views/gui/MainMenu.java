@@ -1,32 +1,69 @@
 package views.gui;
 
-import com.sun.tools.javac.Main;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.awt.*;
 
 public class MainMenu extends Application {
 
-    public MainMenu () throws Exception {
-        Stage main = new Stage();
-        start(main);
-    }
-
     @Override
     public void start(Stage main) throws Exception {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Image icon = new Image("views/assets/icon.png");
 
+        Image logo = new Image("views/assets/logo.png");
+        ImageView logo_view = new ImageView(logo);
+        logo_view.setX(440);
+        logo_view.setY(20);
+        logo_view.setFitWidth(400);
+        logo_view.setPreserveRatio(true);
+
+
+        Button play = new Button("Play");
+        play.setPrefSize(200,50);
+        play.setFont(Font.font("Georgia" , 26));
+
+        play.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            try {
+                new StartGame();
+                main.close();
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+
+        Button champions = new Button("Champions");
+        champions.setPrefSize(200,50);
+        champions.setFont(Font.font("Georgia" , 26));
+
+//        champions.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+//        });
+
+        VBox buttons = new VBox();
+        buttons.getChildren().add(play);
+        buttons.getChildren().add(champions);
+        buttons.setLayoutX(540);
+        buttons.setLayoutY(200);
+        buttons.setSpacing(20);
+
+
         Group root = new Group();
+        root.getChildren().add(logo_view);
+        root.getChildren().add(buttons);
 
-
-        Scene scene = new Scene(root, 1280,720, Color.rgb(36,36,38));
+        Scene scene = new Scene(root, 1280,720, Color.rgb(33,41,50));
 
         main.setResizable(false);
         main.setX((screenSize.getWidth() / 2) - 640);
