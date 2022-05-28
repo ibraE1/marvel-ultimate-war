@@ -1,3 +1,16 @@
+/*.label {*/
+/*    -fx-pref-width: 100%;*/
+/*    -fx-text-alignment: center;*/
+/*}*/
+
+.Rectangle {
+    -fx-background-color: white;
+}
+
+#stats-parent {
+    -fx-alignment: center;
+}
+
 #btn {
     -fx-background-color:
             #090a0c,
@@ -17,4 +30,28 @@
     -fx-cursor: hand;
     -fx-scale-x: 1.1;
     -fx-scale-y: 1.1;
+}
+
+#name {
+    -fx-font-size: 50px;
+}
+
+#type {
+    -fx-font-size: 30px;
+}
+
+#vbox-left {
+    -fx-font-size: 20px;
+}
+
+#vbox-right {
+    -fx-font-size: 20px;
+}
+
+#ability-title {
+    -fx-font-size: 25px;
+}
+
+#vbox-bottom {
+    -fx-font-size: 20px;
 }

@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.scene.shape.Rectangle;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -28,63 +29,15 @@ import model.world.Villain;
 import static engine.Game.getAvailableChampions;
 
 public class AvailableChampions extends Application {
-
-    VBox statsParent = new VBox();
-    HBox middleParent = new HBox();
-    VBox nameBox = new VBox();
-    VBox vboxRight = new VBox();
-    VBox vboxLeft = new VBox();
-    VBox vboxBottom = new VBox();
-    HBox header = new HBox();
-    Pane champPreview = new Pane();
-    Pane statGraph = new Pane();
     public AvailableChampions () throws Exception {
         Stage championScreen = new Stage();
         start(championScreen);
-    }
-
-    private void focusState(int i, boolean value) {
-        ArrayList<Champion> availableChampions = getAvailableChampions();
-        if (value) {
-            nameBox.getChildren().add(new Label(availableChampions.get(i).getName()));
-            String type = "";
-            if (availableChampions.get(i) instanceof Hero) {
-                type = "Hero";
-            } else if (availableChampions.get(i) instanceof Villain) {
-                type = "Villain";
-            } else if (availableChampions.get(i) instanceof AntiHero) {
-                type = "Anti-Hero";
-            }
-            nameBox.getChildren().add(new Label(type));
-            vboxLeft.getChildren().add(new Label("Health ".concat(Integer.toString(availableChampions.get(i).getMaxHP()))));
-            vboxLeft.getChildren().add(new Label("Speed ".concat(Integer.toString(availableChampions.get(i).getSpeed()))));
-            vboxLeft.getChildren().add(new Label("Mana ".concat(Integer.toString(availableChampions.get(i).getMana()))));
-            vboxRight.getChildren().add(new Label("Damage ".concat(Integer.toString(availableChampions.get(i).getAttackDamage()))));
-            vboxRight.getChildren().add(new Label("Range ".concat(Integer.toString(availableChampions.get(i).getAttackRange()))));
-            vboxRight.getChildren().add(new Label("Action Points ".concat(Integer.toString(availableChampions.get(i).getMaxActionPointsPerTurn()))));
-            vboxBottom.getChildren().add(new Label("Champion Abilities"));
-            vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(0).getName()));
-            vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(1).getName()));
-            vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(2).getName()));
-        }
-        else {
-            nameBox.getChildren().clear();
-            vboxLeft.getChildren().clear();
-            vboxLeft.getChildren().clear();
-            vboxLeft.getChildren().clear();
-            vboxRight.getChildren().clear();
-            vboxRight.getChildren().clear();
-            vboxRight.getChildren().clear();
-            vboxBottom.getChildren().clear();
-            vboxBottom.getChildren().clear();
-            vboxBottom.getChildren().clear();
-            vboxBottom.getChildren().clear();
-        }
     }
     @Override
     public void start(Stage championScreen) throws Exception {
         new Game(new Player("Ahma"), new Player("Zizo"));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
         Image icon = new Image("views/assets/icon.png");
         championScreen.getIcons().add(icon);
 
@@ -117,26 +70,90 @@ public class AvailableChampions extends Application {
             }
         }
 
-        statsParent = new VBox();
-        middleParent = new HBox();
-        nameBox = new VBox();
-        vboxRight = new VBox();
-        vboxLeft = new VBox();
-        vboxBottom = new VBox();
-        header = new HBox();
-        champPreview = new Pane();
-        statGraph = new Pane();
-
+        VBox statsParent = new VBox();
+        HBox middleParent = new HBox();
+        VBox nameBox = new VBox();
+        VBox vboxRight = new VBox();
+        VBox vboxLeft = new VBox();
+        VBox vboxBottom = new VBox();
+        VBox abilityTitle = new VBox();
+        HBox header = new HBox();
+        Pane champPreview = new Pane();
+        Pane statGraph = new Pane();
+        abilityTitle.getChildren().add(new Label("Champion Abilities"));
+        statsParent.setId("stats-parent");
         for (int count = 0; count < avatars.size(); count++) {
             int i = count;
 
             avatars.get(i).focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                focusState(i, newValue);
+                ArrayList<Champion> availableChampions = getAvailableChampions();
+                if (newValue) {
+
+                    double hpPercent = (availableChampions.get(i).getMaxHP() / 2250d) * 100;
+                    double manaPercent = (availableChampions.get(i).getMana() / 1500d) * 100;
+                    double actionsPercent = (availableChampions.get(i).getMaxActionPointsPerTurn() / 8d) * 100;
+                    double speedPercent = (availableChampions.get(i).getSpeed() / 99d) * 100;
+                    double rngPercent = (availableChampions.get(i).getAttackRange() / 3d) * 100;
+                    double dmgPercent = (availableChampions.get(i).getAttackDamage() / 200d) * 100;
+
+                    System.out.println(hpPercent + " " + manaPercent + " " + actionsPercent + " " + speedPercent + " " + rngPercent + " " + dmgPercent);
+
+                    Rectangle blackBar = new Rectangle(50, 5);
+                    Rectangle hpBar = new Rectangle(hpPercent, 5);
+                    Rectangle speedBar = new Rectangle(speedPercent, 5);
+                    Rectangle manaBar = new Rectangle(manaPercent, 5);
+                    Rectangle damageBar = new Rectangle(dmgPercent, 5);
+                    Rectangle rangeBar = new Rectangle(rngPercent, 5);
+                    Rectangle pointsBar = new Rectangle(actionsPercent, 5);
+
+                    blackBar.setFill(Color.BLACK);
+
+                    Label nameL = new Label(availableChampions.get(i).getName());
+                    nameL.setId("name");
+                    nameBox.getChildren().add(nameL);
+                    String type = "";
+                    if (availableChampions.get(i) instanceof Hero) {
+                        type = "Hero";
+                    } else if (availableChampions.get(i) instanceof Villain) {
+                        type = "Villain";
+                    } else if (availableChampions.get(i) instanceof AntiHero) {
+                        type = "Anti-Hero";
+                    }
+                    Label typeL = new Label(type);
+                    typeL.setId("type");
+
+                    vboxLeft.setId("vbox-left");
+                    vboxRight.setId("vbox-right");
+                    abilityTitle.setId("ability-title");
+                    vboxBottom.setId("vbox-bottom");
+
+                    nameBox.getChildren().add(typeL);
+
+                    vboxLeft.getChildren().add(new Label("Health ".concat(Integer.toString(availableChampions.get(i).getMaxHP()))));
+                    vboxLeft.getChildren().add(hpBar);
+                    vboxLeft.getChildren().add(new Label("Speed ".concat(Integer.toString(availableChampions.get(i).getSpeed()))));
+                    vboxLeft.getChildren().add(speedBar);
+                    vboxLeft.getChildren().add(new Label("Mana ".concat(Integer.toString(availableChampions.get(i).getMana()))));
+                    vboxLeft.getChildren().add(manaBar);
+                    vboxRight.getChildren().add(new Label("Damage ".concat(Integer.toString(availableChampions.get(i).getAttackDamage()))));
+                    vboxRight.getChildren().add(damageBar);
+                    vboxRight.getChildren().add(new Label("Range ".concat(Integer.toString(availableChampions.get(i).getAttackRange()))));
+                    vboxRight.getChildren().add(rangeBar);
+                    vboxRight.getChildren().add(new Label("Action Points ".concat(Integer.toString(availableChampions.get(i).getMaxActionPointsPerTurn()))));
+                    vboxRight.getChildren().add(pointsBar);
+
+                    vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(0).getName()));
+                    vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(1).getName()));
+                    vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(2).getName()));
+                } else {
+                    nameBox.getChildren().clear();
+                    vboxLeft.getChildren().clear();
+                    vboxRight.getChildren().clear();
+                    vboxBottom.getChildren().clear();
+                }
             });
 
         }
-
-
 
         Button back = new Button("Main Menu");
         back.setPrefSize(150,25);
@@ -155,44 +172,28 @@ public class AvailableChampions extends Application {
             }
         });
 
-
-
-
-        statsParent.setPrefSize(354,600);
+        statsParent.setPrefSize(354,475);
         statsParent.setLayoutX(900);
         statsParent.setLayoutY(100);
-
         nameBox.setPrefSize(354, 150);
-        nameBox.setLayoutX(900);
-        nameBox.setLayoutY(100);
-
-        vboxRight.setPrefSize(177, 250);
-        vboxRight.setLayoutX(900);
-        vboxRight.setLayoutY(250);
-
-        vboxLeft.setPrefSize(177, 250);
-        vboxLeft.setLayoutX(1100);
-        vboxLeft.setLayoutY(250);
-
-        vboxBottom.setPrefSize(354,200);
-        vboxBottom.setLayoutX(900);
-        vboxBottom.setLayoutY(550);
+        vboxRight.setPrefSize(177, 125);
+        vboxLeft.setPrefSize(177, 125);
+        abilityTitle.setPrefSize(354,50);
+        vboxBottom.setPrefSize(354,150);
 
         statsParent.setBackground(Background.fill(Color.BLACK));
         nameBox.setBackground(Background.fill(Color.RED));
-        vboxLeft.setBackground(Background.fill(Color.BLUE));
+        vboxLeft.setBackground(Background.fill(Color.WHITE));
         vboxRight.setBackground(Background.fill(Color.GREEN));
+        abilityTitle.setBackground(Background.fill(Color.YELLOW));
         vboxBottom.setBackground(Background.fill(Color.YELLOW));
-
 
         middleParent.getChildren().add(vboxLeft);
         middleParent.getChildren().add(vboxRight);
         statsParent.getChildren().add(nameBox);
         statsParent.getChildren().add(middleParent);
+        statsParent.getChildren().add(abilityTitle);
         statsParent.getChildren().add(vboxBottom);
-
-
-
 
         champPreview.setPrefSize(300,500);
         champPreview.setLayoutX(550);
@@ -210,10 +211,10 @@ public class AvailableChampions extends Application {
         vboxBottom.setLayoutY(0);
 
         header.setBackground(Background.fill(Color.GOLD));
+        header.getChildren().add(back);
 
         Group root = new Group();
         root.getChildren().add(gp);
-        root.getChildren().add(back);
         root.getChildren().add(statsParent);
         root.getChildren().add(champPreview);
         root.getChildren().add(statGraph);
