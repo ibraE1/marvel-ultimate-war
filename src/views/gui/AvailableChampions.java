@@ -55,7 +55,7 @@ public class AvailableChampions extends Application {
         gp.setHgap(10);
         gp.setVgap(10);
         gp.setLayoutX(25);
-        gp.setLayoutY(100);
+        gp.setLayoutY(80);
 
         int counter = 0;
         for (int i = 1; i <= 5; i++) {
@@ -96,7 +96,7 @@ public class AvailableChampions extends Application {
                     double rngPercent = (availableChampions.get(i).getAttackRange() / 3d) * 100;
                     double dmgPercent = (availableChampions.get(i).getAttackDamage() / 200d) * 100;
 
-                    System.out.println(hpPercent + " " + manaPercent + " " + actionsPercent + " " + speedPercent + " " + rngPercent + " " + dmgPercent);
+
 
                     Rectangle blackBar = new Rectangle(50, 5);
                     Rectangle hpBar = new Rectangle(hpPercent, 5);
@@ -145,11 +145,19 @@ public class AvailableChampions extends Application {
                     vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(0).getName()));
                     vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(1).getName()));
                     vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(2).getName()));
+
+                    Image chart = new Image("views/assets/charts/%s.png".formatted(i));
+                    ImageView chart_view = new ImageView(chart);
+                    chart_view.setFitWidth(280);
+                    chart_view.setPreserveRatio(true);
+                    statGraph.getChildren().add(chart_view);
+
                 } else {
                     nameBox.getChildren().clear();
                     vboxLeft.getChildren().clear();
                     vboxRight.getChildren().clear();
                     vboxBottom.getChildren().clear();
+                    statGraph.getChildren().clear();
                 }
             });
 
@@ -174,7 +182,7 @@ public class AvailableChampions extends Application {
 
         statsParent.setPrefSize(354,475);
         statsParent.setLayoutX(900);
-        statsParent.setLayoutY(100);
+        statsParent.setLayoutY(90);
         nameBox.setPrefSize(354, 150);
         vboxRight.setPrefSize(177, 125);
         vboxLeft.setPrefSize(177, 125);
@@ -197,11 +205,11 @@ public class AvailableChampions extends Application {
 
         champPreview.setPrefSize(300,500);
         champPreview.setLayoutX(550);
-        champPreview.setLayoutY(100);
+        champPreview.setLayoutY(90);
 
-        statGraph.setPrefSize(250,250);
+        statGraph.setPrefSize(280,280);
         statGraph.setLayoutX(150);
-        statGraph.setLayoutY(455);
+        statGraph.setLayoutY(420);
 
         champPreview.setBackground(Background.fill(Color.PINK));
         statGraph.setBackground(Background.fill(Color.WHITE));
