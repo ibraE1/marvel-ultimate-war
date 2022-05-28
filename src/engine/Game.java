@@ -57,8 +57,8 @@ public class Game {
 		availableAbilities = new ArrayList<>();
 		board = new Object[BOARDWIDTH][BOARDHEIGHT];
 		turnOrder = new PriorityQueue(6);
-		loadChampions("Champions.csv");
 		loadAbilities("Abilities.csv");
+		loadChampions("Champions.csv");
 		placeChampions();
 		placeCovers();
 		prepareChampionTurns();

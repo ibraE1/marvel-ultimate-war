@@ -3,9 +3,11 @@ package views.gui;
 import engine.Game;
 import engine.Player;
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -15,54 +17,79 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import model.world.AntiHero;
 import model.world.Champion;
 import model.world.Hero;
-import views.gui.Control;
+import model.world.Villain;
 
 import static engine.Game.getAvailableChampions;
 
 public class AvailableChampions extends Application {
+
+    VBox statsParent = new VBox();
+    HBox middleParent = new HBox();
+    VBox nameBox = new VBox();
+    VBox vboxRight = new VBox();
+    VBox vboxLeft = new VBox();
+    VBox vboxBottom = new VBox();
+    HBox header = new HBox();
+    Pane champPreview = new Pane();
+    Pane statGraph = new Pane();
     public AvailableChampions () throws Exception {
         Stage championScreen = new Stage();
         start(championScreen);
     }
 
+    private void focusState(int i, boolean value) {
+        ArrayList<Champion> availableChampions = getAvailableChampions();
+        if (value) {
+            nameBox.getChildren().add(new Label(availableChampions.get(i).getName()));
+            String type = "";
+            if (availableChampions.get(i) instanceof Hero) {
+                type = "Hero";
+            } else if (availableChampions.get(i) instanceof Villain) {
+                type = "Villain";
+            } else if (availableChampions.get(i) instanceof AntiHero) {
+                type = "Anti-Hero";
+            }
+            nameBox.getChildren().add(new Label(type));
+            vboxLeft.getChildren().add(new Label("Health ".concat(Integer.toString(availableChampions.get(i).getMaxHP()))));
+            vboxLeft.getChildren().add(new Label("Speed ".concat(Integer.toString(availableChampions.get(i).getSpeed()))));
+            vboxLeft.getChildren().add(new Label("Mana ".concat(Integer.toString(availableChampions.get(i).getMana()))));
+            vboxRight.getChildren().add(new Label("Damage ".concat(Integer.toString(availableChampions.get(i).getAttackDamage()))));
+            vboxRight.getChildren().add(new Label("Range ".concat(Integer.toString(availableChampions.get(i).getAttackRange()))));
+            vboxRight.getChildren().add(new Label("Action Points ".concat(Integer.toString(availableChampions.get(i).getMaxActionPointsPerTurn()))));
+            vboxBottom.getChildren().add(new Label("Champion Abilities"));
+            vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(0).getName()));
+            vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(1).getName()));
+            vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(2).getName()));
+        }
+        else {
+            nameBox.getChildren().clear();
+            vboxLeft.getChildren().clear();
+            vboxLeft.getChildren().clear();
+            vboxLeft.getChildren().clear();
+            vboxRight.getChildren().clear();
+            vboxRight.getChildren().clear();
+            vboxRight.getChildren().clear();
+            vboxBottom.getChildren().clear();
+            vboxBottom.getChildren().clear();
+            vboxBottom.getChildren().clear();
+            vboxBottom.getChildren().clear();
+        }
+    }
     @Override
     public void start(Stage championScreen) throws Exception {
+        new Game(new Player("Ahma"), new Player("Zizo"));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
         Image icon = new Image("views/assets/icon.png");
         championScreen.getIcons().add(icon);
-        new Game(new Player("Ahma"), new Player("Zizo"));
-        GridPane gp = new GridPane();
+
         ArrayList<ImageView> icons = new ArrayList<>(15);
-        ArrayList<Champion> availableChampions = getAvailableChampions();
         ArrayList<Button> avatars = new ArrayList<>();
-        ArrayList<String> avatarNames = new ArrayList<>();
-        ArrayList<Integer> hp = new ArrayList<>();
-        ArrayList<Integer> mana = new ArrayList<>();
-        ArrayList<Integer> speed = new ArrayList<>();
-        ArrayList<Integer> attackDamage = new ArrayList<>();
-        ArrayList<Integer> attackRange = new ArrayList<>();
-        ArrayList<Integer> actions = new ArrayList<>();
-
-        for (Champion champ : getAvailableChampions()) {
-            avatarNames.add(champ.getName());
-            hp.add(champ.getMaxHP());
-            mana.add(champ.getMana());
-            speed.add(champ.getSpeed());
-            attackDamage.add(champ.getAttackDamage());
-            attackRange.add(champ.getAttackRange());
-            actions.add(champ.getMaxActionPointsPerTurn());
-        }
-
-
 
         for (int i = 1; i <= 15; i++){
             String  imgPath = "views/assets/champions/%s.png".formatted(i);
@@ -70,6 +97,12 @@ public class AvailableChampions extends Application {
             ImageView icn = new ImageView(img);
             icons.add(icn);
         }
+
+        GridPane gp = new GridPane();
+        gp.setHgap(10);
+        gp.setVgap(10);
+        gp.setLayoutX(25);
+        gp.setLayoutY(100);
 
         int counter = 0;
         for (int i = 1; i <= 5; i++) {
@@ -84,21 +117,25 @@ public class AvailableChampions extends Application {
             }
         }
 
-        for (int i = 0; i < avatars.size(); i++) {
-            int finalI1 = i;
-            avatars.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-                try {
-                    System.out.println(getAvailableChampions().get(finalI1));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        statsParent = new VBox();
+        middleParent = new HBox();
+        nameBox = new VBox();
+        vboxRight = new VBox();
+        vboxLeft = new VBox();
+        vboxBottom = new VBox();
+        header = new HBox();
+        champPreview = new Pane();
+        statGraph = new Pane();
+
+        for (int count = 0; count < avatars.size(); count++) {
+            int i = count;
+
+            avatars.get(i).focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                focusState(i, newValue);
             });
+
         }
 
-        gp.setHgap(10);
-        gp.setVgap(10);
-        gp.setLayoutX(25);
-        gp.setLayoutY(100);
 
 
         Button back = new Button("Main Menu");
@@ -118,12 +155,8 @@ public class AvailableChampions extends Application {
             }
         });
 
-        VBox statsParent = new VBox();
-        HBox middleParent = new HBox();
-        VBox nameBox = new VBox();
-        VBox vboxRight = new VBox();
-        VBox vboxLeft = new VBox();
-        VBox vboxBottom = new VBox();
+
+
 
         statsParent.setPrefSize(354,600);
         statsParent.setLayoutX(900);
@@ -159,8 +192,7 @@ public class AvailableChampions extends Application {
         statsParent.getChildren().add(vboxBottom);
 
 
-        Pane champPreview = new Pane();
-        Pane statGraph = new Pane();
+
 
         champPreview.setPrefSize(300,500);
         champPreview.setLayoutX(550);
@@ -173,12 +205,19 @@ public class AvailableChampions extends Application {
         champPreview.setBackground(Background.fill(Color.PINK));
         statGraph.setBackground(Background.fill(Color.WHITE));
 
+        header.setPrefSize(1280,80);
+        vboxBottom.setLayoutX(0);
+        vboxBottom.setLayoutY(0);
+
+        header.setBackground(Background.fill(Color.GOLD));
+
         Group root = new Group();
         root.getChildren().add(gp);
         root.getChildren().add(back);
         root.getChildren().add(statsParent);
         root.getChildren().add(champPreview);
         root.getChildren().add(statGraph);
+        root.getChildren().add(header);
 
         Scene scene = new Scene(root, 1280,720, Color.rgb(33,41,50));
         scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("championScreenStyle.css")).toExternalForm());
