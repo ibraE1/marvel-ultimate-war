@@ -62,6 +62,7 @@ public class MainMenu extends Application {
         });
 
 
+
         Button quit = new Button("Quit");
         quit.setPrefSize(300,50);
         quit.setFont(Font.font("Georgia" , 26));
