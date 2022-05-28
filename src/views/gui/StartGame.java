@@ -88,13 +88,17 @@ public class StartGame extends Application {
         start.setFont(Font.font("Georgia" , 26));
 
         start.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (p1.getLength() < 2 || p1.getLength() > 26 || p2.getLength() < 2 || p2.getLength() > 26) {
-                try {
-                    throw new ShortNameException();
-                } catch (ShortNameException ex) {
-                    System.out.println("Please enter names between 2 and 26 characters long");
+
+            try {
+                if (p1.getLength() >= 2 && p1.getLength() <= 26 || p2.getLength() >= 2 && p2.getLength() <= 26) {
+                    new AvailableChampions();
+                } else {
+                    throw new ShortNameException("Please enter names between 2 and 26 characters long");
                 }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
+            startMenu.close();
 
             player1 = p1.getText();
             player2 = p2.getText();

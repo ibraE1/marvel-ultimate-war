@@ -1,8 +1,11 @@
-.button {
-}
+/*@font-face {*/
+/*    font-family: main-font;*/
+/*    src: url(../assets/main-font.otf);*/
+/*}*/
 
-.button:focused {
-}
+/*.root {*/
+/*    -fx-font-family: main-font;*/
+/*}*/
 
 .button:hover {
     -fx-cursor: hand;

@@ -48,18 +48,7 @@ public class MainMenu extends Application {
         });
 
 
-        Button champions = new Button("Champions");
-        champions.setPrefSize(300,50);
-        champions.setFont(Font.font("Georgia" , 26));
 
-        champions.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            try {
-                new AvailableChampions();
-                main.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
 
 
 
@@ -78,7 +67,6 @@ public class MainMenu extends Application {
 
         VBox buttons = new VBox();
         buttons.getChildren().add(play);
-        buttons.getChildren().add(champions);
         buttons.getChildren().add(quit);
         buttons.setLayoutX(490);
         buttons.setLayoutY(300);
