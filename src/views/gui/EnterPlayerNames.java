@@ -51,7 +51,7 @@ public class EnterPlayerNames {
             }
         });
 
-        Button play = new Button("Start");
+        Button play = new Button("Play");
         play.setPrefSize(300,50);
         play.setLayoutX(540);
         play.setLayoutY(550);
@@ -74,6 +74,8 @@ public class EnterPlayerNames {
             player1 = p1.getText();
             player2 = p2.getText();
         });
+
+
 
         p1 = new TextField();
         p2 = new TextField();
@@ -103,9 +105,7 @@ public class EnterPlayerNames {
         root.getChildren().add(buttons);
         root.getChildren().add(quit);
 
-        vbox.getParent().requestFocus();
-
-//        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("style.css")).toExternalForm());
+        play.requestFocus();
         return new Scene(root, 1280,720, Color.rgb(33,41,50));
     }
 

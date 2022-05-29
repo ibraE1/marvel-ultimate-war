@@ -33,7 +33,7 @@ public class DisplayChampions {
         ArrayList<Button> avatars = new ArrayList<>();
 
         for (int i = 1; i <= 15; i++){
-            String  imgPath = "views/assets/champions/%s.png".formatted(i);
+            String imgPath = "views/assets/champions/%s.png".formatted(i);
             Image img = new Image(imgPath);
             ImageView icn = new ImageView(img);
             icons.add(icn);

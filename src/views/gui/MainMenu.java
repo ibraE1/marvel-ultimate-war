@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class MainMenu {
-    static Button start, quit;
    public static Scene createMain() {
        Image logo = new Image("views/assets/logo.png");
        ImageView logo_view = new ImageView(logo);
@@ -21,13 +20,15 @@ public class MainMenu {
        logo_view.setPreserveRatio(true);
 
 
-       Button start = new Button("Play");
+       Button start = new Button("Start");
        start.setPrefSize(300,50);
        start.setFont(Font.font("Georgia" , 26));
 
        start.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             Control.onStart();
        });
+
+       start.requestFocus();
 
        Button quit = new Button("Quit");
        quit.setPrefSize(300,50);
@@ -45,8 +46,7 @@ public class MainMenu {
        buttons.setSpacing(20);
 
 
-       Group root = new Group();
-       root.getChildren().add(logo_view);
+       Group root = new Group(logo_view);
        root.getChildren().add(buttons);
 
        return new Scene(root, 1280,720, Color.rgb(33,41,50));
