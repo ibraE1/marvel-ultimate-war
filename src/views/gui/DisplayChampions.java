@@ -2,7 +2,6 @@ package views.gui;
 
 import engine.Game;
 import engine.Player;
-import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -14,12 +13,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 
-import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import model.world.AntiHero;
 import model.world.Champion;
@@ -28,18 +25,9 @@ import model.world.Villain;
 
 import static engine.Game.getAvailableChampions;
 
-public class AvailableChampions extends Application {
-    public AvailableChampions () throws Exception {
-        Stage championScreen = new Stage();
-        start(championScreen);
-    }
-    @Override
-    public void start(Stage championScreen) throws Exception {
+public class DisplayChampions {
+    public static Scene createDisplayChampions() throws IOException {
         new Game(new Player("Ahma"), new Player("Zizo"));
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        Image icon = new Image("views/assets/icon.png");
-        championScreen.getIcons().add(icon);
 
         ArrayList<ImageView> icons = new ArrayList<>(15);
         ArrayList<Button> avatars = new ArrayList<>();
@@ -170,14 +158,7 @@ public class AvailableChampions extends Application {
         back.setFont(Font.font("Georgia", 18));
 
         back.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            try {
-                championScreen.close();
-                MainMenu m = new MainMenu();
-                Stage main = new Stage();
-                m.start(main);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            Control.onMainMenu();
         });
 
         statsParent.setPrefSize(354,475);
@@ -227,15 +208,6 @@ public class AvailableChampions extends Application {
         root.getChildren().add(champPreview);
         root.getChildren().add(statGraph);
         root.getChildren().add(header);
-
-        Scene scene = new Scene(root, 1280,720, Color.rgb(33,41,50));
-        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("championScreenStyle.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("style.css")).toExternalForm());
-        championScreen.setResizable(false);
-        championScreen.setX((screenSize.getWidth() / 2) - 640);
-        championScreen.setY((screenSize.getHeight() / 2) - 360);
-        championScreen.setTitle("Marvel Ultimate War");
-        championScreen.setScene(scene);
-        championScreen.show();
+        return new Scene(root, 1280,720, Color.rgb(33,41,50));
     }
 }

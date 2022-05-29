@@ -1,38 +1,55 @@
 package views.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
-public class Control implements ActionListener, MouseListener {
-    @Override
-    public void actionPerformed(ActionEvent e) {
+import java.awt.*;
 
+public class Control extends Application {
+    private static Scene scene;
+    private static final Stage main = new Stage();
+
+
+    public static void onStart() {
+        scene = EnterPlayerNames.createStart();
+        main.setScene(scene);
+    }
+
+    public static void onQuit() {
+        System.exit(0);
+    }
+
+    public static void onPlay() throws Exception {
+        scene = DisplayChampions.createDisplayChampions();
+        main.setScene(scene);
+    }
+
+    public static void onMainMenu() {
+        scene = MainMenu.createMain();
+        main.setScene(scene);
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
+    public void start(Stage Ignore) throws Exception {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Image icon = new Image("views/assets/icon.png");
+        main.getIcons().add(icon);
+        Image logo = new Image("views/assets/logo.png");
+        ImageView logo_view = new ImageView(logo);
+        logo_view.setX(440);
+        logo_view.setY(20);
+        logo_view.setFitWidth(400);
+        logo_view.setPreserveRatio(true);
+        onMainMenu();
+//        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("style.css")).toExternalForm());
+        main.setResizable(false);
+        main.setX((screenSize.getWidth() / 2) - 640);
+        main.setY((screenSize.getHeight() / 2) - 360);
+        main.setTitle("Marvel Ultimate War");
+        main.show();
 
     }
 }
