@@ -20,6 +20,7 @@ public class Control extends Application {
 
     private static Player p1;
     private static Player p2;
+    private static Game newGame;
     private static Scene scene;
     private static final Stage main = new Stage();
 
@@ -47,7 +48,9 @@ public class Control extends Application {
     }
 
     public static void onReady() throws IOException {
-        new Game(p1,p2);
+        newGame = new Game(p1,p2);
+        scene = InGame.create();
+        main.setScene(scene);
     }
 
     public static void onQuit() {
@@ -78,6 +81,18 @@ public class Control extends Application {
 
     public static Player getP2() {
         return p2;
+    }
+
+    public static boolean getP1LeaderAbility() {
+        return newGame.isFirstLeaderAbilityUsed();
+    }
+
+    public static boolean getP2LeaderAbility() {
+        return newGame.isSecondLeaderAbilityUsed();
+    }
+
+    public static Object[][] getBoard() {
+        return newGame.getBoard();
     }
 }
 
