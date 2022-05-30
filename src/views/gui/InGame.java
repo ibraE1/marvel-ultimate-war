@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
-public class inGame {
+public class InGame {
     public static Scene create() {
         ArrayList<Image> champs = new ArrayList<Image>();
         for (int x = 1; x < 7; x++) {
