@@ -116,5 +116,13 @@ public class EnterPlayerNames {
     public static TextField getP2() {
         return p2;
     }
+
+    public static String getPlayer1() {
+        return player1;
+    }
+
+    public static String getPlayer2() {
+        return player2;
+    }
 }
 

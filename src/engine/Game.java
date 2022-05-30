@@ -39,8 +39,8 @@ import model.world.Hero;
 import model.world.Villain;
 
 public class Game {
-	private static ArrayList<Champion> availableChampions;
-	private static ArrayList<Ability> availableAbilities;
+	private static final ArrayList<Champion> availableChampions = new ArrayList<>();
+	private static final ArrayList<Ability> availableAbilities = new ArrayList<>();
 	private Player firstPlayer;
 	private Player secondPlayer;
 	private Object[][] board;
@@ -53,12 +53,8 @@ public class Game {
 	public Game(Player first, Player second) throws IOException {
 		firstPlayer = first;
 		secondPlayer = second;
-		availableChampions = new ArrayList<>();
-		availableAbilities = new ArrayList<>();
 		board = new Object[BOARDWIDTH][BOARDHEIGHT];
 		turnOrder = new PriorityQueue(6);
-		loadAbilities("Abilities.csv");
-		loadChampions("Champions.csv");
 		placeChampions();
 		placeCovers();
 		prepareChampionTurns();

@@ -1,6 +1,5 @@
 package views.gui;
 
-import engine.Game;
 import engine.Player;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
@@ -17,22 +16,48 @@ import javafx.scene.shape.Rectangle;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import model.world.AntiHero;
 import model.world.Champion;
 import model.world.Hero;
 import model.world.Villain;
 
-import static engine.Game.getAvailableChampions;
+import static engine.Game.*;
 
 public class DisplayChampions {
-    public static Scene createDisplayChampions() throws IOException {
-        new Game(new Player("Ahma"), new Player("Zizo"));
 
+    static Timer myTimer = new Timer();
+
+    private static int playerTurn = 0;
+    private static final Player player1 = Control.getP1();
+    private static final Player player2 = Control.getP2();
+    private static boolean flag = false;
+
+    public static TimerTask chooseChampions(Button btn, int i) {
+        ArrayList<Champion> availableChampions = getAvailableChampions();
+        if (playerTurn % 2 == 0) {
+            if (playerTurn == 0) {
+                player1.setLeader(availableChampions.get(i));
+            }
+            player1.getTeam().add(availableChampions.get(i));
+            btn.setDisable(true);
+
+        } else {
+            if (playerTurn == 1){
+                player2.setLeader(availableChampions.get(i));
+            }
+            player2.getTeam().add(availableChampions.get(i));
+            btn.setDisable(true);
+        }
+        return null;
+    }
+    public static Scene createDisplayChampions() throws IOException {
         ArrayList<ImageView> icons = new ArrayList<>(15);
         ArrayList<Button> avatars = new ArrayList<>();
 
-        for (int i = 1; i <= 15; i++){
+        for (int i = 1; i <= 15; i++) {
             String imgPath = "views/assets/champions/%s.png".formatted(i);
             Image img = new Image(imgPath);
             ImageView icn = new ImageView(img);
@@ -68,13 +93,17 @@ public class DisplayChampions {
         HBox header = new HBox();
         Pane champPreview = new Pane();
         Pane statGraph = new Pane();
+
+        Pane time = new Pane();
+        time.setLayoutX(500);
+        time.setLayoutY(500);
+
         abilityTitle.getChildren().add(new Label("Champion Abilities"));
         statsParent.setId("stats-parent");
         for (int count = 0; count < avatars.size(); count++) {
             int i = count;
-
-            avatars.get(i).focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                ArrayList<Champion> availableChampions = getAvailableChampions();
+            ArrayList<Champion> availableChampions = getAvailableChampions();
+            avatars.get(i).hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                 if (newValue) {
 
                     double hpPercent = (availableChampions.get(i).getMaxHP() / 2250d) * 100;
@@ -83,8 +112,6 @@ public class DisplayChampions {
                     double speedPercent = (availableChampions.get(i).getSpeed() / 99d) * 100;
                     double rngPercent = (availableChampions.get(i).getAttackRange() / 3d) * 100;
                     double dmgPercent = (availableChampions.get(i).getAttackDamage() / 200d) * 100;
-
-
 
                     Rectangle blackBar = new Rectangle(50, 5);
                     Rectangle hpBar = new Rectangle(hpPercent, 5);
@@ -148,7 +175,19 @@ public class DisplayChampions {
                     statGraph.getChildren().clear();
                 }
             });
+            avatars.get(i).pressedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                if (newValue) {
+                    myTimer.schedule(new TimerTask(){
 
+                        @Override
+                        public void run() {
+                            chooseChampions(avatars.get(i), i);
+                        }
+                    }, 10000);
+
+                    playerTurn++;
+                }
+            });
         }
 
         Button back = new Button("Main Menu");
@@ -159,6 +198,46 @@ public class DisplayChampions {
 
         back.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             Control.onMainMenu();
+        });
+
+        Button ready = new Button("Ready");
+        ready.setPrefSize(250,75);
+        ready.setLayoutX(952);
+        ready.setLayoutY(600);
+        ready.setFont(Font.font("Georgia", 18));
+
+        ready.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (flag) {
+                try {
+                    Control.onReady();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        Button test = new Button("Ready");
+        test.setPrefSize(250,75);
+        test.setLayoutX(400);
+        test.setLayoutY(600);
+        test.setFont(Font.font("Georgia", 18));
+
+        test.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            for (int i = 0; i < 4; i++) {
+                if (i == 0) {
+                    System.out.print(player1.getLeader().getName() + " ");
+                } else {
+                    System.out.print(player1.getTeam().get(i-1).getName() + " ");
+                }
+            }
+            System.out.println();
+            for (int i = 0; i < 4; i++) {
+                if (i == 0) {
+                    System.out.print(player2.getLeader().getName() + " ");
+                } else {
+                    System.out.print(player2.getTeam().get(i-1).getName() + " ");
+                }
+            }
         });
 
         statsParent.setPrefSize(354,475);
@@ -208,6 +287,8 @@ public class DisplayChampions {
         root.getChildren().add(champPreview);
         root.getChildren().add(statGraph);
         root.getChildren().add(header);
+        root.getChildren().add(ready);
+        root.getChildren().add(test);
         return new Scene(root, 1280,720, Color.rgb(33,41,50));
     }
 }
