@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -16,8 +17,6 @@ import javafx.scene.shape.Rectangle;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import model.world.AntiHero;
 import model.world.Champion;
@@ -27,15 +26,12 @@ import model.world.Villain;
 import static engine.Game.*;
 
 public class DisplayChampions {
-
-    static Timer myTimer = new Timer();
-
     private static int playerTurn = 0;
     private static final Player player1 = Control.getP1();
     private static final Player player2 = Control.getP2();
     private static boolean flag = false;
 
-    public static TimerTask chooseChampions(Button btn, int i) {
+    public static void chooseChampions(Button btn, int i) {
         ArrayList<Champion> availableChampions = getAvailableChampions();
         if (playerTurn % 2 == 0) {
             if (playerTurn == 0) {
@@ -51,7 +47,6 @@ public class DisplayChampions {
             player2.getTeam().add(availableChampions.get(i));
             btn.setDisable(true);
         }
-        return null;
     }
     public static Scene createDisplayChampions() throws IOException {
         ArrayList<ImageView> icons = new ArrayList<>(15);
@@ -103,90 +98,77 @@ public class DisplayChampions {
         for (int count = 0; count < avatars.size(); count++) {
             int i = count;
             ArrayList<Champion> availableChampions = getAvailableChampions();
-            avatars.get(i).hoverProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                if (newValue) {
+            avatars.get(i).addEventFilter(MouseEvent.MOUSE_ENTERED , e -> {
+                nameBox.getChildren().clear();
+                vboxLeft.getChildren().clear();
+                vboxRight.getChildren().clear();
+                vboxBottom.getChildren().clear();
+                statGraph.getChildren().clear();
 
-                    double hpPercent = (availableChampions.get(i).getMaxHP() / 2250d) * 100;
-                    double manaPercent = (availableChampions.get(i).getMana() / 1500d) * 100;
-                    double actionsPercent = (availableChampions.get(i).getMaxActionPointsPerTurn() / 8d) * 100;
-                    double speedPercent = (availableChampions.get(i).getSpeed() / 99d) * 100;
-                    double rngPercent = (availableChampions.get(i).getAttackRange() / 3d) * 100;
-                    double dmgPercent = (availableChampions.get(i).getAttackDamage() / 200d) * 100;
+                double hpPercent = (availableChampions.get(i).getMaxHP() / 2250d) * 100;
+                double manaPercent = (availableChampions.get(i).getMana() / 1500d) * 100;
+                double actionsPercent = (availableChampions.get(i).getMaxActionPointsPerTurn() / 8d) * 100;
+                double speedPercent = (availableChampions.get(i).getSpeed() / 99d) * 100;
+                double rngPercent = (availableChampions.get(i).getAttackRange() / 3d) * 100;
+                double dmgPercent = (availableChampions.get(i).getAttackDamage() / 200d) * 100;
 
-                    Rectangle blackBar = new Rectangle(50, 5);
-                    Rectangle hpBar = new Rectangle(hpPercent, 5);
-                    Rectangle speedBar = new Rectangle(speedPercent, 5);
-                    Rectangle manaBar = new Rectangle(manaPercent, 5);
-                    Rectangle damageBar = new Rectangle(dmgPercent, 5);
-                    Rectangle rangeBar = new Rectangle(rngPercent, 5);
-                    Rectangle pointsBar = new Rectangle(actionsPercent, 5);
+                Rectangle blackBar = new Rectangle(50, 5);
+                Rectangle hpBar = new Rectangle(hpPercent, 5);
+                Rectangle speedBar = new Rectangle(speedPercent, 5);
+                Rectangle manaBar = new Rectangle(manaPercent, 5);
+                Rectangle damageBar = new Rectangle(dmgPercent, 5);
+                Rectangle rangeBar = new Rectangle(rngPercent, 5);
+                Rectangle pointsBar = new Rectangle(actionsPercent, 5);
 
-                    blackBar.setFill(Color.BLACK);
+                blackBar.setFill(Color.BLACK);
 
-                    Label nameL = new Label(availableChampions.get(i).getName());
-                    nameL.setId("name");
-                    nameBox.getChildren().add(nameL);
-                    String type = "";
-                    if (availableChampions.get(i) instanceof Hero) {
-                        type = "Hero";
-                    } else if (availableChampions.get(i) instanceof Villain) {
-                        type = "Villain";
-                    } else if (availableChampions.get(i) instanceof AntiHero) {
-                        type = "Anti-Hero";
-                    }
-                    Label typeL = new Label(type);
-                    typeL.setId("type");
-
-                    vboxLeft.setId("vbox-left");
-                    vboxRight.setId("vbox-right");
-                    abilityTitle.setId("ability-title");
-                    vboxBottom.setId("vbox-bottom");
-
-                    nameBox.getChildren().add(typeL);
-
-                    vboxLeft.getChildren().add(new Label("Health ".concat(Integer.toString(availableChampions.get(i).getMaxHP()))));
-                    vboxLeft.getChildren().add(hpBar);
-                    vboxLeft.getChildren().add(new Label("Speed ".concat(Integer.toString(availableChampions.get(i).getSpeed()))));
-                    vboxLeft.getChildren().add(speedBar);
-                    vboxLeft.getChildren().add(new Label("Mana ".concat(Integer.toString(availableChampions.get(i).getMana()))));
-                    vboxLeft.getChildren().add(manaBar);
-                    vboxRight.getChildren().add(new Label("Damage ".concat(Integer.toString(availableChampions.get(i).getAttackDamage()))));
-                    vboxRight.getChildren().add(damageBar);
-                    vboxRight.getChildren().add(new Label("Range ".concat(Integer.toString(availableChampions.get(i).getAttackRange()))));
-                    vboxRight.getChildren().add(rangeBar);
-                    vboxRight.getChildren().add(new Label("Action Points ".concat(Integer.toString(availableChampions.get(i).getMaxActionPointsPerTurn()))));
-                    vboxRight.getChildren().add(pointsBar);
-
-                    vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(0).getName()));
-                    vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(1).getName()));
-                    vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(2).getName()));
-
-                    Image chart = new Image("views/assets/charts/%s.png".formatted(i));
-                    ImageView chart_view = new ImageView(chart);
-                    chart_view.setFitWidth(280);
-                    chart_view.setPreserveRatio(true);
-                    statGraph.getChildren().add(chart_view);
-
-                } else {
-                    nameBox.getChildren().clear();
-                    vboxLeft.getChildren().clear();
-                    vboxRight.getChildren().clear();
-                    vboxBottom.getChildren().clear();
-                    statGraph.getChildren().clear();
+                Label nameL = new Label(availableChampions.get(i).getName());
+                nameL.setId("name");
+                nameBox.getChildren().add(nameL);
+                String type = "";
+                if (availableChampions.get(i) instanceof Hero) {
+                    type = "Hero";
+                } else if (availableChampions.get(i) instanceof Villain) {
+                    type = "Villain";
+                } else if (availableChampions.get(i) instanceof AntiHero) {
+                    type = "Anti-Hero";
                 }
+                Label typeL = new Label(type);
+                typeL.setId("type");
+
+                vboxLeft.setId("vbox-left");
+                vboxRight.setId("vbox-right");
+                abilityTitle.setId("ability-title");
+                vboxBottom.setId("vbox-bottom");
+
+                nameBox.getChildren().add(typeL);
+
+                vboxLeft.getChildren().add(new Label("Health ".concat(Integer.toString(availableChampions.get(i).getMaxHP()))));
+                vboxLeft.getChildren().add(hpBar);
+                vboxLeft.getChildren().add(new Label("Speed ".concat(Integer.toString(availableChampions.get(i).getSpeed()))));
+                vboxLeft.getChildren().add(speedBar);
+                vboxLeft.getChildren().add(new Label("Mana ".concat(Integer.toString(availableChampions.get(i).getMana()))));
+                vboxLeft.getChildren().add(manaBar);
+                vboxRight.getChildren().add(new Label("Damage ".concat(Integer.toString(availableChampions.get(i).getAttackDamage()))));
+                vboxRight.getChildren().add(damageBar);
+                vboxRight.getChildren().add(new Label("Range ".concat(Integer.toString(availableChampions.get(i).getAttackRange()))));
+                vboxRight.getChildren().add(rangeBar);
+                vboxRight.getChildren().add(new Label("Action Points ".concat(Integer.toString(availableChampions.get(i).getMaxActionPointsPerTurn()))));
+                vboxRight.getChildren().add(pointsBar);
+
+                vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(0).getName()));
+                vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(1).getName()));
+                vboxBottom.getChildren().add(new Label(availableChampions.get(i).getAbilities().get(2).getName()));
+
+                Image chart = new Image("views/assets/charts/%s.png".formatted(i));
+                ImageView chart_view = new ImageView(chart);
+                chart_view.setFitWidth(280);
+                chart_view.setPreserveRatio(true);
+                statGraph.getChildren().add(chart_view);
             });
-            avatars.get(i).pressedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                if (newValue) {
-                    myTimer.schedule(new TimerTask(){
-
-                        @Override
-                        public void run() {
-                            chooseChampions(avatars.get(i), i);
-                        }
-                    }, 10000);
-
-                    playerTurn++;
-                }
+            avatars.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+                chooseChampions(avatars.get(i), i);
+                playerTurn++;
             });
         }
 
@@ -207,12 +189,10 @@ public class DisplayChampions {
         ready.setFont(Font.font("Georgia", 18));
 
         ready.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (flag) {
-                try {
-                    Control.onReady();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+            try {
+                Control.onReady();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
