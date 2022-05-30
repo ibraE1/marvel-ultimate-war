@@ -34,7 +34,7 @@ public class DisplayChampions {
 
         for (int i = 1; i <= 15; i++){
             String imgPath = "views/assets/champions/%s.png".formatted(i);
-            Image img = new Image(imgPath);
+            Image img = new Image(imgPath, 80, 80, false, true, true);
             ImageView icn = new ImageView(img);
             icons.add(icn);
         }
@@ -49,7 +49,7 @@ public class DisplayChampions {
         for (int i = 1; i <= 5; i++) {
             for (int j = 1; j <= 3; j++) {
                 Button btn = new Button();
-                btn.setPrefSize(80,100);
+                btn.setPrefSize(80,80);
                 btn.setGraphic(icons.get(counter));
                 btn.setId("btn");
                 gp.add(btn, i, j);
