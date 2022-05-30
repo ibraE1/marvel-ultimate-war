@@ -51,9 +51,9 @@ public class InGame {
         VBox profile2 = new VBox();
         profile2.getChildren().add(new Label(player2.getName()));
         if (Control.getP2LeaderAbility())
-            profile1.getChildren().add(new Label("Leader Ability Used"));
+            profile2.getChildren().add(new Label("Leader Ability Used"));
         else
-            profile1.getChildren().add(new Label("Leader Ability Not Used"));
+            profile2.getChildren().add(new Label("Leader Ability Not Used"));
         VBox team2 = new VBox();
         team2.getChildren().add(new ImageView(secondTeamImages.get(0)));
         team2.getChildren().add(new ImageView(secondTeamImages.get(1)));
@@ -88,7 +88,7 @@ public class InGame {
                     ImageView iv = new ImageView(new Image("views/assets/champions/%s.png".formatted(ch.getName())));
                     boardImages.add(iv);
                     GridPane.setConstraints(iv, ch.getLocation().x, ch.getLocation().y);
-                } else {
+                } else if (tile instanceof Cover){
                     Cover cv = (Cover) tile;
                     ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
                     boardImages.add(iv);

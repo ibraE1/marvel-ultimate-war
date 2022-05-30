@@ -1,5 +1,6 @@
 package views.gui;
 
+import engine.Player;
 import exceptions.ShortNameException;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -59,6 +60,8 @@ public class EnterPlayerNames {
 
         play.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             if (p1.getLength() >= 2 && p1.getLength() <= 26 && p2.getLength() >= 2 && p2.getLength() <= 26) {
+                player1 = p1.getText();
+                player2 = p2.getText();
                 try {
                     Control.onPlay();
                 } catch (Exception ex) {
@@ -71,8 +74,6 @@ public class EnterPlayerNames {
                     throw new RuntimeException(ex);
                 }
             }
-            player1 = p1.getText();
-            player2 = p2.getText();
         });
 
 
