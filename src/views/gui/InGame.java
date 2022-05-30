@@ -1,6 +1,8 @@
 package views.gui;
 
 import engine.Player;
+import engine.PriorityQueue;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -81,18 +83,22 @@ public class InGame {
         board.setLayoutX(1280/2 - 250);
         board.setLayoutY(720/2 - 250);
         ArrayList<ImageView> boardImages = new ArrayList<ImageView>();
-        for (Object tile : Control.getBoard()) {
-            if (tile != null) {
-                if (tile instanceof Champion) {
-                    Champion ch = (Champion) tile;
-                    ImageView iv = new ImageView(new Image("views/assets/champions/%s.png".formatted(ch.getName())));
-                    boardImages.add(iv);
-                    GridPane.setConstraints(iv, ch.getLocation().x, ch.getLocation().y);
-                } else if (tile instanceof Cover){
-                    Cover cv = (Cover) tile;
-                    ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
-                    boardImages.add(iv);
-                    GridPane.setConstraints(iv, cv.getLocation().x, cv.getLocation().y);
+        for (Object[] o : Control.getBoard()) {
+            for (Object tile : o) {
+                if (tile != null) {
+                    if (tile instanceof Champion) {
+                        Champion ch = (Champion) tile;
+                        ImageView iv = new ImageView(new Image("views/assets/champions/%s.png".formatted(ch.getName())));
+                        boardImages.add(iv);
+                        GridPane.setConstraints(iv, ch.getLocation().y, 4 - ch.getLocation().x);
+                        GridPane.setHalignment(iv, HPos.CENTER);
+                    } else if (tile instanceof Cover){
+                        Cover cv = (Cover) tile;
+                        ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
+                        boardImages.add(iv);
+                        GridPane.setConstraints(iv, cv.getLocation().y, 4 - cv.getLocation().x);
+                        GridPane.setHalignment(iv, HPos.CENTER);
+                    }
                 }
             }
         }
@@ -100,9 +106,26 @@ public class InGame {
 
         HBox turn = new HBox();
         ArrayList<ImageView> turnImages = new ArrayList<ImageView>();
-        turn.getChildren().addAll(turnImages);
+        PriorityQueue pq = new PriorityQueue(Control.getTurnOrder().size());
+        int size = Control.getTurnOrder().size();
+        for (int i = 0; i < size && !Control.getTurnOrder().isEmpty(); i++) {
+            Champion ch = (Champion) (Control.getTurnOrder().remove());
+            Image img = new Image("views/assets/champions/%s.png".formatted(ch.getName()));
+            ImageView iv = new ImageView(img);
+            iv.setFitHeight(40);
+            iv.setFitWidth(40);
+            turnImages.add(iv);
+        }
+        for (int i = 0; i < size && !pq.isEmpty(); i++)
+            Control.getTurnOrder().insert(pq.remove());
+        for (ImageView iv : turnImages) {
+            turn.getChildren().add(iv);
+            turn.getChildren().add(new Label(">"));
+        }
+        turn.getChildren().remove(turn.getChildren().size() - 1);
         turn.setPrefSize(350, 55);
-        turn.setLayoutX(1280 - 350);
+        turn.setAlignment(Pos.CENTER);
+        turn.setLayoutX(1280 - 325);
         turn.setLayoutY(720 - 55);
 
         Group root = new Group();

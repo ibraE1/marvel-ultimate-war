@@ -2,6 +2,7 @@ package views.gui;
 
 import engine.Game;
 import engine.Player;
+import engine.PriorityQueue;
 import javafx.application.Application;
 import javafx.css.Stylesheet;
 import javafx.scene.Scene;
@@ -93,6 +94,10 @@ public class Control extends Application {
 
     public static Object[][] getBoard() {
         return newGame.getBoard();
+    }
+
+    public static PriorityQueue getTurnOrder() {
+        return newGame.getTurnOrder();
     }
 }
 
