@@ -1,6 +1,8 @@
 package views.gui;
 
 import engine.Player;
+import exceptions.NotEnoughChampionsException;
+import exceptions.NotEnoughResourcesException;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -29,10 +31,10 @@ public class DisplayChampions {
     private static int playerTurn = 0;
     private static final Player player1 = Control.getP1();
     private static final Player player2 = Control.getP2();
-    private static boolean flag = false;
 
     public static void chooseChampions(Button btn, int i) {
         ArrayList<Champion> availableChampions = getAvailableChampions();
+
         if (playerTurn % 2 == 0) {
             if (playerTurn == 0) {
                 player1.setLeader(availableChampions.get(i));
@@ -169,6 +171,11 @@ public class DisplayChampions {
             avatars.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
                 chooseChampions(avatars.get(i), i);
                 playerTurn++;
+                if (playerTurn == 6) {
+                    for (Button b : avatars) {
+                        b.setDisable(true);
+                    }
+                }
             });
         }
 
@@ -190,8 +197,11 @@ public class DisplayChampions {
 
         ready.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             try {
+                if (playerTurn != 6) {
+                    throw new NotEnoughChampionsException();
+                }
                 Control.onReady();
-            } catch (IOException ex) {
+            } catch (IOException | NotEnoughChampionsException ex) {
                 throw new RuntimeException(ex);
             }
         });
@@ -203,21 +213,25 @@ public class DisplayChampions {
         test.setFont(Font.font("Georgia", 18));
 
         test.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            System.out.print("Leader 1: ");
             for (int i = 0; i < 4; i++) {
                 if (i == 0) {
-                    System.out.print(player1.getLeader().getName() + " ");
+                    System.out.print(player1.getLeader().getName() + "\t");
                 } else {
                     System.out.print(player1.getTeam().get(i-1).getName() + " ");
                 }
             }
             System.out.println();
+            System.out.print("Leader 2: ");
             for (int i = 0; i < 4; i++) {
                 if (i == 0) {
-                    System.out.print(player2.getLeader().getName() + " ");
+                    System.out.print(player2.getLeader().getName() + "\t");
                 } else {
-                    System.out.print(player2.getTeam().get(i-1).getName() + " ");
+                    System.out.print(player2.getTeam().get(i-1).getName() + ", ");
                 }
             }
+            System.out.println("\nPlayer 1: " + EnterPlayerNames.getPlayer1()+ "and Player 2: " + EnterPlayerNames.getPlayer2());
+
         });
 
         statsParent.setPrefSize(354,475);
