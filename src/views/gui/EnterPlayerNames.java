@@ -105,7 +105,7 @@ public class EnterPlayerNames {
         root.getChildren().add(vbox);
         root.getChildren().add(buttons);
         root.getChildren().add(quit);
-        
+
         return new Scene(root, 1280,720, Color.rgb(33,41,50));
     }
 
