@@ -24,7 +24,7 @@ public class MainMenu {
        start.setPrefSize(300,50);
        start.setFont(Font.font("Georgia" , 26));
 
-       start.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+       start.setOnAction(e -> {
             Control.onStart();
        });
 
@@ -34,7 +34,7 @@ public class MainMenu {
        quit.setPrefSize(300,50);
        quit.setFont(Font.font("Georgia" , 26));
 
-       quit.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+       quit.setOnAction(e -> {
             Control.onQuit();
        });
 

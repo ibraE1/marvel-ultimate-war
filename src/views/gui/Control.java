@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import model.world.Champion;
 
 import java.awt.*;
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class Control extends Application {
     private static Scene scene;
     private static final Stage main = new Stage();
 
-    //    public Stylesheet addStyles() {
+//    public Stylesheet addStyles() {
 //        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("style.css")).toExternalForm());
 //        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("championScreenStyle.css")).toExternalForm());
 //    }
@@ -98,6 +99,10 @@ public class Control extends Application {
 
     public static PriorityQueue getTurnOrder() {
         return newGame.getTurnOrder();
+    }
+
+    public static Champion getCurrentChampion() {
+        return newGame.getCurrentChampion();
     }
 }
 

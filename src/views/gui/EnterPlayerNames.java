@@ -34,7 +34,7 @@ public class EnterPlayerNames {
         quit.setFont(Font.font("Georgia"));
 
 
-        quit.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        quit.setOnAction(e -> {
             Control.onQuit();
         });
 
@@ -44,7 +44,7 @@ public class EnterPlayerNames {
         mainMenuBtn.setLayoutY(10);
         mainMenuBtn.setFont(Font.font("Georgia", 26));
 
-        mainMenuBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        mainMenuBtn.setOnAction(e -> {
             try {
                 Control.onMainMenu();
             } catch (Exception ex) {
@@ -58,7 +58,7 @@ public class EnterPlayerNames {
         play.setLayoutY(550);
         play.setFont(Font.font("Georgia" , 26));
 
-        play.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        play.setOnAction(e -> {
             if (p1.getLength() >= 2 && p1.getLength() <= 26 && p2.getLength() >= 2 && p2.getLength() <= 26) {
                 player1 = p1.getText();
                 player2 = p2.getText();
@@ -105,8 +105,7 @@ public class EnterPlayerNames {
         root.getChildren().add(vbox);
         root.getChildren().add(buttons);
         root.getChildren().add(quit);
-
-        play.requestFocus();
+        
         return new Scene(root, 1280,720, Color.rgb(33,41,50));
     }
 

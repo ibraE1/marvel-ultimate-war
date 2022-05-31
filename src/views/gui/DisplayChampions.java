@@ -100,7 +100,7 @@ public class DisplayChampions {
         for (int count = 0; count < avatars.size(); count++) {
             int i = count;
             ArrayList<Champion> availableChampions = getAvailableChampions();
-            avatars.get(i).addEventFilter(MouseEvent.MOUSE_ENTERED , e -> {
+            avatars.get(i).setOnAction(e -> {
                 nameBox.getChildren().clear();
                 vboxLeft.getChildren().clear();
                 vboxRight.getChildren().clear();
@@ -168,7 +168,7 @@ public class DisplayChampions {
                 chart_view.setPreserveRatio(true);
                 statGraph.getChildren().add(chart_view);
             });
-            avatars.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            avatars.get(i).setOnAction(e -> {
                 chooseChampions(avatars.get(i), i);
                 playerTurn++;
                 if (playerTurn == 6) {
@@ -185,7 +185,7 @@ public class DisplayChampions {
         back.setLayoutY(15);
         back.setFont(Font.font("Georgia", 18));
 
-        back.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        back.setOnAction(e -> {
             Control.onMainMenu();
         });
 
@@ -195,7 +195,7 @@ public class DisplayChampions {
         ready.setLayoutY(600);
         ready.setFont(Font.font("Georgia", 18));
 
-        ready.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        ready.setOnAction(e -> {
             try {
                 if (playerTurn != 6) {
                     throw new NotEnoughChampionsException();
@@ -212,7 +212,7 @@ public class DisplayChampions {
         test.setLayoutY(600);
         test.setFont(Font.font("Georgia", 18));
 
-        test.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        test.setOnAction(e -> {
             System.out.print("Leader 1: ");
             for (int i = 0; i < 4; i++) {
                 if (i == 0) {
