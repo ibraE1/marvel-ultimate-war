@@ -272,7 +272,7 @@ public class DisplayChampions {
 
         Button back = new Button("Main Menu");
         back.setPrefSize(150,40);
-        back.setLayoutX(1520);
+        back.setLayoutX(1500);
         back.setLayoutY(15);
         back.setFont(Font.font("Arial", 18));
         back.styleProperty().bind(Bindings.when(back.hoverProperty()).then("-fx-cursor: hand; -fx-scale-x: 1.1;" +
