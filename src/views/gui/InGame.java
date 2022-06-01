@@ -13,6 +13,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import model.abilities.Ability;
+import model.abilities.CrowdControlAbility;
+import model.abilities.DamagingAbility;
+import model.abilities.HealingAbility;
+import model.effects.Effect;
 import model.world.*;
 
 import java.util.ArrayList;
@@ -64,7 +69,7 @@ public class InGame {
         profiles.getChildren().add(profile1);
         profiles.getChildren().add(profile2);
         profiles.setHgap(15);
-        profiles.setPrefWidth(380);
+        profiles.setPrefWidth(390);
         profiles.setPadding(new Insets(0, 10, 0, 0));
 
         GridPane board = new GridPane();
@@ -120,13 +125,16 @@ public class InGame {
         }
         board.getChildren().addAll(boardTiles);
 
-        TilePane right = new TilePane(Orientation.VERTICAL);
+        VBox right = new VBox();
         Label l1 = new Label("Current Champ: ");
         l1.setPrefHeight(20);
         right.getChildren().add(l1);
-        right.getChildren().add(champInfo(Control.getCurrentChampion()));
-        right.setPrefWidth(390);
-        right.setAlignment(Pos.TOP_RIGHT);
+        Label l2 = new Label("" + Control.getCurrentChampion().getName());
+        l2.setMaxHeight(20);
+        right.getChildren().add(l2);
+        right.getChildren().add(champAbilities(Control.getCurrentChampion()));
+        right.setPrefWidth(400);
+        right.setAlignment(Pos.BASELINE_RIGHT);
         right.setPadding(new Insets(0, 10, 0, 0));
 
         TilePane turn = new TilePane(Orientation.HORIZONTAL);
@@ -152,7 +160,7 @@ public class InGame {
 
         BorderPane root = new BorderPane(board, menu, right, turn, profiles);
         root.setPadding(new Insets(0, 10, 0, 10));
-        return new Scene(root, 1280, 720);
+        return new Scene(root, 1600, 900);
     }
 
     private static VBox champInfo(Champion c) {
@@ -174,7 +182,6 @@ public class InGame {
         HBox topBox = new HBox();
         topBox.getChildren().add(champView);
         topBox.getChildren().add(nameBox);
-        topBox.setSpacing(5);
         currentChampInfo.getChildren().add(topBox);
         currentChampInfo.getChildren().add(new Label("HP: " + c.getCurrentHP() + "/" + c.getMaxHP()));
         GridPane stats = new GridPane();
@@ -185,13 +192,42 @@ public class InGame {
         stats.setVgap(5);
         stats.setHgap(5);
         currentChampInfo.getChildren().add(stats);
-        //TilePane effects = new TilePane(Orientation.HORIZONTAL);
-        //effects.getChildren().add(new Label("Applied Effects: "));
-        //for (Effect eft : c.getAppliedEffects())
-        //    effects.getChildren().add(new Label(eft.getName() + " (" + eft.getDuration() + ") "));
-        //currentChampInfo.getChildren().add(effects);
-        currentChampInfo.setAlignment(Pos.CENTER);
-        currentChampInfo.setSpacing(5);
+        TilePane effects = new TilePane(Orientation.HORIZONTAL);
+        effects.getChildren().add(new Label("Applied Effects: "));
+        for (Effect eft : c.getAppliedEffects())
+            effects.getChildren().add(new Label(eft.getName() + " (" + eft.getDuration() + ") "));
+        currentChampInfo.getChildren().add(effects);
+        currentChampInfo.setAlignment(Pos.CENTER_LEFT);
         return currentChampInfo;
+    }
+
+    private static VBox champAbilities(Champion c) {
+        VBox currentChampAbilities = new VBox();
+        for (Ability abt : c.getAbilities()) {
+            VBox abilityInfo = new VBox();
+            String name = "" + abt.getName();
+            String value = "";
+            if (abt instanceof DamagingAbility) {
+                name += " (Damaging)";
+                value += "Damage Amount: " + ((DamagingAbility) abt).getDamageAmount();
+            } else if (abt instanceof HealingAbility) {
+                name += " (Healing)";
+                value += "Heal Amount: " + ((HealingAbility) abt).getHealAmount();
+            } else if (abt instanceof CrowdControlAbility) {
+                name += " (CC)";
+                value += "Effect: " + ((CrowdControlAbility) abt).getEffect().getName();
+            }
+            abilityInfo.getChildren().add(new Label(name));
+            abilityInfo.getChildren().add(new Label(value));
+            abilityInfo.getChildren().add(new Label("AoE: " + abt.getCastArea()));
+            abilityInfo.getChildren().add(new Label("Range: " + abt.getCastRange()));
+            abilityInfo.getChildren().add(new Label("Mana Cost: " + abt.getManaCost()));
+            abilityInfo.getChildren().add(new Label("AP Cost: " + abt.getRequiredActionPoints()));
+            abilityInfo.getChildren().add(new Label("Cooldown: " + abt.getCurrentCooldown() + "/" + abt.getBaseCooldown()));
+            abilityInfo.setAlignment(Pos.TOP_RIGHT);
+            currentChampAbilities.getChildren().add(abilityInfo);
+        }
+        currentChampAbilities.setAlignment(Pos.TOP_RIGHT);
+        return currentChampAbilities;
     }
 }
