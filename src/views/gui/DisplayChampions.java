@@ -1,7 +1,6 @@
 package views.gui;
 
 import engine.Player;
-
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -14,18 +13,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
+import javafx.scene.text.Font;
 import model.world.AntiHero;
 import model.world.Champion;
 import model.world.Hero;
 import model.world.Villain;
 
-import static engine.Game.*;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import static engine.Game.getAvailableChampions;
 
 public class DisplayChampions {
     private static int playerTurn = 0;

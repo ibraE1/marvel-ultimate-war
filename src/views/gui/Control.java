@@ -8,10 +8,10 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import model.world.Champion;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Objects;
 
 import static engine.Game.loadAbilities;
 import static engine.Game.loadChampions;
@@ -28,10 +28,12 @@ public class Control extends Application {
         scene = MainMenu.createMain();
         main.setScene(scene);
     }
+
     public static void onStart() {
         scene = EnterPlayerNames.createStart();
         main.setScene(scene);
     }
+
     public static void onPlay() throws Exception {
         loadAbilities("Abilities.csv");
         loadChampions("Champions.csv");
@@ -44,7 +46,7 @@ public class Control extends Application {
     }
 
     public static void onReady() throws IOException {
-        newGame = new Game(p1,p2);
+        newGame = new Game(p1, p2);
         scene = InGame.create();
         main.setScene(scene);
     }
@@ -52,6 +54,11 @@ public class Control extends Application {
     public static void onQuit() {
         System.exit(0);
     }
+
+    public static Champion getCurrentChampion() {
+        return newGame.getCurrentChampion();
+    }
+
     @Override
     public void start(Stage Ignore) throws Exception {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

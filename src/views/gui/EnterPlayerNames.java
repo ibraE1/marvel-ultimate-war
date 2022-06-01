@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -27,7 +26,7 @@ public class EnterPlayerNames {
         logo_view.setPreserveRatio(true);
 
         Button quit = new Button("Quit");
-        quit.setPrefSize(100,25);
+        quit.setPrefSize(100, 25);
         quit.setLayoutX(1550);
         quit.setLayoutY(1010);
         quit.setFont(Font.font("Georgia"));
@@ -40,12 +39,12 @@ public class EnterPlayerNames {
                         ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));-fx-text-fill: white;"));
 
 
-        quit.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        quit.setOnAction(e -> {
             Control.onQuit();
         });
 
         Button mainMenuBtn = new Button("Main Menu");
-        mainMenuBtn.setPrefSize(350,75);
+        mainMenuBtn.setPrefSize(350, 75);
         mainMenuBtn.setFont(Font.font("Arial", 26));
         mainMenuBtn.styleProperty().bind(Bindings.when(mainMenuBtn.hoverProperty()).then("-fx-cursor: hand; -fx-scale-x: 1.1;" +
                         " -fx-scale-y: 1.1;-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," +
@@ -55,7 +54,7 @@ public class EnterPlayerNames {
                 .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
                         ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));-fx-text-fill: white;"));
 
-        mainMenuBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        mainMenuBtn.setOnAction(e -> {
             try {
                 Control.onMainMenu();
             } catch (Exception ex) {
@@ -64,8 +63,8 @@ public class EnterPlayerNames {
         });
 
         Button play = new Button("Play");
-        play.setPrefSize(350,75);
-        play.setFont(Font.font("Arial" , 26));
+        play.setPrefSize(350, 75);
+        play.setFont(Font.font("Arial", 26));
         play.styleProperty().bind(Bindings.when(play.hoverProperty()).then("-fx-cursor: hand; -fx-scale-x: 1.1;" +
                         " -fx-scale-y: 1.1;-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," +
                         " linear-gradient(#20262b, #191d22), radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9)," +
@@ -74,7 +73,7 @@ public class EnterPlayerNames {
                 .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
                         ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));-fx-text-fill: white;"));
 
-        play.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        play.setOnAction(e -> {
             try {
                 if (p1.getLength() >= 2 && p1.getLength() <= 26 && p2.getLength() >= 2 && p2.getLength() <= 26) {
                     player1 = p1.getText();
@@ -88,10 +87,10 @@ public class EnterPlayerNames {
 
         p1 = new TextField();
         p2 = new TextField();
-        p1.setPrefSize(280,50);
-        p2.setPrefSize(280,50);
-        p1.setFont(Font.font("Arial",18));
-        p2.setFont(Font.font("Arial",18));
+        p1.setPrefSize(280, 50);
+        p2.setPrefSize(280, 50);
+        p1.setFont(Font.font("Arial", 18));
+        p2.setFont(Font.font("Arial", 18));
         p1.setPromptText("Player 1");
         p2.setPromptText("Player 2");
 
@@ -114,7 +113,7 @@ public class EnterPlayerNames {
         root.getChildren().add(buttons);
         root.getChildren().add(quit);
 
-        Scene scene = new Scene(root, 1680,1050, Color.rgb(33,41,50));
+        Scene scene = new Scene(root, 1680, 1050, Color.rgb(33, 41, 50));
         buttons.requestFocus();
         return scene;
     }

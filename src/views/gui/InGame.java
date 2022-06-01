@@ -13,8 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import model.effects.Effect;
 import model.world.*;
+
 import java.util.ArrayList;
 
 public class InGame {
@@ -26,10 +26,10 @@ public class InGame {
     public static Scene create() {
         TilePane menu = new TilePane(Orientation.HORIZONTAL);
         Button quit = new Button("Quit");
-        quit.setPrefSize(100,50);
+        quit.setPrefSize(100, 50);
         quit.setOnAction(e -> Control.onQuit());
         Button mainMenuBtn = new Button("Main Menu");
-        mainMenuBtn.setPrefSize(100,50);
+        mainMenuBtn.setPrefSize(100, 50);
         mainMenuBtn.setOnAction(e -> Control.onMainMenu());
         menu.getChildren().add(quit);
         menu.getChildren().add(mainMenuBtn);
@@ -96,7 +96,7 @@ public class InGame {
                         GridPane.setHalignment(btn, HPos.CENTER);
                         btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                         boardTiles.add(btn);
-                    } else if (tile instanceof Cover){
+                    } else if (tile instanceof Cover) {
                         Cover cv = (Cover) tile;
                         ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
                         VBox box = new VBox();
@@ -112,7 +112,7 @@ public class InGame {
                     }
                 } else {
                     Button btn = new Button();
-                    GridPane.setConstraints(btn, j, 4-i);
+                    GridPane.setConstraints(btn, j, 4 - i);
                     btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                     boardTiles.add(btn);
                 }
@@ -161,7 +161,7 @@ public class InGame {
         champView.setFitWidth(40);
         champView.setFitHeight(40);
         VBox nameBox = new VBox();
-        String title = (c == player1.getLeader() || c == player2.getLeader())? "(Leader) " + c.getName() : c.getName();
+        String title = (c == player1.getLeader() || c == player2.getLeader()) ? "(Leader) " + c.getName() : c.getName();
         nameBox.getChildren().add(new Label(title));
         if (c instanceof Hero) {
             nameBox.getChildren().add(new Label("Hero"));
@@ -180,7 +180,7 @@ public class InGame {
         GridPane stats = new GridPane();
         stats.add(new Label("Mana: " + c.getMana()), 0, 0, 1, 1);
         stats.add(new Label("Actions: " + c.getCurrentActionPoints() + "/" + c.getMaxActionPointsPerTurn()), 1, 0, 1, 1);
-        stats.add(new Label("Damage: " + c.getAttackDamage()), 0, 1, 1,1);
+        stats.add(new Label("Damage: " + c.getAttackDamage()), 0, 1, 1, 1);
         stats.add(new Label("Range: " + c.getAttackRange()), 1, 1, 1, 1);
         stats.setVgap(5);
         stats.setHgap(5);
