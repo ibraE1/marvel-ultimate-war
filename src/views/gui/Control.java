@@ -4,7 +4,6 @@ import engine.Game;
 import engine.Player;
 import engine.PriorityQueue;
 import javafx.application.Application;
-import javafx.css.Stylesheet;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,12 +24,13 @@ public class Control extends Application {
     private static Scene scene;
     private static final Stage main = new Stage();
 
-    //    public Stylesheet addStyles() {
+    public void addStyles() {
 //        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("style.css")).toExternalForm());
-//        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("championScreenStyle.css")).toExternalForm());
-//    }
+        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("championScreenStyle.css")).toExternalForm());
+    }
 
     public static void onMainMenu() {
+        DisplayChampions.setPlayerTurn(0);
         scene = MainMenu.createMain();
         main.setScene(scene);
     }
@@ -44,6 +44,7 @@ public class Control extends Application {
 
         p1 = new Player(EnterPlayerNames.getPlayer1());
         p2 = new Player(EnterPlayerNames.getPlayer2());
+
         scene = DisplayChampions.createDisplayChampions();
         main.setScene(scene);
     }
@@ -68,7 +69,7 @@ public class Control extends Application {
         logo_view.setY(20);
         logo_view.setFitWidth(400);
         logo_view.setPreserveRatio(true);
-        onMainMenu();
+        onPlay();
         main.setResizable(false);
         main.setX((screenSize.getWidth() / 2) - 640);
         main.setY((screenSize.getHeight() / 2) - 360);

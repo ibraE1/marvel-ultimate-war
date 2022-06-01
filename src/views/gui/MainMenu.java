@@ -49,6 +49,6 @@ public class MainMenu {
        Group root = new Group(logo_view);
        root.getChildren().add(buttons);
 
-       return new Scene(root, 1280,720, Color.rgb(33,41,50));
+       return new Scene(root, 1680,1050, Color.rgb(33,41,50));
    }
 }

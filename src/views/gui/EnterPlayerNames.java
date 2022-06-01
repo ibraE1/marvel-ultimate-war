@@ -106,8 +106,11 @@ public class EnterPlayerNames {
         root.getChildren().add(buttons);
         root.getChildren().add(quit);
 
-        play.requestFocus();
-        return new Scene(root, 1280,720, Color.rgb(33,41,50));
+        Scene scene = new Scene(root, 1680,1050, Color.rgb(33,41,50));
+        buttons.requestFocus();
+        p1.setFocusTraversable(false);
+        p2.setFocusTraversable(false);
+        return scene;
     }
 
     public static TextField getP1() {
