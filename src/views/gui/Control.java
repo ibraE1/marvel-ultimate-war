@@ -24,13 +24,7 @@ public class Control extends Application {
     private static Scene scene;
     private static final Stage main = new Stage();
 
-    public void addStyles() {
-//        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("style.css")).toExternalForm());
-        scene.getStylesheets().add(Objects.requireNonNull(this.getClass().getResource("championScreenStyle.css")).toExternalForm());
-    }
-
     public static void onMainMenu() {
-        DisplayChampions.setPlayerTurn(0);
         scene = MainMenu.createMain();
         main.setScene(scene);
     }
@@ -69,7 +63,7 @@ public class Control extends Application {
         logo_view.setY(20);
         logo_view.setFitWidth(400);
         logo_view.setPreserveRatio(true);
-        onPlay();
+        onMainMenu();
         main.setResizable(false);
         main.setX((screenSize.getWidth() / 2) - 640);
         main.setY((screenSize.getHeight() / 2) - 360);

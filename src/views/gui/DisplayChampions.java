@@ -1,7 +1,7 @@
 package views.gui;
 
 import engine.Player;
-import exceptions.NotEnoughChampionsException;
+
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -13,7 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
@@ -81,8 +80,7 @@ public class DisplayChampions {
                         " rgba(255,255,255,0));-fx-background-radius: 5,4,3,5; -fx-background-insets: 0,1,2,0;" +
                         "-fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1);")
                         .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
-                                ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));"));
-
+                                ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));" ));
                 gp.add(btn, i, j);
                 avatars.add(btn);
                 counter++;
@@ -119,6 +117,7 @@ public class DisplayChampions {
         Pane statGraph = new Pane();
         VBox nameBoxCont = new VBox();
 
+        Button ready = new Button("Ready");
         statsParent.setId("stats-parent");
 
         for (int count = 0; count < avatars.size(); count++) {
@@ -266,6 +265,7 @@ public class DisplayChampions {
                     for (Button b : avatars) {
                         b.setDisable(true);
                     }
+                    ready.setDisable(false);
                 }
             });
         }
@@ -287,7 +287,7 @@ public class DisplayChampions {
             Control.onMainMenu();
         });
 
-        Button ready = new Button("Ready");
+
         ready.setPrefSize(250,75);
         ready.setLayoutX(1410);
         ready.setLayoutY(820);
@@ -299,14 +299,12 @@ public class DisplayChampions {
                 .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
                         ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));-fx-text-fill: white;"));
         ready.setFont(Font.font("Arial", 32));
+        ready.setDisable(true);
 
         ready.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             try {
-                if (playerTurn != 6) {
-                    throw new NotEnoughChampionsException();
-                }
                 Control.onReady();
-            } catch (IOException | NotEnoughChampionsException ex) {
+            } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
@@ -392,7 +390,7 @@ public class DisplayChampions {
         root.getChildren().add(back);
         root.getChildren().add(triangleUp);
         root.getChildren().add(triangleDown);
-//        root.getChildren().add(test);
+        root.getChildren().add(test);
         return new Scene(root, 1680,1050, Color.rgb(33,41,50));
     }
 

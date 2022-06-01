@@ -1,7 +1,6 @@
 package views.gui;
 
 import engine.Player;
-import exceptions.ShortNameException;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -42,7 +41,7 @@ public class EnterPlayerNames {
         mainMenuBtn.setPrefSize(300,50);
         mainMenuBtn.setLayoutX(20);
         mainMenuBtn.setLayoutY(10);
-        mainMenuBtn.setFont(Font.font("Georgia", 26));
+        mainMenuBtn.setFont(Font.font("Arial", 26));
 
         mainMenuBtn.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             try {
@@ -56,34 +55,26 @@ public class EnterPlayerNames {
         play.setPrefSize(300,50);
         play.setLayoutX(540);
         play.setLayoutY(550);
-        play.setFont(Font.font("Georgia" , 26));
+        play.setFont(Font.font("Arial" , 26));
 
         play.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (p1.getLength() >= 2 && p1.getLength() <= 26 && p2.getLength() >= 2 && p2.getLength() <= 26) {
-                player1 = p1.getText();
-                player2 = p2.getText();
-                try {
+            try {
+                if (p1.getLength() >= 2 && p1.getLength() <= 26 && p2.getLength() >= 2 && p2.getLength() <= 26) {
+                    player1 = p1.getText();
+                    player2 = p2.getText();
                     Control.onPlay();
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
                 }
-            } else {
-                try {
-                    throw new ShortNameException("Please enter names between 2 and 26 characters long");
-                } catch (ShortNameException ex) {
-                    throw new RuntimeException(ex);
-                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
         });
-
-
 
         p1 = new TextField();
         p2 = new TextField();
         p1.setPrefSize(200,40);
         p2.setPrefSize(200,40);
-        p1.setFont(Font.font("Georgia",18));
-        p2.setFont(Font.font("Georgia",18));
+        p1.setFont(Font.font("Arial",18));
+        p2.setFont(Font.font("Arial",18));
         p1.setPromptText("Player 1");
         p2.setPromptText("Player 2");
 
