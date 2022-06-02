@@ -20,9 +20,9 @@ public class EnterPlayerNames {
     public static Scene createStart() {
         Image logo = new Image("views/assets/logo.png");
         ImageView logo_view = new ImageView(logo);
-        logo_view.setX(640);
-        logo_view.setY(20);
-        logo_view.setFitWidth(400);
+        logo_view.setX(500);
+        logo_view.setY(15);
+        logo_view.setFitWidth(600);
         logo_view.setPreserveRatio(true);
 
         Button quit = new Button("Quit");
@@ -97,15 +97,15 @@ public class EnterPlayerNames {
         VBox vbox = new VBox();
         vbox.getChildren().add(p1);
         vbox.getChildren().add(p2);
-        vbox.setLayoutX(700);
-        vbox.setLayoutY(250);
+        vbox.setLayoutX(660);
+        vbox.setLayoutY(270);
         vbox.setSpacing(20);
 
         VBox buttons = new VBox();
         buttons.getChildren().add(play);
         buttons.getChildren().add(mainMenuBtn);
-        buttons.setLayoutX(665);
-        buttons.setLayoutY(450);
+        buttons.setLayoutX(625);
+        buttons.setLayoutY(470);
         buttons.setSpacing(20);
 
         Group root = new Group(logo_view);

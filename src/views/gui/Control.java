@@ -40,6 +40,7 @@ public class Control extends Application {
         p2 = new Player(EnterPlayerNames.getPlayer2());
         scene = DisplayChampions.createDisplayChampions();
         main.setScene(scene);
+        DisplayChampions.onHover(0);
     }
     public static void onReady() throws IOException {
         newGame = new Game(p1, p2);

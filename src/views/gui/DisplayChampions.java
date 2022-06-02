@@ -30,10 +30,28 @@ import java.util.ArrayList;
 import static engine.Game.getAvailableChampions;
 
 public class DisplayChampions {
+    private static Group root = new Group();
+    private static VBox nameBox = new VBox();
+    private static HBox statsParent = new HBox();
+    private static VBox vBoxLeft = new VBox();
+    private static VBox stats = new VBox();
+    private static VBox vBoxRight = new VBox();
+    private static VBox abilityDisplay = new VBox();
+    private static VBox abilityTitleBox = new VBox();
+    private static VBox abilityDisplayBox = new VBox();
+    private static Pane champPreview = new Pane();
+    private static Pane statGraph = new Pane();
+    private static VBox nameBoxCont = new VBox();
+    private static HBox player1Team = new HBox();
+    private static HBox player2Team = new HBox();
+    private static ArrayList<ImageView> champPrevArr = new ArrayList<>(15);
+    private static ArrayList<Champion> availableChampions = getAvailableChampions();
+    private static ArrayList<BorderPane> chartsArray = new ArrayList<>();
     private static int playerTurn = 0;
     private static final Player player1 = Control.getP1();
     private static final Player player2 = Control.getP2();
     private static final ArrayList<Champion> chosenChampions = new ArrayList<>();
+    private static VBox numbers = new VBox();
     public static void chooseChampions(Button btn, int i) {
         ArrayList<Champion> availableChampions = getAvailableChampions();
         if (playerTurn % 2 == 0) {
@@ -53,15 +71,174 @@ public class DisplayChampions {
             chosenChampions.add(availableChampions.get(i));
         }
     }
+
+    public static void onHover(int i) {
+        double hpPercent = (availableChampions.get(i).getMaxHP() / 2250d) * 150;
+        double manaPercent = (availableChampions.get(i).getMana() / 1500d) * 150;
+        double actionsPercent = (availableChampions.get(i).getMaxActionPointsPerTurn() / 8d) * 150;
+        double speedPercent = (availableChampions.get(i).getSpeed() / 99d) * 150;
+        double rngPercent = (availableChampions.get(i).getAttackRange() / 3d) * 150;
+        double dmgPercent = (availableChampions.get(i).getAttackDamage() / 200d) * 150;
+
+        Rectangle hpBar = new Rectangle(hpPercent, 10,Color.WHITE);
+        Rectangle speedBar = new Rectangle(speedPercent, 10,Color.WHITE);
+        Rectangle manaBar = new Rectangle(manaPercent, 10,Color.WHITE);
+        Rectangle damageBar = new Rectangle(dmgPercent, 10,Color.WHITE);
+        Rectangle rangeBar = new Rectangle(rngPercent, 10,Color.WHITE);
+        Rectangle pointsBar = new Rectangle(actionsPercent, 10,Color.WHITE);
+
+        Label nameL = new Label(availableChampions.get(i).getName());
+        nameL.setStyle("-fx-text-fill: white");
+        nameBox.getChildren().add(nameL);
+
+
+        String type = "";
+        if (availableChampions.get(i) instanceof Hero) {
+            type = "Hero";
+        } else if (availableChampions.get(i) instanceof Villain) {
+            type = "Villain";
+        } else if (availableChampions.get(i) instanceof AntiHero) {
+            type = "Anti-Hero";
+        }
+
+        Label typeL = new Label(type);
+        typeL.setStyle("-fx-font-size: 32;-fx-text-fill: white;");
+        nameBoxCont.getChildren().add(nameBox);
+        nameBoxCont.getChildren().add(typeL);
+
+        Label abilityTitle = new Label("Champion Abilities");
+        abilityTitle.setStyle("-fx-font-size: 32; -fx-text-fill: white");
+        abilityTitleBox.getChildren().add(abilityTitle);
+
+        stats.setId("vbox-left");
+        abilityTitle.setId("ability-title");
+        abilityDisplay.setId("vbox-bottom");
+
+        HBox hpBox = new HBox();
+        HBox speedBox = new HBox();
+        HBox manaBox = new HBox();
+        HBox dmgBox = new HBox();
+        HBox rngBox = new HBox();
+        HBox ptsBox = new HBox();
+
+        Label stat1 = new Label("Health");
+        stat1.setStyle("-fx-text-fill: white");
+        Label stat2 = new Label("Speed");
+        stat2.setStyle("-fx-text-fill: white");
+        Label stat3 = new Label("Mana");
+        stat3.setStyle("-fx-text-fill: white");
+        Label stat4 = new Label("Damage");
+        stat4.setStyle("-fx-text-fill: white");
+        Label stat5 = new Label("Range");
+        stat5.setStyle("-fx-text-fill: white");
+        Label stat6 = new Label("Action Pts");
+        stat6.setStyle("-fx-text-fill: white");
+
+        Label l1 = new Label(Integer.toString(availableChampions.get(i).getMaxHP()));
+        l1.setStyle("-fx-text-fill: white");
+        numbers.getChildren().add(l1);
+
+        Label l2 = new Label(Integer.toString(availableChampions.get(i).getSpeed()));
+        l2.setStyle("-fx-text-fill: white");
+        numbers.getChildren().add(l2);
+
+        Label l3 = new Label(Integer.toString(availableChampions.get(i).getMana()));
+        l3.setStyle("-fx-text-fill: white");
+        numbers.getChildren().add(l3);
+
+        Label l4 = new Label(Integer.toString(availableChampions.get(i).getAttackDamage()));
+        l4.setStyle("-fx-text-fill: white");
+        numbers.getChildren().add(l4);
+
+        Label l5 = new Label(Integer.toString(availableChampions.get(i).getAttackRange()));
+        l5.setStyle("-fx-text-fill: white");
+        numbers.getChildren().add(l5);
+
+        Label l6 = new Label(Integer.toString(availableChampions.get(i).getMaxActionPointsPerTurn()));
+        l6.setStyle("-fx-text-fill: white");
+        numbers.getChildren().add(l6);
+
+        hpBox.getChildren().add(stat1);
+        hpBox.getChildren().add(hpBar);
+
+        speedBox.getChildren().add(stat2);
+        speedBox.getChildren().add(speedBar);
+
+        manaBox.getChildren().add(stat3);
+        manaBox.getChildren().add(manaBar);
+
+        dmgBox.getChildren().add(stat4);
+        dmgBox.getChildren().add(damageBar);
+
+        rngBox.getChildren().add(stat5);
+        rngBox.getChildren().add(rangeBar);
+
+        ptsBox.getChildren().add(stat6);
+        ptsBox.getChildren().add(pointsBar);
+
+        stats.getChildren().add(hpBox);
+        stats.getChildren().add(speedBox);
+        stats.getChildren().add(manaBox);
+        stats.getChildren().add(dmgBox);
+        stats.getChildren().add(rngBox);
+        stats.getChildren().add(ptsBox);
+
+        hpBox.setAlignment(Pos.CENTER_LEFT);
+        hpBox.setSpacing(15);
+        speedBox.setAlignment(Pos.CENTER_LEFT);
+        speedBox.setSpacing(15);
+        manaBox.setAlignment(Pos.CENTER_LEFT);
+        manaBox.setSpacing(15);
+        dmgBox.setAlignment(Pos.CENTER_LEFT);
+        dmgBox.setSpacing(15);
+        rngBox.setAlignment(Pos.CENTER_LEFT);
+        rngBox.setSpacing(15);
+        ptsBox.setAlignment(Pos.CENTER_LEFT);
+        ptsBox.setSpacing(15);
+
+        Label ab1 = new Label(availableChampions.get(i).getAbilities().get(0).getName());
+        ab1.setStyle("-fx-text-fill: white");
+        Label ab2 = new Label(availableChampions.get(i).getAbilities().get(1).getName());
+        ab2.setStyle("-fx-text-fill: white");
+        Label ab3 = new Label(availableChampions.get(i).getAbilities().get(2).getName());
+        ab3.setStyle("-fx-text-fill: white");
+
+        abilityDisplay.getChildren().add(ab1);
+        abilityDisplay.getChildren().add(ab2);
+        abilityDisplay.getChildren().add(ab3);
+
+        champPreview.getChildren().add(champPrevArr.get(i));
+        statGraph.getChildren().add(chartsArray.get(i));
+    }
+
     public static Scene createDisplayChampions() {
         ArrayList<ImageView> icons = new ArrayList<>(15);
         ArrayList<Button> avatars = new ArrayList<>();
-        ArrayList<Pane> pnArray = new ArrayList<>();
 
         Color transparentBlack = new Color(0,0,0,0.4);
 
-        for (int i = 1; i <= 15; i++) {
-            String imgPath = "views/assets/champions/%s.png".formatted(i);
+        for (int i = 0; i < 15; i++) {
+            Image chart = new Image("views/assets/charts/%s.png".formatted(i));
+            ImageView chart_view = new ImageView(chart);
+            chart_view.setFitWidth(280);
+            chart_view.setPreserveRatio(true);
+            BorderPane bp = new BorderPane();
+            bp.setPrefSize(300,300);
+            bp.setCenter(chart_view);
+            chartsArray.add(bp);
+        }
+
+
+        for (int i = 0; i < 15; i++) {
+            Image champDisplay = new Image("views/assets/champions-full/%s.png".formatted(i));
+            ImageView champDisplayView = new ImageView(champDisplay);
+            champDisplayView.setFitHeight(500);
+            champDisplayView.setPreserveRatio(true);
+            champPrevArr.add(champDisplayView);
+        }
+
+        for (int i = 0; i <= 14; i++) {
+            String imgPath = "views/assets/champions/%s.png".formatted(getAvailableChampions().get(i).getName());
             Image img = new Image(imgPath, 80, 80, false, true, true);
             ImageView icn = new ImageView(img);
             icons.add(icn);
@@ -126,28 +303,11 @@ public class DisplayChampions {
         vl.setStrokeWidth(2);
         vl.setOpacity(0.6);
 
-        VBox nameBox = new VBox();
-        HBox statsParent = new HBox();
-        VBox vBoxLeft = new VBox();
-        VBox stats = new VBox();
-        VBox vBoxRight = new VBox();
-        VBox abilityDisplay = new VBox();
-        VBox abilityTitleBox = new VBox();
-        VBox abilityDisplayBox = new VBox();
-        Pane champPreview = new Pane();
-        Pane statGraph = new Pane();
-        VBox nameBoxCont = new VBox();
-        HBox player1Team = new HBox();
-        HBox player2Team = new HBox();
-
         Button ready = new Button("Ready");
         statsParent.setId("stats-parent");
 
-        VBox numbers = new VBox();
-
         for (int count = 0; count < avatars.size(); count++) {
             int i = count;
-            ArrayList<Champion> availableChampions = getAvailableChampions();
             avatars.get(i).addEventFilter(MouseEvent.MOUSE_ENTERED , e -> {
                 nameBox.getChildren().clear();
                 stats.getChildren().clear();
@@ -157,156 +317,7 @@ public class DisplayChampions {
                 abilityTitleBox.getChildren().clear();
                 champPreview.getChildren().clear();
                 numbers.getChildren().clear();
-
-                double hpPercent = (availableChampions.get(i).getMaxHP() / 2250d) * 150;
-                double manaPercent = (availableChampions.get(i).getMana() / 1500d) * 150;
-                double actionsPercent = (availableChampions.get(i).getMaxActionPointsPerTurn() / 8d) * 150;
-                double speedPercent = (availableChampions.get(i).getSpeed() / 99d) * 150;
-                double rngPercent = (availableChampions.get(i).getAttackRange() / 3d) * 150;
-                double dmgPercent = (availableChampions.get(i).getAttackDamage() / 200d) * 150;
-
-                Rectangle hpBar = new Rectangle(hpPercent, 10,Color.WHITE);
-                Rectangle speedBar = new Rectangle(speedPercent, 10,Color.WHITE);
-                Rectangle manaBar = new Rectangle(manaPercent, 10,Color.WHITE);
-                Rectangle damageBar = new Rectangle(dmgPercent, 10,Color.WHITE);
-                Rectangle rangeBar = new Rectangle(rngPercent, 10,Color.WHITE);
-                Rectangle pointsBar = new Rectangle(actionsPercent, 10,Color.WHITE);
-
-                Label nameL = new Label(availableChampions.get(i).getName());
-                nameL.setStyle("-fx-text-fill: white");
-                nameBox.getChildren().add(nameL);
-
-
-                String type = "";
-                if (availableChampions.get(i) instanceof Hero) {
-                    type = "Hero";
-                } else if (availableChampions.get(i) instanceof Villain) {
-                    type = "Villain";
-                } else if (availableChampions.get(i) instanceof AntiHero) {
-                    type = "Anti-Hero";
-                }
-
-                Label typeL = new Label(type);
-                typeL.setStyle("-fx-font-size: 32;-fx-text-fill: white;");
-                nameBoxCont.getChildren().add(nameBox);
-                nameBoxCont.getChildren().add(typeL);
-
-                Label abilityTitle = new Label("Champion Abilities");
-                abilityTitle.setStyle("-fx-font-size: 32; -fx-text-fill: white");
-                abilityTitleBox.getChildren().add(abilityTitle);
-
-                stats.setId("vbox-left");
-                abilityTitle.setId("ability-title");
-                abilityDisplay.setId("vbox-bottom");
-
-                HBox hpBox = new HBox();
-                HBox speedBox = new HBox();
-                HBox manaBox = new HBox();
-                HBox dmgBox = new HBox();
-                HBox rngBox = new HBox();
-                HBox ptsBox = new HBox();
-
-                Label stat1 = new Label("Health");
-                stat1.setStyle("-fx-text-fill: white");
-                Label stat2 = new Label("Speed");
-                stat2.setStyle("-fx-text-fill: white");
-                Label stat3 = new Label("Mana");
-                stat3.setStyle("-fx-text-fill: white");
-                Label stat4 = new Label("Damage");
-                stat4.setStyle("-fx-text-fill: white");
-                Label stat5 = new Label("Range");
-                stat5.setStyle("-fx-text-fill: white");
-                Label stat6 = new Label("Action Pts");
-                stat6.setStyle("-fx-text-fill: white");
-
-                Label l1 = new Label(Integer.toString(availableChampions.get(i).getMaxHP()));
-                l1.setStyle("-fx-text-fill: white");
-                numbers.getChildren().add(l1);
-
-                Label l2 = new Label(Integer.toString(availableChampions.get(i).getSpeed()));
-                l2.setStyle("-fx-text-fill: white");
-                numbers.getChildren().add(l2);
-
-                Label l3 = new Label(Integer.toString(availableChampions.get(i).getMana()));
-                l3.setStyle("-fx-text-fill: white");
-                numbers.getChildren().add(l3);
-
-                Label l4 = new Label(Integer.toString(availableChampions.get(i).getAttackDamage()));
-                l4.setStyle("-fx-text-fill: white");
-                numbers.getChildren().add(l4);
-
-                Label l5 = new Label(Integer.toString(availableChampions.get(i).getAttackRange()));
-                l5.setStyle("-fx-text-fill: white");
-                numbers.getChildren().add(l5);
-
-                Label l6 = new Label(Integer.toString(availableChampions.get(i).getMaxActionPointsPerTurn()));
-                l6.setStyle("-fx-text-fill: white");
-                numbers.getChildren().add(l6);
-
-                hpBox.getChildren().add(stat1);
-                hpBox.getChildren().add(hpBar);
-
-                speedBox.getChildren().add(stat2);
-                speedBox.getChildren().add(speedBar);
-
-                manaBox.getChildren().add(stat3);
-                manaBox.getChildren().add(manaBar);
-
-                dmgBox.getChildren().add(stat4);
-                dmgBox.getChildren().add(damageBar);
-
-                rngBox.getChildren().add(stat5);
-                rngBox.getChildren().add(rangeBar);
-
-                ptsBox.getChildren().add(stat6);
-                ptsBox.getChildren().add(pointsBar);
-
-                stats.getChildren().add(hpBox);
-                stats.getChildren().add(speedBox);
-                stats.getChildren().add(manaBox);
-                stats.getChildren().add(dmgBox);
-                stats.getChildren().add(rngBox);
-                stats.getChildren().add(ptsBox);
-
-                hpBox.setAlignment(Pos.CENTER_LEFT);
-                hpBox.setSpacing(15);
-                speedBox.setAlignment(Pos.CENTER_LEFT);
-                speedBox.setSpacing(15);
-                manaBox.setAlignment(Pos.CENTER_LEFT);
-                manaBox.setSpacing(15);
-                dmgBox.setAlignment(Pos.CENTER_LEFT);
-                dmgBox.setSpacing(15);
-                rngBox.setAlignment(Pos.CENTER_LEFT);
-                rngBox.setSpacing(15);
-                ptsBox.setAlignment(Pos.CENTER_LEFT);
-                ptsBox.setSpacing(15);
-
-                Label ab1 = new Label(availableChampions.get(i).getAbilities().get(0).getName());
-                ab1.setStyle("-fx-text-fill: white");
-                Label ab2 = new Label(availableChampions.get(i).getAbilities().get(1).getName());
-                ab2.setStyle("-fx-text-fill: white");
-                Label ab3 = new Label(availableChampions.get(i).getAbilities().get(2).getName());
-                ab3.setStyle("-fx-text-fill: white");
-
-                abilityDisplay.getChildren().add(ab1);
-                abilityDisplay.getChildren().add(ab2);
-                abilityDisplay.getChildren().add(ab3);
-
-                Image champDisplay = new Image("views/assets/champions-full/%s.png".formatted(i));
-                ImageView champDisplayView = new ImageView(champDisplay);
-                champDisplayView.setFitHeight(500);
-                champDisplayView.setPreserveRatio(true);
-                champPreview.getChildren().add(champDisplayView);
-
-
-                Image chart = new Image("views/assets/charts/%s.png".formatted(i));
-                ImageView chart_view = new ImageView(chart);
-                chart_view.setFitWidth(280);
-                chart_view.setPreserveRatio(true);
-                BorderPane bp = new BorderPane();
-                bp.setPrefSize(300,300);
-                bp.setCenter(chart_view);
-                statGraph.getChildren().add(bp);
+                onHover(i);
 
             });
             avatars.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
@@ -524,7 +535,6 @@ public class DisplayChampions {
         player2Box.setLayoutX(1280);
         player2Box.setLayoutY(130);
 
-        Group root = new Group();
         root.getChildren().add(gp);
         root.getChildren().add(statsParent);
         root.getChildren().add(champPreview);

@@ -14,13 +14,13 @@ public class MainMenu {
     public static Scene createMain() {
         Image logo = new Image("views/assets/logo.png");
         ImageView logo_view = new ImageView(logo);
-        logo_view.setX(540);
-        logo_view.setY(20);
+        logo_view.setX(500);
+        logo_view.setY(15);
         logo_view.setFitWidth(600);
         logo_view.setPreserveRatio(true);
 
 
-        Button start = new Button("Start");
+        Button start = new Button("New Game");
         start.setPrefSize(300, 75);
         start.setFont(Font.font("Arial", 26));
         start.styleProperty().bind(Bindings.when(start.hoverProperty()).then("-fx-cursor: hand; -fx-scale-x: 1.1;" +
@@ -33,8 +33,6 @@ public class MainMenu {
         start.setOnAction(e -> {
             Control.onStart();
         });
-
-        start.requestFocus();
 
         Button quit = new Button("Quit");
         quit.setPrefSize(300, 75);
@@ -54,8 +52,8 @@ public class MainMenu {
         VBox buttons = new VBox();
         buttons.getChildren().add(start);
         buttons.getChildren().add(quit);
-        buttons.setLayoutX(690);
-        buttons.setLayoutY(300);
+        buttons.setLayoutX(650);
+        buttons.setLayoutY(320);
         buttons.setSpacing(20);
 
 
