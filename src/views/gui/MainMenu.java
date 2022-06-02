@@ -11,14 +11,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class MainMenu {
-    public static Scene createMain() {
-        Image logo = new Image("views/assets/logo.png");
-        ImageView logo_view = new ImageView(logo);
-        logo_view.setX(500);
-        logo_view.setY(15);
-        logo_view.setFitWidth(600);
-        logo_view.setPreserveRatio(true);
-
+    public static Scene create() {
+        ImageView logo = new ImageView(new Image("views/assets/logo.png"));
+        logo.setX(500);
+        logo.setY(15);
+        logo.setFitWidth(600);
+        logo.setPreserveRatio(true);
 
         Button start = new Button("New Game");
         start.setPrefSize(300, 75);
@@ -31,7 +29,7 @@ public class MainMenu {
                 .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
                         ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));-fx-text-fill: white;"));
         start.setOnAction(e -> {
-            Control.onStart();
+            GameApp.onStart();
         });
 
         Button quit = new Button("Quit");
@@ -44,9 +42,8 @@ public class MainMenu {
                         "-fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1);-fx-text-fill: white;")
                 .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
                         ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));-fx-text-fill: white;"));
-
         quit.setOnAction(e -> {
-            Control.onQuit();
+            GameApp.onQuit();
         });
 
         VBox buttons = new VBox();
@@ -57,7 +54,7 @@ public class MainMenu {
         buttons.setSpacing(20);
 
 
-        Group root = new Group(logo_view);
+        Group root = new Group(logo);
         root.getChildren().add(buttons);
 
         return new Scene(root, 1600, 900, Color.rgb(33, 41, 50));

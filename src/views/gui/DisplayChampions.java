@@ -1,11 +1,9 @@
 package views.gui;
 
-import engine.Game;
 import engine.Player;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,7 +21,6 @@ import model.world.Champion;
 import model.world.Hero;
 import model.world.Villain;
 
-import javax.security.auth.callback.LanguageCallback;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -48,10 +45,11 @@ public class DisplayChampions {
     private static ArrayList<Champion> availableChampions = getAvailableChampions();
     private static ArrayList<BorderPane> chartsArray = new ArrayList<>();
     private static int playerTurn = 0;
-    private static final Player player1 = Control.getP1();
-    private static final Player player2 = Control.getP2();
+    private static Player player1;
+    private static Player player2;
     private static final ArrayList<Champion> chosenChampions = new ArrayList<>();
     private static VBox numbers = new VBox();
+
     public static void chooseChampions(Button btn, int i) {
         ArrayList<Champion> availableChampions = getAvailableChampions();
         if (playerTurn % 2 == 0) {
@@ -211,7 +209,10 @@ public class DisplayChampions {
         statGraph.getChildren().add(chartsArray.get(i));
     }
 
-    public static Scene createDisplayChampions() {
+    public static Scene create(Player player1, Player player2) {
+        DisplayChampions.player1 = player1;
+        DisplayChampions.player2 = player2;
+
         ArrayList<ImageView> icons = new ArrayList<>(15);
         ArrayList<Button> avatars = new ArrayList<>();
 
@@ -227,7 +228,6 @@ public class DisplayChampions {
             bp.setCenter(chart_view);
             chartsArray.add(bp);
         }
-
 
         for (int i = 0; i < 15; i++) {
             Image champDisplay = new Image("views/assets/champions-full/%s.png".formatted(i));
@@ -347,24 +347,6 @@ public class DisplayChampions {
             });
         }
 
-        Button back = new Button("Main Menu");
-        back.setPrefSize(150,40);
-        back.setLayoutX(1430);
-        back.setLayoutY(15);
-        back.setFont(Font.font("Arial", 18));
-        back.styleProperty().bind(Bindings.when(back.hoverProperty()).then("-fx-cursor: hand; -fx-scale-x: 1.1;" +
-                        " -fx-scale-y: 1.1;-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," +
-                        " linear-gradient(#20262b, #191d22), radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9)," +
-                        " rgba(255,255,255,0));-fx-background-radius: 5,4,3,5; -fx-background-insets: 0,1,2,0;" +
-                        "-fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1);-fx-text-fill: white;")
-                .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
-                        ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));-fx-text-fill: white;"));
-        back.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            playerTurn = 0;
-            Control.onMainMenu();
-        });
-
-
         ready.setPrefSize(250,85);
         ready.setLayoutX(1330);
         ready.setLayoutY(785);
@@ -380,7 +362,7 @@ public class DisplayChampions {
 
         ready.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             try {
-                Control.onReady();
+                GameApp.onReady(player1, player2);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -410,7 +392,7 @@ public class DisplayChampions {
                     System.out.print(player2.getTeam().get(i-1).getName() + ", ");
                 }
             }
-            System.out.println("\nPlayer 1: " + EnterPlayerNames.getPlayer1()+ "and Player 2: " + EnterPlayerNames.getPlayer2());
+            System.out.println("\nPlayer 1: " + player1 + "and Player 2: " + player2);
             System.out.println(playerTurn);
         });
 
@@ -539,7 +521,6 @@ public class DisplayChampions {
         root.getChildren().add(statsParent);
         root.getChildren().add(champPreview);
         root.getChildren().add(ready);
-        root.getChildren().add(back);
         root.getChildren().add(triangleUp);
         root.getChildren().add(triangleDown);
         root.getChildren().add(hl);

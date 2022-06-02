@@ -1,5 +1,6 @@
 package views.gui;
 
+import engine.Game;
 import engine.Player;
 import engine.PriorityQueue;
 import javafx.geometry.HPos;
@@ -23,27 +24,24 @@ import model.world.*;
 import java.util.ArrayList;
 
 public class InGame {
-    static Player player1 = Control.getP1();
-    static Player player2 = Control.getP2();
-    static ArrayList<Champion> firstTeam = player1.getTeam();
-    static ArrayList<Champion> secondTeam = player2.getTeam();
+    static Player player1;
+    static Player player2;
 
-    public static Scene create() {
+    public static Scene create(Game newGame) {
+        player1 = newGame.getFirstPlayer();
+        player2 = newGame.getSecondPlayer();
+        ArrayList<Champion> firstTeam = player1.getTeam();
+        ArrayList<Champion> secondTeam = player2.getTeam();
+
         TilePane menu = new TilePane(Orientation.HORIZONTAL);
         Button quit = new Button("Quit");
         quit.setPrefSize(100, 50);
-        quit.setOnAction(e -> Control.onQuit());
-        Button mainMenuBtn = new Button("Main Menu");
-        mainMenuBtn.setPrefSize(100, 50);
-        mainMenuBtn.setOnAction(e -> Control.onMainMenu());
+        quit.setOnAction(e -> GameApp.onQuit());
         menu.getChildren().add(quit);
-        menu.getChildren().add(mainMenuBtn);
-        menu.setAlignment(Pos.CENTER);
-        menu.setPrefHeight(60);
 
         VBox profile1 = new VBox();
         profile1.getChildren().add(new Label(player1.getName()));
-        if (Control.getP1LeaderAbility())
+        if (newGame.isFirstLeaderAbilityUsed())
             profile1.getChildren().add(new Label("Leader Ability Used"));
         else
             profile1.getChildren().add(new Label("Leader Ability Not Used"));
@@ -55,7 +53,7 @@ public class InGame {
 
         VBox profile2 = new VBox();
         profile2.getChildren().add(new Label(player2.getName()));
-        if (Control.getP2LeaderAbility())
+        if (newGame.isSecondLeaderAbilityUsed())
             profile2.getChildren().add(new Label("Leader Ability Used"));
         else
             profile2.getChildren().add(new Label("Leader Ability Not Used"));
@@ -87,10 +85,11 @@ public class InGame {
             rowConst.setFillHeight(true);
             board.getRowConstraints().add(rowConst);
         }
+
         ArrayList<Node> boardTiles = new ArrayList<>();
-        for (int i = 0; i < Control.getBoard().length; i++) {
-            for (int j = 0; j < Control.getBoard()[i].length; j++) {
-                Object tile = Control.getBoard()[i][j];
+        for (int i = 0; i < newGame.getBoard().length; i++) {
+            for (int j = 0; j < newGame.getBoard()[i].length; j++) {
+                Object tile = newGame.getBoard()[i][j];
                 if (tile != null) {
                     if (tile instanceof Champion) {
                         Champion ch = (Champion) tile;
@@ -129,18 +128,18 @@ public class InGame {
         Label l1 = new Label("Current Champ: ");
         l1.setPrefHeight(20);
         right.getChildren().add(l1);
-        Label l2 = new Label("" + Control.getCurrentChampion().getName());
+        Label l2 = new Label("" + newGame.getCurrentChampion().getName());
         l2.setMaxHeight(20);
         right.getChildren().add(l2);
-        right.getChildren().add(champAbilities(Control.getCurrentChampion()));
+        right.getChildren().add(champAbilities(newGame.getCurrentChampion()));
         right.setPrefWidth(400);
         right.setAlignment(Pos.BASELINE_RIGHT);
         right.setPadding(new Insets(0, 10, 0, 0));
 
         TilePane turn = new TilePane(Orientation.HORIZONTAL);
         ArrayList<ImageView> turnImages = new ArrayList<>();
-        PriorityQueue pq = Control.getTurnOrder();
-        int size = Control.getTurnOrder().size();
+        PriorityQueue pq = newGame.getTurnOrder();
+        int size = newGame.getTurnOrder().size();
         for (int i = 0; i < size && !pq.isEmpty(); i++) {
             Champion ch = (Champion) (pq.remove());
             Image img = new Image("views/assets/champions/%s.png".formatted(ch.getName()));
