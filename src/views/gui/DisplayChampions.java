@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -16,6 +17,9 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.stage.PopupWindow;
+
+import model.abilities.Ability;
 import model.world.AntiHero;
 import model.world.Champion;
 import model.world.Hero;
@@ -42,7 +46,6 @@ public class DisplayChampions {
     private static HBox player1Team = new HBox();
     private static HBox player2Team = new HBox();
     private static ArrayList<ImageView> champPrevArr = new ArrayList<>(15);
-    private static ArrayList<Champion> availableChampions = getAvailableChampions();
     private static ArrayList<BorderPane> chartsArray = new ArrayList<>();
     private static int playerTurn = 0;
     private static Player player1;
@@ -51,32 +54,31 @@ public class DisplayChampions {
     private static VBox numbers = new VBox();
 
     public static void chooseChampions(Button btn, int i) {
-        ArrayList<Champion> availableChampions = getAvailableChampions();
         if (playerTurn % 2 == 0) {
             if (playerTurn == 0) {
-                player1.setLeader(availableChampions.get(i));
+                player1.setLeader(getAvailableChampions().get(i));
             }
-            player1.getTeam().add(availableChampions.get(i));
+            player1.getTeam().add(getAvailableChampions().get(i));
             btn.setDisable(true);
-            chosenChampions.add(availableChampions.get(i));
+            chosenChampions.add(getAvailableChampions().get(i));
 
         } else {
             if (playerTurn == 1){
-                player2.setLeader(availableChampions.get(i));
+                player2.setLeader(getAvailableChampions().get(i));
             }
-            player2.getTeam().add(availableChampions.get(i));
+            player2.getTeam().add(getAvailableChampions().get(i));
             btn.setDisable(true);
-            chosenChampions.add(availableChampions.get(i));
+            chosenChampions.add(getAvailableChampions().get(i));
         }
     }
 
     public static void onHover(int i) {
-        double hpPercent = (availableChampions.get(i).getMaxHP() / 2250d) * 150;
-        double manaPercent = (availableChampions.get(i).getMana() / 1500d) * 150;
-        double actionsPercent = (availableChampions.get(i).getMaxActionPointsPerTurn() / 8d) * 150;
-        double speedPercent = (availableChampions.get(i).getSpeed() / 99d) * 150;
-        double rngPercent = (availableChampions.get(i).getAttackRange() / 3d) * 150;
-        double dmgPercent = (availableChampions.get(i).getAttackDamage() / 200d) * 150;
+        double hpPercent = (getAvailableChampions().get(i).getMaxHP() / 2250d) * 150;
+        double manaPercent = (getAvailableChampions().get(i).getMana() / 1500d) * 150;
+        double actionsPercent = (getAvailableChampions().get(i).getMaxActionPointsPerTurn() / 8d) * 150;
+        double speedPercent = (getAvailableChampions().get(i).getSpeed() / 99d) * 150;
+        double rngPercent = (getAvailableChampions().get(i).getAttackRange() / 3d) * 150;
+        double dmgPercent = (getAvailableChampions().get(i).getAttackDamage() / 200d) * 150;
 
         Rectangle hpBar = new Rectangle(hpPercent, 10,Color.WHITE);
         Rectangle speedBar = new Rectangle(speedPercent, 10,Color.WHITE);
@@ -85,17 +87,17 @@ public class DisplayChampions {
         Rectangle rangeBar = new Rectangle(rngPercent, 10,Color.WHITE);
         Rectangle pointsBar = new Rectangle(actionsPercent, 10,Color.WHITE);
 
-        Label nameL = new Label(availableChampions.get(i).getName());
+        Label nameL = new Label(getAvailableChampions().get(i).getName());
         nameL.setStyle("-fx-text-fill: white");
         nameBox.getChildren().add(nameL);
 
 
         String type = "";
-        if (availableChampions.get(i) instanceof Hero) {
+        if (getAvailableChampions().get(i) instanceof Hero) {
             type = "Hero";
-        } else if (availableChampions.get(i) instanceof Villain) {
+        } else if (getAvailableChampions().get(i) instanceof Villain) {
             type = "Villain";
-        } else if (availableChampions.get(i) instanceof AntiHero) {
+        } else if (getAvailableChampions().get(i) instanceof AntiHero) {
             type = "Anti-Hero";
         }
 
@@ -132,27 +134,27 @@ public class DisplayChampions {
         Label stat6 = new Label("Action Pts");
         stat6.setStyle("-fx-text-fill: white");
 
-        Label l1 = new Label(Integer.toString(availableChampions.get(i).getMaxHP()));
+        Label l1 = new Label(Integer.toString(getAvailableChampions().get(i).getMaxHP()));
         l1.setStyle("-fx-text-fill: white");
         numbers.getChildren().add(l1);
 
-        Label l2 = new Label(Integer.toString(availableChampions.get(i).getSpeed()));
+        Label l2 = new Label(Integer.toString(getAvailableChampions().get(i).getSpeed()));
         l2.setStyle("-fx-text-fill: white");
         numbers.getChildren().add(l2);
 
-        Label l3 = new Label(Integer.toString(availableChampions.get(i).getMana()));
+        Label l3 = new Label(Integer.toString(getAvailableChampions().get(i).getMana()));
         l3.setStyle("-fx-text-fill: white");
         numbers.getChildren().add(l3);
 
-        Label l4 = new Label(Integer.toString(availableChampions.get(i).getAttackDamage()));
+        Label l4 = new Label(Integer.toString(getAvailableChampions().get(i).getAttackDamage()));
         l4.setStyle("-fx-text-fill: white");
         numbers.getChildren().add(l4);
 
-        Label l5 = new Label(Integer.toString(availableChampions.get(i).getAttackRange()));
+        Label l5 = new Label(Integer.toString(getAvailableChampions().get(i).getAttackRange()));
         l5.setStyle("-fx-text-fill: white");
         numbers.getChildren().add(l5);
 
-        Label l6 = new Label(Integer.toString(availableChampions.get(i).getMaxActionPointsPerTurn()));
+        Label l6 = new Label(Integer.toString(getAvailableChampions().get(i).getMaxActionPointsPerTurn()));
         l6.setStyle("-fx-text-fill: white");
         numbers.getChildren().add(l6);
 
@@ -194,12 +196,22 @@ public class DisplayChampions {
         ptsBox.setAlignment(Pos.CENTER_LEFT);
         ptsBox.setSpacing(15);
 
-        Label ab1 = new Label(availableChampions.get(i).getAbilities().get(0).getName());
+        Ability currAb1 = getAvailableChampions().get(i).getAbilities().get(0);
+        Ability currAb2 = getAvailableChampions().get(i).getAbilities().get(1);
+        Ability currAb3 = getAvailableChampions().get(i).getAbilities().get(2);
+
+        Label ab1 = new Label(currAb1.getName());
         ab1.setStyle("-fx-text-fill: white");
-        Label ab2 = new Label(availableChampions.get(i).getAbilities().get(1).getName());
+        ab1.setTooltip(new Tooltip("Mana Cost: %s\nCooldown: %s\nRange: %s\nArea: %s\nAction Pts: %s"
+                .formatted(currAb1.getManaCost(), currAb1.getBaseCooldown(),currAb1.getCastRange(), currAb1.getCastArea(),currAb1.getRequiredActionPoints())));
+        Label ab2 = new Label(currAb2.getName());
         ab2.setStyle("-fx-text-fill: white");
-        Label ab3 = new Label(availableChampions.get(i).getAbilities().get(2).getName());
+        ab2.setTooltip(new Tooltip("Mana Cost: %s\nCooldown: %s\nRange: %s\nArea: %s\nAction Pts: %s"
+                .formatted(currAb2.getManaCost(), currAb2.getBaseCooldown(),currAb2.getCastRange(), currAb2.getCastArea(),currAb2.getRequiredActionPoints())));
+        Label ab3 = new Label(currAb3.getName());
         ab3.setStyle("-fx-text-fill: white");
+        ab3.setTooltip(new Tooltip("Mana Cost: %s\nCooldown: %s\nRange: %s\nArea: %s\nAction Pts: %s"
+                .formatted(currAb3.getManaCost(), currAb3.getBaseCooldown(),currAb3.getCastRange(), currAb3.getCastArea(),currAb3.getRequiredActionPoints())));
 
         abilityDisplay.getChildren().add(ab1);
         abilityDisplay.getChildren().add(ab2);
@@ -248,7 +260,7 @@ public class DisplayChampions {
         gp.setHgap(8);
         gp.setVgap(8);
         gp.setLayoutX(15);
-        gp.setLayoutY(40);
+        gp.setLayoutY(15);
 
         int counter = 0;
         for (int i = 1; i <= 5; i++) {
@@ -257,12 +269,8 @@ public class DisplayChampions {
                 btn.setPrefSize(80,80);
                 btn.setGraphic(icons.get(counter));
                 btn.styleProperty().bind(Bindings.when(btn.hoverProperty()).then("-fx-cursor: hand; -fx-scale-x: 1.1;" +
-                        " -fx-scale-y: 1.1;-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," +
-                        " linear-gradient(#20262b, #191d22), radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9)," +
-                        " rgba(255,255,255,0));-fx-background-radius: 5,4,3,5; -fx-background-insets: 0,1,2,0;" +
-                        "-fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1);")
-                        .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
-                                ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));" ));
+                                " -fx-scale-y: 1.1;-fx-background-color: rgb(0,0,0, 0.4); -fx-border-radius: 8px;")
+                        .otherwise("-fx-background-color: rgb(0,0,0, 0.4);-fx-border-radius: 8px;"));
                 gp.add(btn, i, j);
                 avatars.add(btn);
                 counter++;
@@ -271,34 +279,42 @@ public class DisplayChampions {
 
         Polygon triangleUp = new Polygon();
         triangleUp.getPoints().setAll(
-                800d, 45d,
+                800d, 15d,
                 800d, 350d,
-                1400d,45d
+                1460d,15d
         );
         triangleUp.setFill(transparentBlack);
 
         Polygon triangleDown = new Polygon();
         triangleDown.getPoints().setAll(
                 810d, 350d,
-                1410d, 350d,
-                1410d,45d
+                1470d, 350d,
+                1470d, 15d
         );
         triangleDown.setFill(transparentBlack);
 
+        Image vs = new Image("views/assets/vs.png");
+        ImageView vs_view = new ImageView(vs);
+        vs_view.setFitHeight(52);
+        vs_view.setPreserveRatio(true);
+        Pane vsPane = new Pane(vs_view);
+        vsPane.setLayoutX(1109);
+        vsPane.setLayoutY(149);
+
         Line hl = new Line();
         hl.setStartX(465);
-        hl.setStartY(405);
+        hl.setStartY(390);
         hl.setEndX(710);
-        hl.setEndY(405);
+        hl.setEndY(390);
         hl.setStroke(Color.WHITE);
         hl.setStrokeWidth(2);
         hl.setOpacity(0.6);
 
         Line vl = new Line();
         vl.setStartX(355);
-        vl.setStartY(540);
+        vl.setStartY(525);
         vl.setEndX(355);
-        vl.setEndY(850);
+        vl.setEndY(835);
         vl.setStroke(Color.WHITE);
         vl.setStrokeWidth(2);
         vl.setOpacity(0.6);
@@ -328,8 +344,7 @@ public class DisplayChampions {
                 Pane pn = new Pane();
                 pn.setPrefSize(80,80);
                 pn.getChildren().add(icon_view);
-                pn.setStyle("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
-                        ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));");
+                pn.setStyle("-fx-border-radius: 8px;");
 
                 if (playerTurn % 2 == 0) {
                     player1Team.getChildren().add(pn);
@@ -397,7 +412,7 @@ public class DisplayChampions {
         });
 
         statsParent.setLayoutX(25);
-        statsParent.setLayoutY(360);
+        statsParent.setLayoutY(345);
         nameBoxCont.setPrefSize(400, 130);
         stats.setPrefSize(400, 380);
         vBoxRight.setPrefSize(300,410);
@@ -441,7 +456,7 @@ public class DisplayChampions {
 
         numbers.setSpacing(30);
         numbers.setLayoutX(370);
-        numbers.setLayoutY(540);
+        numbers.setLayoutY(525);
         numbers.setStyle("-fx-font-size: 20px;");
         numbers.setAlignment(Pos.CENTER);
 
@@ -449,8 +464,8 @@ public class DisplayChampions {
         player2Team.setSpacing(22);
 
         player1Team.setLayoutX(850);
-        player1Team.setLayoutY(80);
-        player2Team.setLayoutX(1076);
+        player1Team.setLayoutY(60);
+        player2Team.setLayoutX(1136);
         player2Team.setLayoutY(235);
 
         HBox iconsContainer1 = new HBox();
@@ -468,29 +483,29 @@ public class DisplayChampions {
         iconsContainer6.setPrefSize(80,80);
 
         iconsContainer1.setLayoutX(850);
-        iconsContainer1.setLayoutY(80);
+        iconsContainer1.setLayoutY(60);
 
         iconsContainer2.setLayoutX(952);
-        iconsContainer2.setLayoutY(80);
+        iconsContainer2.setLayoutY(60);
 
         iconsContainer3.setLayoutX(1054);
-        iconsContainer3.setLayoutY(80);
+        iconsContainer3.setLayoutY(60);
 
-        iconsContainer4.setLayoutX(1076);
+        iconsContainer4.setLayoutX(1136);
         iconsContainer4.setLayoutY(235);
 
-        iconsContainer5.setLayoutX(1178);
+        iconsContainer5.setLayoutX(1238);
         iconsContainer5.setLayoutY(235);
 
-        iconsContainer6.setLayoutX(1280);
+        iconsContainer6.setLayoutX(1340);
         iconsContainer6.setLayoutY(235);
 
-        iconsContainer1.setStyle("-fx-border-radius: 3px; -fx-border-color: white");
-        iconsContainer2.setStyle("-fx-border-radius: 3px; -fx-border-color: white");
-        iconsContainer3.setStyle("-fx-border-radius: 3px; -fx-border-color: white");
-        iconsContainer4.setStyle("-fx-border-radius: 3px; -fx-border-color: white");
-        iconsContainer5.setStyle("-fx-border-radius: 3px; -fx-border-color: white");
-        iconsContainer6.setStyle("-fx-border-radius: 3px; -fx-border-color: white");
+        iconsContainer1.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
+        iconsContainer2.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
+        iconsContainer3.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
+        iconsContainer4.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
+        iconsContainer5.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
+        iconsContainer6.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
 
         Label playerOne = new Label("Player 1");
         Label playerTwo = new Label("Player 2");
@@ -512,10 +527,10 @@ public class DisplayChampions {
         player2Box.getChildren().add(playerName2);
 
         player1Box.setLayoutX(850);
-        player1Box.setLayoutY(200);
+        player1Box.setLayoutY(160);
 
-        player2Box.setLayoutX(1280);
-        player2Box.setLayoutY(130);
+        player2Box.setLayoutX(1340);
+        player2Box.setLayoutY(160);
 
         root.getChildren().add(gp);
         root.getChildren().add(statsParent);
@@ -536,6 +551,7 @@ public class DisplayChampions {
         root.getChildren().add(iconsContainer6);
         root.getChildren().add(player1Box);
         root.getChildren().add(player2Box);
+        root.getChildren().add(vsPane);
 
         return new Scene(root, 1600,900, Color.rgb(33,41,50));
     }

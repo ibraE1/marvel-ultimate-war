@@ -84,6 +84,9 @@ public class EnterPlayerNames {
         root.getChildren().add(buttons);
 
         Scene scene = new Scene(root, 1600, 900, Color.rgb(33, 41, 50));
+
+        buttons.requestFocus();
+
         return scene;
     }
 }
