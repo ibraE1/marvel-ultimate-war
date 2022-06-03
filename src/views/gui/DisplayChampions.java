@@ -348,16 +348,16 @@ public class DisplayChampions {
         lead1_view.setFitHeight(26);
         lead1_view.setPreserveRatio(true);
         Pane lead1Pane = new Pane(lead1_view);
-        lead1Pane.setLayoutX(877);
-        lead1Pane.setLayoutY(30);
+        lead1Pane.setLayoutX(892);
+        lead1Pane.setLayoutY(25);
 
         Image lead2 = new Image("views/assets/leader.png");
         ImageView lead2_view = new ImageView(lead2);
         lead2_view.setFitHeight(26);
         lead2_view.setPreserveRatio(true);
         Pane lead2Pane = new Pane(lead2_view);
-        lead2Pane.setLayoutX(1163);
-        lead2Pane.setLayoutY(205);
+        lead2Pane.setLayoutX(1148);
+        lead2Pane.setLayoutY(210);
 
         Line hl = new Line();
         hl.setStartX(465);
@@ -517,10 +517,10 @@ public class DisplayChampions {
         player1Team.setSpacing(22);
         player2Team.setSpacing(22);
 
-        player1Team.setLayoutX(850);
-        player1Team.setLayoutY(60);
-        player2Team.setLayoutX(1136);
-        player2Team.setLayoutY(235);
+        player1Team.setLayoutX(865);
+        player1Team.setLayoutY(55);
+        player2Team.setLayoutX(1121);
+        player2Team.setLayoutY(240);
 
         HBox iconsContainer1 = new HBox();
         HBox iconsContainer2 = new HBox();
@@ -536,23 +536,23 @@ public class DisplayChampions {
         iconsContainer5.setPrefSize(80,80);
         iconsContainer6.setPrefSize(80,80);
 
-        iconsContainer1.setLayoutX(850);
-        iconsContainer1.setLayoutY(60);
+        iconsContainer1.setLayoutX(865);
+        iconsContainer1.setLayoutY(55);
 
-        iconsContainer2.setLayoutX(952);
-        iconsContainer2.setLayoutY(60);
+        iconsContainer2.setLayoutX(967);
+        iconsContainer2.setLayoutY(55);
 
-        iconsContainer3.setLayoutX(1054);
-        iconsContainer3.setLayoutY(60);
+        iconsContainer3.setLayoutX(1069);
+        iconsContainer3.setLayoutY(55);
 
-        iconsContainer4.setLayoutX(1136);
-        iconsContainer4.setLayoutY(235);
+        iconsContainer4.setLayoutX(1121);
+        iconsContainer4.setLayoutY(240);
 
-        iconsContainer5.setLayoutX(1238);
-        iconsContainer5.setLayoutY(235);
+        iconsContainer5.setLayoutX(1223);
+        iconsContainer5.setLayoutY(240);
 
-        iconsContainer6.setLayoutX(1340);
-        iconsContainer6.setLayoutY(235);
+        iconsContainer6.setLayoutX(1325);
+        iconsContainer6.setLayoutY(240);
 
         iconsContainer1.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
         iconsContainer2.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
@@ -566,11 +566,18 @@ public class DisplayChampions {
         Label playerName1 = new Label(player1.getName());
         Label playerName2 = new Label(player2.getName());
 
+        playerName1.setPrefSize(180,300);
+        playerName1.setWrapText(true);
+        playerName1.setAlignment(Pos.TOP_LEFT);
+        playerName2.setPrefSize(180,300);
+        playerName2.setWrapText(true);
+        playerName2.setAlignment(Pos.TOP_LEFT);
+
         playerOne.setStyle("-fx-text-fill: white; -fx-font-size: 30;");
         playerTwo.setStyle("-fx-text-fill: white; -fx-font-size: 30;");
 
-        playerName1.setStyle("-fx-text-fill: white; -fx-font-size: 22;");
-        playerName2.setStyle("-fx-text-fill: white; -fx-font-size: 22;");
+        playerName1.setStyle("-fx-text-fill: white; -fx-font-size: 20;");
+        playerName2.setStyle("-fx-text-fill: white; -fx-font-size: 20;");
 
         VBox player1Box = new VBox();
         VBox player2Box = new VBox();
@@ -580,10 +587,10 @@ public class DisplayChampions {
         player2Box.getChildren().add(playerTwo);
         player2Box.getChildren().add(playerName2);
 
-        player1Box.setLayoutX(850);
+        player1Box.setLayoutX(870);
         player1Box.setLayoutY(160);
 
-        player2Box.setLayoutX(1340);
+        player2Box.setLayoutX(1320);
         player2Box.setLayoutY(160);
 
         root.getChildren().add(gp);
