@@ -245,6 +245,9 @@ public class DisplayChampions {
             Image champDisplay = new Image("views/assets/champions-full/%s.png".formatted(i));
             ImageView champDisplayView = new ImageView(champDisplay);
             champDisplayView.setFitHeight(500);
+            if (i == 7 || i == 2){
+                champDisplayView.setFitHeight(380);
+            }
             champDisplayView.setPreserveRatio(true);
             champPrevArr.add(champDisplayView);
         }
@@ -300,6 +303,22 @@ public class DisplayChampions {
         Pane vsPane = new Pane(vs_view);
         vsPane.setLayoutX(1109);
         vsPane.setLayoutY(149);
+
+        Image lead1 = new Image("views/assets/leader.png");
+        ImageView lead1_view = new ImageView(lead1);
+        lead1_view.setFitHeight(26);
+        lead1_view.setPreserveRatio(true);
+        Pane lead1Pane = new Pane(lead1_view);
+        lead1Pane.setLayoutX(877);
+        lead1Pane.setLayoutY(30);
+
+        Image lead2 = new Image("views/assets/leader.png");
+        ImageView lead2_view = new ImageView(lead2);
+        lead2_view.setFitHeight(26);
+        lead2_view.setPreserveRatio(true);
+        Pane lead2Pane = new Pane(lead2_view);
+        lead2Pane.setLayoutX(1163);
+        lead2Pane.setLayoutY(205);
 
         Line hl = new Line();
         hl.setStartX(465);
@@ -452,7 +471,7 @@ public class DisplayChampions {
 
         champPreview.setPrefSize(300,500);
         champPreview.setLayoutX(780);
-        champPreview.setLayoutY(380);
+        champPreview.setLayoutY(400);
 
         numbers.setSpacing(30);
         numbers.setLayoutX(370);
@@ -552,8 +571,10 @@ public class DisplayChampions {
         root.getChildren().add(player1Box);
         root.getChildren().add(player2Box);
         root.getChildren().add(vsPane);
+        root.getChildren().add(lead1Pane);
+        root.getChildren().add(lead2Pane);
 
-        return new Scene(root, 1600,900, Color.rgb(33,41,50));
+        return new Scene(root, 1600,900, GameApp.getScene_color());
     }
 
     public static void setPlayerTurn(int playerTurn) {

@@ -5,6 +5,7 @@ import engine.Player;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -14,6 +15,8 @@ import static engine.Game.loadAbilities;
 import static engine.Game.loadChampions;
 
 public class GameApp extends Application {
+
+    private static final Color scene_color = Color.rgb(33,41,50);
     private static Game newGame;
     private static Stage stage = new Stage();
     private static Scene scene;
@@ -56,5 +59,9 @@ public class GameApp extends Application {
     public static void onReady(Player player1, Player player2) throws IOException {
         newGame = new Game(player1, player2);
         stage.setScene(InGame.create(newGame));
+    }
+
+    public static Color getScene_color() {
+        return scene_color;
     }
 }

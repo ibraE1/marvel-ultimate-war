@@ -83,7 +83,7 @@ public class EnterPlayerNames {
         root.getChildren().add(vbox);
         root.getChildren().add(buttons);
 
-        Scene scene = new Scene(root, 1600, 900, Color.rgb(33, 41, 50));
+        Scene scene = new Scene(root, 1600, 900, GameApp.getScene_color());
 
         buttons.requestFocus();
 

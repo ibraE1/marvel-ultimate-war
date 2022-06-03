@@ -57,6 +57,6 @@ public class MainMenu {
         Group root = new Group(logo);
         root.getChildren().add(buttons);
 
-        return new Scene(root, 1600, 900, Color.rgb(33, 41, 50));
+        return new Scene(root, 1600, 900, GameApp.getScene_color());
     }
 }
