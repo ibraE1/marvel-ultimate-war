@@ -17,11 +17,9 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.stage.PopupWindow;
 
 import model.abilities.Ability;
 import model.world.AntiHero;
-import model.world.Champion;
 import model.world.Hero;
 import model.world.Villain;
 
@@ -31,27 +29,26 @@ import java.util.ArrayList;
 import static engine.Game.getAvailableChampions;
 
 public class DisplayChampions {
-    private static Group root = new Group();
-    private static VBox nameBox = new VBox();
-    private static HBox statsParent = new HBox();
-    private static VBox vBoxLeft = new VBox();
-    private static VBox stats = new VBox();
-    private static VBox vBoxRight = new VBox();
-    private static VBox abilityDisplay = new VBox();
-    private static VBox abilityTitleBox = new VBox();
-    private static VBox abilityDisplayBox = new VBox();
-    private static Pane champPreview = new Pane();
-    private static Pane statGraph = new Pane();
-    private static VBox nameBoxCont = new VBox();
-    private static HBox player1Team = new HBox();
-    private static HBox player2Team = new HBox();
-    private static ArrayList<ImageView> champPrevArr = new ArrayList<>(15);
-    private static ArrayList<BorderPane> chartsArray = new ArrayList<>();
+    private static final Group root = new Group();
+    private static final VBox nameBox = new VBox();
+    private static final HBox statsParent = new HBox();
+    private static final VBox vBoxLeft = new VBox();
+    private static final VBox stats = new VBox();
+    private static final VBox vBoxRight = new VBox();
+    private static final VBox abilityDisplay = new VBox();
+    private static final VBox abilityTitleBox = new VBox();
+    private static final VBox abilityDisplayBox = new VBox();
+    private static final Pane champPreview = new Pane();
+    private static final Pane statGraph = new Pane();
+    private static final VBox nameBoxCont = new VBox();
+    private static final HBox player1Team = new HBox();
+    private static final HBox player2Team = new HBox();
+    private static final ArrayList<ImageView> champPrevArr = new ArrayList<>(15);
+    private static final ArrayList<BorderPane> chartsArray = new ArrayList<>();
     private static int playerTurn = 0;
     private static Player player1;
     private static Player player2;
-    private static final ArrayList<Champion> chosenChampions = new ArrayList<>();
-    private static VBox numbers = new VBox();
+    private static final VBox numbers = new VBox();
 
     public static void chooseChampions(Button btn, int i) {
         if (playerTurn % 2 == 0) {
@@ -60,7 +57,6 @@ public class DisplayChampions {
             }
             player1.getTeam().add(getAvailableChampions().get(i));
             btn.setDisable(true);
-            chosenChampions.add(getAvailableChampions().get(i));
 
         } else {
             if (playerTurn == 1){
@@ -68,7 +64,6 @@ public class DisplayChampions {
             }
             player2.getTeam().add(getAvailableChampions().get(i));
             btn.setDisable(true);
-            chosenChampions.add(getAvailableChampions().get(i));
         }
     }
 
@@ -217,6 +212,41 @@ public class DisplayChampions {
         abilityDisplay.getChildren().add(ab2);
         abilityDisplay.getChildren().add(ab3);
 
+
+        champPreview.setPrefSize(300,500);
+        champPreview.setLayoutX(780);
+        champPreview.setLayoutY(400);
+
+        if (i == 10) {
+            champPreview.setLayoutY(345);
+            champPreview.setLayoutX(850);
+        }
+        if (i == 14) {
+            champPreview.setLayoutY(350);
+            champPreview.setLayoutX(810);
+        }
+        if (i == 5) {
+            champPreview.setLayoutX(760);
+        }
+        if (i == 8) {
+            champPreview.setLayoutX(820);
+            champPreview.setLayoutY(410);
+        }
+        if (i == 2 || i == 13 | i == 6 || i == 12) {
+            champPreview.setLayoutX(840);
+        }
+        if (i == 12 || i == 8 || i == 13 ) {
+            champPreview.setLayoutY(360);
+        }
+        if (i == 7) {
+            champPreview.setLayoutX(750);
+        }
+        if (i == 4) {
+            champPreview.setLayoutY(370);
+        }
+        if (i == 1) {
+            champPreview.setLayoutY(410);
+        }
         champPreview.getChildren().add(champPrevArr.get(i));
         statGraph.getChildren().add(chartsArray.get(i));
     }
@@ -245,8 +275,17 @@ public class DisplayChampions {
             Image champDisplay = new Image("views/assets/champions-full/%s.png".formatted(i));
             ImageView champDisplayView = new ImageView(champDisplay);
             champDisplayView.setFitHeight(500);
-            if (i == 7 || i == 2){
-                champDisplayView.setFitHeight(380);
+            if (i == 2) {
+                champDisplayView.setFitHeight(360);
+            }
+            if (i == 10 || i == 14) {
+                champDisplayView.setFitHeight(550);
+            }
+            if (i == 4) {
+                champDisplayView.setFitHeight(530);
+            }
+            if (i == 13) {
+                champDisplayView.setFitHeight(520);
             }
             champDisplayView.setPreserveRatio(true);
             champPrevArr.add(champDisplayView);
@@ -469,10 +508,6 @@ public class DisplayChampions {
         vBoxLeft.getChildren().add(nameBoxCont);
         vBoxLeft.getChildren().add(stats);
 
-        champPreview.setPrefSize(300,500);
-        champPreview.setLayoutX(780);
-        champPreview.setLayoutY(400);
-
         numbers.setSpacing(30);
         numbers.setLayoutX(370);
         numbers.setLayoutY(525);
@@ -575,9 +610,5 @@ public class DisplayChampions {
         root.getChildren().add(lead2Pane);
 
         return new Scene(root, 1600,900, GameApp.getScene_color());
-    }
-
-    public static void setPlayerTurn(int playerTurn) {
-        DisplayChampions.playerTurn = playerTurn;
     }
 }
