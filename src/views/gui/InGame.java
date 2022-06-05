@@ -11,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -105,9 +104,10 @@ public class InGame {
                     } else if (tile instanceof Cover) {
                         Cover cv = (Cover) tile;
                         ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
+                        VBox box = new VBox();
+                        box.getChildren().add(new Label("HP: " + cv.getCurrentHP()));
                         Button btn = new Button();
                         btn.setGraphic(iv);
-<<<<<<< HEAD
                         box.getChildren().add(btn);
                         box.setAlignment(Pos.CENTER);
                         GridPane.setConstraints(box, cv.getLocation().y, 4 - cv.getLocation().x);
@@ -115,17 +115,6 @@ public class InGame {
                         box.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                         boardTiles.add(box);
                         btn.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 5px; -fx-border-radius: 3px");
-=======
-                        Tooltip tt = new Tooltip("HP: " + cv.getCurrentHP());
-                        tt.setStyle("-fx-font: normal bold 12 Langdon; "
-                                + "-fx-base: #AE3522; "
-                                + "-fx-text-fill: orange;");
-                        btn.setTooltip(tt);
-                        GridPane.setConstraints(btn, cv.getLocation().y, 4 - cv.getLocation().x);
-                        GridPane.setHalignment(btn, HPos.CENTER);
-                        btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                        boardTiles.add(btn);
->>>>>>> a6d82b5d14cd7bdf46d264dc6c2764faa1503719
                     }
                 } else {
                     Button btn = new Button();
