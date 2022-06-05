@@ -100,6 +100,7 @@ public class InGame {
                         GridPane.setHalignment(btn, HPos.CENTER);
                         btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                         boardTiles.add(btn);
+                        btn.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 5px; -fx-border-radius: 3px");
                     } else if (tile instanceof Cover) {
                         Cover cv = (Cover) tile;
                         ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
@@ -113,12 +114,14 @@ public class InGame {
                         GridPane.setHalignment(box, HPos.CENTER);
                         box.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                         boardTiles.add(box);
+                        btn.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 5px; -fx-border-radius: 3px");
                     }
                 } else {
                     Button btn = new Button();
                     GridPane.setConstraints(btn, j, 4 - i);
                     btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                     boardTiles.add(btn);
+                    btn.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 5px; -fx-border-radius: 3px");
                 }
             }
         }

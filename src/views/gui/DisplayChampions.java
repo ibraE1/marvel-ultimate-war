@@ -232,7 +232,7 @@ public class DisplayChampions {
             champPreview.setLayoutX(820);
             champPreview.setLayoutY(410);
         }
-        if (i == 2 || i == 13 | i == 6 || i == 12) {
+        if (i == 13 | i == 6 || i == 12) {
             champPreview.setLayoutX(840);
         }
         if (i == 12 || i == 8 || i == 13 ) {
@@ -616,6 +616,6 @@ public class DisplayChampions {
         root.getChildren().add(lead1Pane);
         root.getChildren().add(lead2Pane);
 
-        return new Scene(root, 1600,900, GameApp.getScene_color());
+        return new Scene(root, 1600,900, Color.rgb(33,41,50));
     }
 }

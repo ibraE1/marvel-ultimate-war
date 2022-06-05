@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 public class MainMenu {
@@ -45,13 +45,20 @@ public class MainMenu {
         buttons.getChildren().add(start);
         buttons.getChildren().add(quit);
         buttons.setLayoutX(650);
-        buttons.setLayoutY(320);
+        buttons.setLayoutY(400);
         buttons.setSpacing(20);
 
 
-        Group root = new Group(logo);
+        Pane root = new Pane(logo);
+        Image img = new Image("views/assets/bg.jpeg");
+        BackgroundImage bImg = new BackgroundImage(img,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+        Background bGround = new Background(bImg);
+        root.setBackground(bGround);
         root.getChildren().add(buttons);
-
         return new Scene(root, 1600, 900, GameApp.getScene_color());
     }
 }

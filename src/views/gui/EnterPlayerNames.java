@@ -7,7 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 public class EnterPlayerNames {
@@ -76,7 +76,15 @@ public class EnterPlayerNames {
         buttons.setLayoutY(470);
         buttons.setSpacing(20);
 
-        Group root = new Group(logo);
+        Pane root = new Pane(logo);
+        Image img = new Image("views/assets/bg.jpeg");
+        BackgroundImage bImg = new BackgroundImage(img,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+        Background bGround = new Background(bImg);
+        root.setBackground(bGround);
         root.getChildren().add(vbox);
         root.getChildren().add(buttons);
 
