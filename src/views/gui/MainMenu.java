@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class MainMenu {
@@ -28,9 +27,7 @@ public class MainMenu {
                         "-fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1);-fx-text-fill: white;")
                 .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
                         ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));-fx-text-fill: white;"));
-        start.setOnAction(e -> {
-            GameApp.onStart();
-        });
+        start.setOnAction(e -> GameApp.onStart());
 
         Button quit = new Button("Quit");
         quit.setPrefSize(300, 75);
@@ -42,9 +39,7 @@ public class MainMenu {
                         "-fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1);-fx-text-fill: white;")
                 .otherwise("-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," + "  linear-gradient(#20262b, #191d22)" +
                         ", radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));-fx-text-fill: white;"));
-        quit.setOnAction(e -> {
-            GameApp.onQuit();
-        });
+        quit.setOnAction(e -> GameApp.onQuit());
 
         VBox buttons = new VBox();
         buttons.getChildren().add(start);
