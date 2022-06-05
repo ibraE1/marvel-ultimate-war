@@ -360,6 +360,7 @@ public class DisplayChampions {
                 Image icon = new Image("views/assets/champions/%s.png".formatted(getAvailableChampions().get(i).getName()));
                 ImageView icon_view = new ImageView(icon);
                 icon_view.setFitWidth(80);
+                icon_view.setFitHeight(80);
                 Pane pn = new Pane();
                 pn.setPrefSize(80,80);
                 pn.getChildren().add(icon_view);
