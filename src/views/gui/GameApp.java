@@ -25,8 +25,8 @@ public class GameApp extends Application {
     public void start(Stage Ignore) throws IOException {
         stage.getIcons().add(new Image("views/assets/icon.png"));
         stage.setResizable(false);
-        stage.setX((screenWidth - 1600f) / 2);
-        stage.setY((screenHeight - 900f) / 2);
+//        stage.setX((screenWidth - 1600f) / 2);
+//        stage.setY((screenHeight - 900f) / 2);
         stage.setTitle("Marvel Ultimate War");
         stage.setScene(MainMenu.create());
         stage.show();

@@ -49,6 +49,8 @@ public class DisplayChampions {
     private static int playerTurn = 0;
     private static Player player1;
     private static Player player2;
+    private static String player1Name;
+    private static String player2Name;
     private static final VBox numbers = new VBox();
     private static final VBox hintBox = new VBox();
     private static final VBox hintBoxContainer = new VBox();
@@ -68,19 +70,19 @@ public class DisplayChampions {
         String hintString = "";
 
         if (playerTurn == 0) {
-            hintString = "Player 1 choose your leader";
+            hintString = "Each player has to choose 3 champions\n\n%s, choose your leader".formatted(player1Name);
         } else if (playerTurn == 1) {
-            hintString = "Player 2 choose your leader";
+            hintString = "%s, choose your leader".formatted(player2Name);
         } else if (playerTurn == 2) {
-            hintString = "Player 1 choose a champion";
+            hintString = "%s, choose a champion".formatted(player1Name);
         } else if (playerTurn == 3) {
-            hintString = "Player 2 choose a champion";
+            hintString = "%s, choose a champion".formatted(player2Name);
         } else if (playerTurn == 4) {
-            hintString = "Player 1 choose one last champion";
+            hintString = "%s, choose one last champion".formatted(player1Name);
         } else if (playerTurn == 5) {
-            hintString = "Player 2 choose one last champion";
+            hintString = "%s, choose one last champion".formatted(player2Name);
         } else if (playerTurn == 6) {
-            hintString = "Done!";
+            root.getChildren().remove(hintBoxContainer);
         }
 
         Label hintTitle = new Label("Hint");
@@ -322,6 +324,9 @@ public class DisplayChampions {
         DisplayChampions.player1 = player1;
         DisplayChampions.player2 = player2;
 
+        player1Name = player1.getName().substring(0,1).toUpperCase() + player1.getName().substring(1);
+        player2Name = player2.getName().substring(0,1).toUpperCase() + player2.getName().substring(1);
+
         ArrayList<ImageView> icons = new ArrayList<>(15);
         ArrayList<Button> avatars = new ArrayList<>();
 
@@ -386,19 +391,44 @@ public class DisplayChampions {
 
         Polygon triangleUp = new Polygon();
         triangleUp.getPoints().setAll(
-                1000-30d, 15d,
-                1000-30d, 350d,
-                1660-80d,15d
+                970d, 15d,
+                970d, 350d,
+                1580d, 15d
         );
         triangleUp.setFill(transparentBlack);
 
         Polygon triangleDown = new Polygon();
         triangleDown.getPoints().setAll(
-                1010-30d, 350d,
-                1670-80d, 350d,
-                1670-80d, 15d
+                980d, 350d,
+                1590d, 350d,
+                1590d, 15d
         );
         triangleDown.setFill(transparentBlack);
+
+
+        Image vs = new Image("views/assets/vs.png");
+        ImageView vs_view = new ImageView(vs);
+        vs_view.setFitHeight(52);
+        vs_view.setPreserveRatio(true);
+        Pane vsPane = new Pane(vs_view);
+        vsPane.setLayoutX(1254);
+        vsPane.setLayoutY(149);
+
+        Image lead1 = new Image("views/assets/leader.png");
+        ImageView lead1_view = new ImageView(lead1);
+        lead1_view.setFitHeight(26);
+        lead1_view.setPreserveRatio(true);
+        Pane lead1Pane = new Pane(lead1_view);
+        lead1Pane.setLayoutX(1037);
+        lead1Pane.setLayoutY(25);
+
+        Image lead2 = new Image("views/assets/leader.png");
+        ImageView lead2_view = new ImageView(lead2);
+        lead2_view.setFitHeight(26);
+        lead2_view.setPreserveRatio(true);
+        Pane lead2Pane = new Pane(lead2_view);
+        lead2Pane.setLayoutX(1293);
+        lead2Pane.setLayoutY(210);
 
         Line hl = new Line();
         hl.setStartX(465);
@@ -464,7 +494,7 @@ public class DisplayChampions {
         }
 
         ready.setPrefSize(250,85);
-        ready.setLayoutX(1330);
+        ready.setLayoutX(1320);
         ready.setLayoutY(785);
         ready.styleProperty().bind(Bindings.when(ready.hoverProperty()).then("-fx-cursor: hand; -fx-scale-x: 1.1;" +
                         " -fx-scale-y: 1.1;-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%)," +
@@ -562,9 +592,9 @@ public class DisplayChampions {
         player1Team.setSpacing(22);
         player2Team.setSpacing(22);
 
-        player1Team.setLayoutX(985);
+        player1Team.setLayoutX(1010);
         player1Team.setLayoutY(55);
-        player2Team.setLayoutX(1241);
+        player2Team.setLayoutX(1266);
         player2Team.setLayoutY(240);
 
         HBox iconsContainer1 = new HBox();
@@ -581,22 +611,22 @@ public class DisplayChampions {
         iconsContainer5.setPrefSize(80,80);
         iconsContainer6.setPrefSize(80,80);
 
-        iconsContainer1.setLayoutX(985);
+        iconsContainer1.setLayoutX(1010);
         iconsContainer1.setLayoutY(55);
 
-        iconsContainer2.setLayoutX(1087);
+        iconsContainer2.setLayoutX(1112);
         iconsContainer2.setLayoutY(55);
 
-        iconsContainer3.setLayoutX(1189);
+        iconsContainer3.setLayoutX(1214);
         iconsContainer3.setLayoutY(55);
 
-        iconsContainer4.setLayoutX(1241);
+        iconsContainer4.setLayoutX(1266);
         iconsContainer4.setLayoutY(240);
 
-        iconsContainer5.setLayoutX(1343);
+        iconsContainer5.setLayoutX(1368);
         iconsContainer5.setLayoutY(240);
 
-        iconsContainer6.setLayoutX(1445);
+        iconsContainer6.setLayoutX(1470);
         iconsContainer6.setLayoutY(240);
 
         iconsContainer1.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
@@ -608,8 +638,8 @@ public class DisplayChampions {
 
         Label playerOne = new Label("Player 1");
         Label playerTwo = new Label("Player 2");
-        Label playerName1 = new Label(player1.getName());
-        Label playerName2 = new Label(player2.getName());
+        Label playerName1 = new Label(player1Name);
+        Label playerName2 = new Label(player2Name);
 
         playerName1.setPrefSize(180,300);
         playerName1.setWrapText(true);
@@ -632,36 +662,11 @@ public class DisplayChampions {
         player2Box.getChildren().add(playerTwo);
         player2Box.getChildren().add(playerName2);
 
-        player1Box.setLayoutX(990);
+        player1Box.setLayoutX(1015);
         player1Box.setLayoutY(160);
 
-        player2Box.setLayoutX(1440);
+        player2Box.setLayoutX(1465);
         player2Box.setLayoutY(160);
-
-
-        Image vs = new Image("views/assets/vs.png");
-        ImageView vs_view = new ImageView(vs);
-        vs_view.setFitHeight(52);
-        vs_view.setPreserveRatio(true);
-        Pane vsPane = new Pane(vs_view);
-        vsPane.setLayoutX(1229);
-        vsPane.setLayoutY(149);
-
-        Image lead1 = new Image("views/assets/leader.png");
-        ImageView lead1_view = new ImageView(lead1);
-        lead1_view.setFitHeight(26);
-        lead1_view.setPreserveRatio(true);
-        Pane lead1Pane = new Pane(lead1_view);
-        lead1Pane.setLayoutX(1012);
-        lead1Pane.setLayoutY(25);
-
-        Image lead2 = new Image("views/assets/leader.png");
-        ImageView lead2_view = new ImageView(lead2);
-        lead2_view.setFitHeight(26);
-        lead2_view.setPreserveRatio(true);
-        Pane lead2Pane = new Pane(lead2_view);
-        lead2Pane.setLayoutX(1268);
-        lead2Pane.setLayoutY(210);
 
         root.getChildren().add(gp);
         root.getChildren().add(statsParent);
