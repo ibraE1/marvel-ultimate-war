@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import static engine.Game.getAvailableChampions;
 
 public class DisplayChampions {
+    private static final Color transparentBlack = new Color(0,0,0,0.4);
     private static final Group root = new Group();
     private static final VBox nameBox = new VBox();
     private static final HBox statsParent = new HBox();
@@ -49,6 +50,72 @@ public class DisplayChampions {
     private static Player player1;
     private static Player player2;
     private static final VBox numbers = new VBox();
+    private static final VBox hintBox = new VBox();
+    private static final VBox hintBoxContainer = new VBox();
+
+    public static void showHint() {
+        hintBoxContainer.getChildren().clear();
+        hintBox.getChildren().clear();
+        hintBoxContainer.setPrefSize(400,200);
+        hintBox.setPrefSize(360,200);
+        hintBox.setBackground(Background.fill(transparentBlack));
+
+        Image hint = new Image("views/assets/uatu.png");
+        ImageView hint_view = new ImageView(hint);
+        hint_view.setFitHeight(48);
+        hint_view.setPreserveRatio(true);
+
+        String hintString = "";
+
+        if (playerTurn == 0) {
+            hintString = "Player 1 choose your leader";
+        } else if (playerTurn == 1) {
+            hintString = "Player 2 choose your leader";
+        } else if (playerTurn == 2) {
+            hintString = "Player 1 choose a champion";
+        } else if (playerTurn == 3) {
+            hintString = "Player 2 choose a champion";
+        } else if (playerTurn == 4) {
+            hintString = "Player 1 choose one last champion";
+        } else if (playerTurn == 5) {
+            hintString = "Player 2 choose one last champion";
+        } else if (playerTurn == 6) {
+            hintString = "Done!";
+        }
+
+        Label hintTitle = new Label("Hint");
+        Label hintDisplayed = new Label(hintString);
+
+        VBox hintTitleLabelBox = new VBox(hintTitle);
+        VBox hintDisplayedBox = new VBox(hintDisplayed);
+        HBox hintTitleBox = new HBox();
+
+        hintTitle.setStyle("-fx-font-size: 28; -fx-text-fill: gold; -fx-font-weight: 700;-fx-underline: true;");
+        hintDisplayed.setStyle("-fx-font-size: 22; -fx-text-fill: white; -fx-font-weight: 700");
+
+        hintTitleLabelBox.setPrefSize(hintTitleBox.getMaxWidth(),hintTitleBox.getMaxHeight());
+        hintTitleLabelBox.setAlignment(Pos.CENTER_LEFT);
+
+        hintDisplayedBox.setPrefWidth(555);
+        hintDisplayedBox.setAlignment(Pos.CENTER);
+
+
+        hintTitleBox.setLayoutX(555);
+        hintTitleBox.setLayoutY(50);
+
+        hintTitleBox.getChildren().add(hint_view);
+        hintTitleBox.getChildren().add(hintTitleLabelBox);
+        hintTitleBox.setSpacing(15);
+
+        hintBox.setSpacing(15);
+        hintBox.getChildren().add(hintTitleBox);
+        hintBox.getChildren().add(hintDisplayedBox);
+
+        hintBoxContainer.setAlignment(Pos.CENTER);
+        hintBoxContainer.getChildren().add(hintBox);
+        hintBoxContainer.setLayoutX(555);
+        hintBoxContainer.setLayoutY(15);
+    }
 
     public static void chooseChampions(Button btn, int i) {
         if (playerTurn % 2 == 0) {
@@ -258,8 +325,6 @@ public class DisplayChampions {
         ArrayList<ImageView> icons = new ArrayList<>(15);
         ArrayList<Button> avatars = new ArrayList<>();
 
-        Color transparentBlack = new Color(0,0,0,0.4);
-
         for (int i = 0; i < 15; i++) {
             Image chart = new Image("views/assets/charts/%s.png".formatted(i));
             ImageView chart_view = new ImageView(chart);
@@ -321,43 +386,19 @@ public class DisplayChampions {
 
         Polygon triangleUp = new Polygon();
         triangleUp.getPoints().setAll(
-                800d, 15d,
-                800d, 350d,
-                1460d,15d
+                1000-30d, 15d,
+                1000-30d, 350d,
+                1660-80d,15d
         );
         triangleUp.setFill(transparentBlack);
 
         Polygon triangleDown = new Polygon();
         triangleDown.getPoints().setAll(
-                810d, 350d,
-                1470d, 350d,
-                1470d, 15d
+                1010-30d, 350d,
+                1670-80d, 350d,
+                1670-80d, 15d
         );
         triangleDown.setFill(transparentBlack);
-
-        Image vs = new Image("views/assets/vs.png");
-        ImageView vs_view = new ImageView(vs);
-        vs_view.setFitHeight(52);
-        vs_view.setPreserveRatio(true);
-        Pane vsPane = new Pane(vs_view);
-        vsPane.setLayoutX(1109);
-        vsPane.setLayoutY(149);
-
-        Image lead1 = new Image("views/assets/leader.png");
-        ImageView lead1_view = new ImageView(lead1);
-        lead1_view.setFitHeight(26);
-        lead1_view.setPreserveRatio(true);
-        Pane lead1Pane = new Pane(lead1_view);
-        lead1Pane.setLayoutX(892);
-        lead1Pane.setLayoutY(25);
-
-        Image lead2 = new Image("views/assets/leader.png");
-        ImageView lead2_view = new ImageView(lead2);
-        lead2_view.setFitHeight(26);
-        lead2_view.setPreserveRatio(true);
-        Pane lead2Pane = new Pane(lead2_view);
-        lead2Pane.setLayoutX(1148);
-        lead2Pane.setLayoutY(210);
 
         Line hl = new Line();
         hl.setStartX(465);
@@ -418,6 +459,7 @@ public class DisplayChampions {
                     }
                     ready.setDisable(false);
                 }
+                showHint();
             });
         }
 
@@ -470,6 +512,8 @@ public class DisplayChampions {
             System.out.println(playerTurn);
         });
 
+        showHint();
+
         statsParent.setLayoutX(25);
         statsParent.setLayoutY(345);
         nameBoxCont.setPrefSize(400, 130);
@@ -518,9 +562,9 @@ public class DisplayChampions {
         player1Team.setSpacing(22);
         player2Team.setSpacing(22);
 
-        player1Team.setLayoutX(865);
+        player1Team.setLayoutX(985);
         player1Team.setLayoutY(55);
-        player2Team.setLayoutX(1121);
+        player2Team.setLayoutX(1241);
         player2Team.setLayoutY(240);
 
         HBox iconsContainer1 = new HBox();
@@ -537,22 +581,22 @@ public class DisplayChampions {
         iconsContainer5.setPrefSize(80,80);
         iconsContainer6.setPrefSize(80,80);
 
-        iconsContainer1.setLayoutX(865);
+        iconsContainer1.setLayoutX(985);
         iconsContainer1.setLayoutY(55);
 
-        iconsContainer2.setLayoutX(967);
+        iconsContainer2.setLayoutX(1087);
         iconsContainer2.setLayoutY(55);
 
-        iconsContainer3.setLayoutX(1069);
+        iconsContainer3.setLayoutX(1189);
         iconsContainer3.setLayoutY(55);
 
-        iconsContainer4.setLayoutX(1121);
+        iconsContainer4.setLayoutX(1241);
         iconsContainer4.setLayoutY(240);
 
-        iconsContainer5.setLayoutX(1223);
+        iconsContainer5.setLayoutX(1343);
         iconsContainer5.setLayoutY(240);
 
-        iconsContainer6.setLayoutX(1325);
+        iconsContainer6.setLayoutX(1445);
         iconsContainer6.setLayoutY(240);
 
         iconsContainer1.setStyle("-fx-border-radius: 8px; -fx-border-color: white");
@@ -574,11 +618,11 @@ public class DisplayChampions {
         playerName2.setWrapText(true);
         playerName2.setAlignment(Pos.TOP_LEFT);
 
-        playerOne.setStyle("-fx-text-fill: white; -fx-font-size: 30;");
-        playerTwo.setStyle("-fx-text-fill: white; -fx-font-size: 30;");
+        playerOne.setStyle("-fx-text-fill: white; -fx-font-size: 28;");
+        playerTwo.setStyle("-fx-text-fill: white; -fx-font-size: 28;");
 
-        playerName1.setStyle("-fx-text-fill: white; -fx-font-size: 20;");
-        playerName2.setStyle("-fx-text-fill: white; -fx-font-size: 20;");
+        playerName1.setStyle("-fx-text-fill: white; -fx-font-size: 18;");
+        playerName2.setStyle("-fx-text-fill: white; -fx-font-size: 18;");
 
         VBox player1Box = new VBox();
         VBox player2Box = new VBox();
@@ -588,11 +632,36 @@ public class DisplayChampions {
         player2Box.getChildren().add(playerTwo);
         player2Box.getChildren().add(playerName2);
 
-        player1Box.setLayoutX(870);
+        player1Box.setLayoutX(990);
         player1Box.setLayoutY(160);
 
-        player2Box.setLayoutX(1320);
+        player2Box.setLayoutX(1440);
         player2Box.setLayoutY(160);
+
+
+        Image vs = new Image("views/assets/vs.png");
+        ImageView vs_view = new ImageView(vs);
+        vs_view.setFitHeight(52);
+        vs_view.setPreserveRatio(true);
+        Pane vsPane = new Pane(vs_view);
+        vsPane.setLayoutX(1229);
+        vsPane.setLayoutY(149);
+
+        Image lead1 = new Image("views/assets/leader.png");
+        ImageView lead1_view = new ImageView(lead1);
+        lead1_view.setFitHeight(26);
+        lead1_view.setPreserveRatio(true);
+        Pane lead1Pane = new Pane(lead1_view);
+        lead1Pane.setLayoutX(1012);
+        lead1Pane.setLayoutY(25);
+
+        Image lead2 = new Image("views/assets/leader.png");
+        ImageView lead2_view = new ImageView(lead2);
+        lead2_view.setFitHeight(26);
+        lead2_view.setPreserveRatio(true);
+        Pane lead2Pane = new Pane(lead2_view);
+        lead2Pane.setLayoutX(1268);
+        lead2Pane.setLayoutY(210);
 
         root.getChildren().add(gp);
         root.getChildren().add(statsParent);
@@ -616,6 +685,7 @@ public class DisplayChampions {
         root.getChildren().add(vsPane);
         root.getChildren().add(lead1Pane);
         root.getChildren().add(lead2Pane);
+        root.getChildren().add(hintBoxContainer);
 
         return new Scene(root, 1600,900, Color.rgb(33,41,50));
     }
