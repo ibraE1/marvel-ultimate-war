@@ -2,18 +2,19 @@ package views.gui;
 
 import engine.Game;
 import engine.Player;
-import engine.PriorityQueue;
+import exceptions.NotEnoughResourcesException;
+import exceptions.UnallowedMovementException;
+import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import model.abilities.Ability;
 import model.abilities.CrowdControlAbility;
@@ -31,8 +32,6 @@ public class InGame {
     public static Scene create(Game newGame) {
         player1 = newGame.getFirstPlayer();
         player2 = newGame.getSecondPlayer();
-        ArrayList<Champion> firstTeam = player1.getTeam();
-        ArrayList<Champion> secondTeam = player2.getTeam();
 
         TilePane menu = new TilePane(Orientation.HORIZONTAL);
         Button quit = new Button("Quit");
@@ -40,34 +39,11 @@ public class InGame {
         quit.setOnAction(e -> GameApp.onQuit());
         menu.getChildren().add(quit);
 
-        VBox profile1 = new VBox();
-        profile1.getChildren().add(new Label(player1.getName()));
-        if (newGame.isFirstLeaderAbilityUsed())
-            profile1.getChildren().add(new Label("Leader Ability Used"));
-        else
-            profile1.getChildren().add(new Label("Leader Ability Not Used"));
-        VBox team1 = new VBox();
-        for (Champion c : firstTeam) {
-            team1.getChildren().add(champInfo(c));
-        }
-        profile1.getChildren().add(team1);
-
-        VBox profile2 = new VBox();
-        profile2.getChildren().add(new Label(player2.getName()));
-        if (newGame.isSecondLeaderAbilityUsed())
-            profile2.getChildren().add(new Label("Leader Ability Used"));
-        else
-            profile2.getChildren().add(new Label("Leader Ability Not Used"));
-        VBox team2 = new VBox();
-        for (Champion c : secondTeam) {
-            team2.getChildren().add(champInfo(c));
-        }
-        profile2.getChildren().add(team2);
-
-        TilePane profiles = new TilePane(Orientation.HORIZONTAL);
-        profiles.getChildren().add(profile1);
-        profiles.getChildren().add(profile2);
-        profiles.setHgap(15);
+        TabPane profiles = new TabPane();
+        profiles.getTabs().add(new Tab(player1.getName(), createProfile(player1, newGame, 1)));
+        profiles.getTabs().add(new Tab(player2.getName(), createProfile(player2, newGame, 2)));
+        profiles.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        profiles.addEventFilter(KeyEvent.ANY, Event::consume);
         profiles.setPrefWidth(390);
         profiles.setPadding(new Insets(0, 10, 0, 0));
 
@@ -86,61 +62,16 @@ public class InGame {
             rowConst.setFillHeight(true);
             board.getRowConstraints().add(rowConst);
         }
-
-        ArrayList<Node> boardTiles = new ArrayList<>();
-        for (int i = 0; i < newGame.getBoard().length; i++) {
-            for (int j = 0; j < newGame.getBoard()[i].length; j++) {
-                Object tile = newGame.getBoard()[i][j];
-                if (tile != null) {
-                    if (tile instanceof Champion) {
-                        Champion ch = (Champion) tile;
-                        ImageView iv = new ImageView(new Image("views/assets/champions/%s.png".formatted(ch.getName())));
-                        Button btn = new Button();
-                        btn.setGraphic(iv);
-                        GridPane.setConstraints(btn, ch.getLocation().y, 4 - ch.getLocation().x);
-                        GridPane.setHalignment(btn, HPos.CENTER);
-                        btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                        boardTiles.add(btn);
-                    } else if (tile instanceof Cover) {
-                        Cover cv = (Cover) tile;
-                        ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
-                        Button btn = new Button();
-                        btn.setGraphic(iv);
-                        Tooltip tt = new Tooltip("HP: " + cv.getCurrentHP());
-                        tt.setStyle("-fx-font: normal bold 12 Langdon; "
-                                + "-fx-base: #AE3522; "
-                                + "-fx-text-fill: orange;");
-                        btn.setTooltip(tt);
-                        GridPane.setConstraints(btn, cv.getLocation().y, 4 - cv.getLocation().x);
-                        GridPane.setHalignment(btn, HPos.CENTER);
-                        btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                        boardTiles.add(btn);
-                    }
-                } else {
-                    Button btn = new Button();
-                    GridPane.setConstraints(btn, j, 4 - i);
-                    btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                    boardTiles.add(btn);
-                }
-            }
-        }
-        board.getChildren().addAll(boardTiles);
+        board.getChildren().addAll(createBoard(newGame));
 
         VBox right = new VBox();
-        Label l1 = new Label("Current Champ: ");
-        l1.setPrefHeight(20);
-        right.getChildren().add(l1);
-        Label l2 = new Label("" + newGame.getCurrentChampion().getName());
-        l2.setMaxHeight(20);
-        right.getChildren().add(l2);
-        right.getChildren().add(champAbilities(newGame.getCurrentChampion()));
+        right.getChildren().add(currentChampInfo(newGame));
         right.setPrefWidth(400);
-        right.setAlignment(Pos.BASELINE_RIGHT);
         right.setPadding(new Insets(0, 10, 0, 0));
 
         TilePane turn = new TilePane(Orientation.HORIZONTAL);
         ArrayList<ImageView> turnImages = new ArrayList<>();
-        PriorityQueue pq = newGame.getTurnOrder();
+        /*PriorityQueue pq = newGame.getTurnOrder();
         int size = newGame.getTurnOrder().size();
         for (int i = 0; i < size && !pq.isEmpty(); i++) {
             Champion ch = (Champion) (pq.remove());
@@ -155,12 +86,55 @@ public class InGame {
             turn.getChildren().add(new Label(">"));
         }
         turn.getChildren().remove(turn.getChildren().size() - 1);
+        */
         turn.setPrefHeight(160);
         turn.setAlignment(Pos.CENTER);
         turn.setPrefTileWidth(40);
 
         BorderPane root = new BorderPane(board, menu, right, turn, profiles);
         root.setPadding(new Insets(0, 10, 0, 10));
+        root.addEventFilter(KeyEvent.KEY_RELEASED, key -> {
+            switch (key.getCode()) {
+                case UP:
+                    try {
+                        newGame.move(Direction.UP);
+                    } catch (UnallowedMovementException | NotEnoughResourcesException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                case DOWN:
+                    try {
+                        newGame.move(Direction.DOWN);
+                    } catch (UnallowedMovementException | NotEnoughResourcesException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                case LEFT:
+                    try {
+                        newGame.move(Direction.LEFT);
+                    } catch (UnallowedMovementException | NotEnoughResourcesException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                case RIGHT:
+                    try {
+                        newGame.move(Direction.RIGHT);
+                    } catch (UnallowedMovementException | NotEnoughResourcesException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+            }
+            if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
+                newGame.endTurn();
+                right.getChildren().clear();
+                right.getChildren().add(currentChampInfo(newGame));
+            }
+            board.getChildren().clear();
+            board.getChildren().addAll(createBoard(newGame));
+            profiles.getTabs().clear();
+            profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
+            profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+        });
         return new Scene(root, 1600, 900);
     }
 
@@ -230,5 +204,75 @@ public class InGame {
         }
         currentChampAbilities.setAlignment(Pos.TOP_RIGHT);
         return currentChampAbilities;
+    }
+
+    private static VBox createProfile(Player player, Game newGame, int i) {
+        VBox profile = new VBox();
+        if (i == 1 && newGame.isFirstLeaderAbilityUsed())
+            profile.getChildren().add(new Label("Leader Ability Used"));
+        else if (i == 2 && newGame.isSecondLeaderAbilityUsed())
+            profile.getChildren().add(new Label("Leader Ability Used"));
+        else
+            profile.getChildren().add(new Label("Leader Ability Not Used"));
+        VBox team = new VBox();
+        for (Champion c : player.getTeam()) {
+            team.getChildren().add(champInfo(c));
+        }
+        profile.getChildren().add(team);
+        return profile;
+    }
+
+    private static ArrayList<Node> createBoard(Game newGame) {
+        ArrayList<Node> boardTiles = new ArrayList<>();
+        for (int i = 0; i < newGame.getBoard().length; i++) {
+            for (int j = 0; j < newGame.getBoard()[i].length; j++) {
+                Object tile = newGame.getBoard()[i][j];
+                if (tile != null) {
+                    if (tile instanceof Champion) {
+                        Champion ch = (Champion) tile;
+                        ImageView iv = new ImageView(new Image("views/assets/champions/%s.png".formatted(ch.getName())));
+                        Button btn = new Button();
+                        btn.setGraphic(iv);
+                        GridPane.setConstraints(btn, ch.getLocation().y, 4 - ch.getLocation().x);
+                        GridPane.setHalignment(btn, HPos.CENTER);
+                        btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                        boardTiles.add(btn);
+                    } else if (tile instanceof Cover) {
+                        Cover cv = (Cover) tile;
+                        ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
+                        Button btn = new Button();
+                        btn.setGraphic(iv);
+                        Tooltip tt = new Tooltip("HP: " + cv.getCurrentHP());
+                        tt.setStyle("-fx-font: normal bold 12 Langdon; "
+                                + "-fx-base: #AE3522; "
+                                + "-fx-text-fill: orange;");
+                        btn.setTooltip(tt);
+                        GridPane.setConstraints(btn, cv.getLocation().y, 4 - cv.getLocation().x);
+                        GridPane.setHalignment(btn, HPos.CENTER);
+                        btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                        boardTiles.add(btn);
+                    }
+                } else {
+                    Button btn = new Button();
+                    GridPane.setConstraints(btn, j, 4 - i);
+                    btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                    boardTiles.add(btn);
+                }
+            }
+        }
+        return boardTiles;
+    }
+
+    private static VBox currentChampInfo(Game newGame) {
+        VBox info = new VBox();
+        Label l1 = new Label("Current Champ: ");
+        l1.setPrefHeight(20);
+        info.getChildren().add(l1);
+        Label l2 = new Label("" + newGame.getCurrentChampion().getName());
+        l2.setMaxHeight(20);
+        info.getChildren().add(l2);
+        info.getChildren().add(champAbilities(newGame.getCurrentChampion()));
+        info.setAlignment(Pos.BASELINE_RIGHT);
+        return info;
     }
 }
