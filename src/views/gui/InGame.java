@@ -2,6 +2,8 @@ package views.gui;
 
 import engine.Game;
 import engine.Player;
+import exceptions.ChampionDisarmedException;
+import exceptions.InvalidTargetException;
 import exceptions.NotEnoughResourcesException;
 import exceptions.UnallowedMovementException;
 import javafx.event.Event;
@@ -38,6 +40,9 @@ public class InGame {
         quit.setPrefSize(100, 50);
         quit.setOnAction(e -> GameApp.onQuit());
         menu.getChildren().add(quit);
+        ToggleButton attack = new ToggleButton("Attack");
+        attack.setPrefSize(100, 50);
+        menu.getChildren().add(attack);
 
         TabPane profiles = new TabPane();
         profiles.getTabs().add(new Tab(player1.getName(), createProfile(player1, newGame, 1)));
@@ -94,35 +99,11 @@ public class InGame {
         BorderPane root = new BorderPane(board, menu, right, turn, profiles);
         root.setPadding(new Insets(0, 10, 0, 10));
         root.addEventFilter(KeyEvent.KEY_RELEASED, key -> {
-            switch (key.getCode()) {
-                case UP:
-                    try {
-                        newGame.move(Direction.UP);
-                    } catch (UnallowedMovementException | NotEnoughResourcesException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                case DOWN:
-                    try {
-                        newGame.move(Direction.DOWN);
-                    } catch (UnallowedMovementException | NotEnoughResourcesException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                case LEFT:
-                    try {
-                        newGame.move(Direction.LEFT);
-                    } catch (UnallowedMovementException | NotEnoughResourcesException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                case RIGHT:
-                    try {
-                        newGame.move(Direction.RIGHT);
-                    } catch (UnallowedMovementException | NotEnoughResourcesException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
+            if (!attack.isSelected())
+                handleMove(key, newGame);
+            else {
+                attack.selectedProperty().setValue(false);
+                handleAttack(key, newGame);
             }
             if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
                 newGame.endTurn();
@@ -274,5 +255,71 @@ public class InGame {
         info.getChildren().add(champAbilities(newGame.getCurrentChampion()));
         info.setAlignment(Pos.BASELINE_RIGHT);
         return info;
+    }
+
+    private static void handleMove(KeyEvent key, Game newGame) {
+        switch (key.getCode()) {
+            case UP:
+                try {
+                    newGame.move(Direction.UP);
+                } catch (UnallowedMovementException | NotEnoughResourcesException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case DOWN:
+                try {
+                    newGame.move(Direction.DOWN);
+                } catch (UnallowedMovementException | NotEnoughResourcesException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case LEFT:
+                try {
+                    newGame.move(Direction.LEFT);
+                } catch (UnallowedMovementException | NotEnoughResourcesException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case RIGHT:
+                try {
+                    newGame.move(Direction.RIGHT);
+                } catch (UnallowedMovementException | NotEnoughResourcesException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+        }
+    }
+
+    private static void handleAttack(KeyEvent key, Game newGame) {
+        switch (key.getCode()) {
+            case UP:
+                try {
+                    newGame.attack(Direction.UP);
+                } catch (InvalidTargetException | ChampionDisarmedException | NotEnoughResourcesException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case DOWN:
+                try {
+                    newGame.attack(Direction.DOWN);
+                } catch (InvalidTargetException | ChampionDisarmedException | NotEnoughResourcesException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case LEFT:
+                try {
+                    newGame.attack(Direction.LEFT);
+                } catch (InvalidTargetException | ChampionDisarmedException | NotEnoughResourcesException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case RIGHT:
+                try {
+                    newGame.attack(Direction.RIGHT);
+                } catch (InvalidTargetException | ChampionDisarmedException | NotEnoughResourcesException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+        }
     }
 }
