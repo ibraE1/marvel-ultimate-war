@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class EnterPlayerNames {
@@ -88,7 +89,7 @@ public class EnterPlayerNames {
         root.getChildren().add(vbox);
         root.getChildren().add(buttons);
 
-        Scene scene = new Scene(root, 1600, 900, GameApp.getScene_color());
+        Scene scene = new Scene(root, 1600, 900, Color.rgb(33,41,50));
 
         buttons.requestFocus();
 

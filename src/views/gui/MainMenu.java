@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class MainMenu {
@@ -59,6 +60,6 @@ public class MainMenu {
         Background bGround = new Background(bImg);
         root.setBackground(bGround);
         root.getChildren().add(buttons);
-        return new Scene(root, 1600, 900, GameApp.getScene_color());
+        return new Scene(root, 1600, 900, Color.rgb(33,41,50));
     }
 }

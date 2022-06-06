@@ -2,10 +2,7 @@ package views.gui;
 
 import engine.Game;
 import engine.Player;
-import exceptions.ChampionDisarmedException;
-import exceptions.InvalidTargetException;
-import exceptions.NotEnoughResourcesException;
-import exceptions.UnallowedMovementException;
+import exceptions.*;
 import javafx.event.Event;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -95,6 +92,22 @@ public class InGame {
         turn.setPrefHeight(160);
         turn.setAlignment(Pos.CENTER);
         turn.setPrefTileWidth(40);
+
+        Button leaderAbility = new Button("Use Leader Ability");
+        leaderAbility.setPrefHeight(50);
+        leaderAbility.setOnAction(e -> {
+            try {
+                newGame.useLeaderAbility();
+            } catch (LeaderNotCurrentException | LeaderAbilityAlreadyUsedException ex) {
+                throw new RuntimeException(ex);
+            }
+            board.getChildren().clear();
+            board.getChildren().addAll(createBoard(newGame));
+            profiles.getTabs().clear();
+            profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
+            profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+        });
+        menu.getChildren().add(leaderAbility);
 
         BorderPane root = new BorderPane(board, menu, right, turn, profiles);
         root.setPadding(new Insets(0, 10, 0, 10));

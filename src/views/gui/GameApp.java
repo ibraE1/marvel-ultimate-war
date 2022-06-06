@@ -14,8 +14,6 @@ import static engine.Game.loadAbilities;
 import static engine.Game.loadChampions;
 
 public class GameApp extends Application {
-
-    private static final Color scene_color = Color.rgb(33,41,50);
     private static final Stage stage = new Stage();
     private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private final int screenHeight = screenSize.height;
@@ -56,9 +54,5 @@ public class GameApp extends Application {
     public static void onReady(Player player1, Player player2) throws IOException {
         Game newGame = new Game(player1, player2);
         stage.setScene(InGame.create(newGame));
-    }
-
-    public static Color getScene_color() {
-        return scene_color;
     }
 }
