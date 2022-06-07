@@ -29,6 +29,15 @@ import java.util.ArrayList;
 import static engine.Game.getAvailableChampions;
 
 public class DisplayChampions {
+
+    private static final HBox iconsContainer1 = new HBox();
+    private static final HBox iconsContainer2 = new HBox();
+    private static final HBox iconsContainer3 = new HBox();
+    private static final HBox iconsContainer4 = new HBox();
+    private static final HBox iconsContainer5 = new HBox();
+    private static final HBox iconsContainer6 = new HBox();
+    private static final ArrayList<HBox> iconsContainerArr1 = new ArrayList<>();
+    private static final ArrayList<HBox> iconsContainerArr2 = new ArrayList<>();
     private static final Color transparentBlack = new Color(0,0,0,0.4);
     private static final Group root = new Group();
     private static final VBox nameBox = new VBox();
@@ -55,6 +64,43 @@ public class DisplayChampions {
     private static final VBox hintBox = new VBox();
     private static final VBox hintBoxContainer = new VBox();
 
+    private static final Pane lead1Pane = new Pane();
+    private static final Pane lead2Pane = new Pane();
+
+
+    public static void chooseLeader() {
+        for (int i = 0; i < 3; i++) {
+
+            HBox actionSite1 = iconsContainerArr1.get(i);
+            HBox actionSite2 = iconsContainerArr2.get(i);
+
+
+            actionSite1.styleProperty().bind(Bindings.when(actionSite1.hoverProperty()).then("-fx-cursor: hand;-fx-border-radius: 8px; -fx-border-color: white")
+                    .otherwise("-fx-cursor: default;-fx-border-radius: 8px; -fx-border-color: white"));
+
+            actionSite2.styleProperty().bind(Bindings.when(actionSite2.hoverProperty()).then("-fx-cursor: hand;-fx-border-radius: 8px; -fx-border-color: white")
+                    .otherwise("-fx-cursor: default;-fx-border-radius: 8px; -fx-border-color: white"));
+
+            int finalI = i;
+            actionSite1.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+                if (player1.getLeader() == null) {
+                    player1.setLeader(player1.getTeam().get(finalI));
+                    root.getChildren().add(lead1Pane);
+                    lead1Pane.setLayoutX(actionSite1.getLayoutX() + 27);
+                    lead1Pane.setLayoutY(25);
+                }
+            });
+            actionSite2.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+                if (player2.getLeader() == null) {
+                    player2.setLeader(player2.getTeam().get(finalI));
+                    root.getChildren().add(lead2Pane);
+                    lead2Pane.setLayoutX(actionSite2.getLayoutX() + 27);
+                    lead2Pane.setLayoutY(210);
+                }
+            });
+        }
+    }
+
     public static void showHint() {
         hintBoxContainer.getChildren().clear();
         hintBox.getChildren().clear();
@@ -70,13 +116,13 @@ public class DisplayChampions {
         String hintString = "";
 
         if (playerTurn == 0) {
-            hintString = "Each player has to choose 3 champions\n\n%s, choose your leader".formatted(player1Name);
+            hintString = "Each player has to choose 3 champions\n\n%s, choose a champion".formatted(player1Name);
         } else if (playerTurn == 1) {
-            hintString = "%s, choose your leader".formatted(player2Name);
-        } else if (playerTurn == 2) {
-            hintString = "%s, choose a champion".formatted(player1Name);
-        } else if (playerTurn == 3) {
             hintString = "%s, choose a champion".formatted(player2Name);
+        } else if (playerTurn == 2) {
+            hintString = "%s, choose another champion".formatted(player1Name);
+        } else if (playerTurn == 3) {
+            hintString = "%s, choose another champion".formatted(player2Name);
         } else if (playerTurn == 4) {
             hintString = "%s, choose one last champion".formatted(player1Name);
         } else if (playerTurn == 5) {
@@ -121,16 +167,9 @@ public class DisplayChampions {
 
     public static void chooseChampions(Button btn, int i) {
         if (playerTurn % 2 == 0) {
-            if (playerTurn == 0) {
-                player1.setLeader(getAvailableChampions().get(i));
-            }
             player1.getTeam().add(getAvailableChampions().get(i));
             btn.setDisable(true);
-
         } else {
-            if (playerTurn == 1){
-                player2.setLeader(getAvailableChampions().get(i));
-            }
             player2.getTeam().add(getAvailableChampions().get(i));
             btn.setDisable(true);
         }
@@ -418,17 +457,13 @@ public class DisplayChampions {
         ImageView lead1_view = new ImageView(lead1);
         lead1_view.setFitHeight(26);
         lead1_view.setPreserveRatio(true);
-        Pane lead1Pane = new Pane(lead1_view);
-        lead1Pane.setLayoutX(1037);
-        lead1Pane.setLayoutY(25);
+        lead1Pane.getChildren().add(lead1_view);
 
         Image lead2 = new Image("views/assets/leader.png");
         ImageView lead2_view = new ImageView(lead2);
         lead2_view.setFitHeight(26);
         lead2_view.setPreserveRatio(true);
-        Pane lead2Pane = new Pane(lead2_view);
-        lead2Pane.setLayoutX(1293);
-        lead2Pane.setLayoutY(210);
+        lead2Pane.getChildren().add(lead2_view);
 
         Line hl = new Line();
         hl.setStartX(465);
@@ -471,6 +506,7 @@ public class DisplayChampions {
                 ImageView icon_view = new ImageView(icon);
                 icon_view.setFitWidth(80);
                 icon_view.setFitHeight(80);
+
                 Pane pn = new Pane();
                 pn.setPrefSize(80,80);
                 pn.getChildren().add(icon_view);
@@ -488,8 +524,13 @@ public class DisplayChampions {
                         b.setDisable(true);
                     }
                     ready.setDisable(false);
+                    chooseLeader();
                 }
+                System.out.println(playerTurn);
                 showHint();
+                System.out.println("--------------------------");
+                System.out.println(playerTurn);
+                System.out.println(iconsContainerArr2.get(2));
             });
         }
 
@@ -538,7 +579,7 @@ public class DisplayChampions {
                     System.out.print(player2.getTeam().get(i-1).getName() + ", ");
                 }
             }
-            System.out.println("\nPlayer 1: " + player1 + "and Player 2: " + player2);
+            System.out.println("\nPlayer 1: " + player1Name + "and Player 2: " + player2Name);
             System.out.println(playerTurn);
         });
 
@@ -597,19 +638,20 @@ public class DisplayChampions {
         player2Team.setLayoutX(1266);
         player2Team.setLayoutY(240);
 
-        HBox iconsContainer1 = new HBox();
-        HBox iconsContainer2 = new HBox();
-        HBox iconsContainer3 = new HBox();
-        HBox iconsContainer4 = new HBox();
-        HBox iconsContainer5 = new HBox();
-        HBox iconsContainer6 = new HBox();
-
         iconsContainer1.setPrefSize(80,80);
         iconsContainer2.setPrefSize(80,80);
         iconsContainer3.setPrefSize(80,80);
         iconsContainer4.setPrefSize(80,80);
         iconsContainer5.setPrefSize(80,80);
         iconsContainer6.setPrefSize(80,80);
+
+        iconsContainerArr1.add(iconsContainer1);
+        iconsContainerArr1.add(iconsContainer2);
+        iconsContainerArr1.add(iconsContainer3);
+        iconsContainerArr2.add(iconsContainer4);
+        iconsContainerArr2.add(iconsContainer5);
+        iconsContainerArr2.add(iconsContainer6);
+
 
         iconsContainer1.setLayoutX(1010);
         iconsContainer1.setLayoutY(55);
@@ -688,9 +730,8 @@ public class DisplayChampions {
         root.getChildren().add(player1Box);
         root.getChildren().add(player2Box);
         root.getChildren().add(vsPane);
-        root.getChildren().add(lead1Pane);
-        root.getChildren().add(lead2Pane);
         root.getChildren().add(hintBoxContainer);
+//        root.getChildren().add(test);
 
         return new Scene(root, 1600,900, Color.rgb(33,41,50));
     }

@@ -3,8 +3,9 @@ package views.gui;
 import engine.Game;
 import engine.Player;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -23,8 +24,19 @@ public class GameApp extends Application {
     public void start(Stage Ignore) throws IOException {
         stage.getIcons().add(new Image("views/assets/icon.png"));
         stage.setResizable(false);
+
+        // Middle of primary screen
+
 //        stage.setX((screenWidth - 1600f) / 2);
 //        stage.setY((screenHeight - 900f) / 2);
+
+        // Middle of secondary screen
+
+        Rectangle2D bounds = Screen.getScreens().get(1).getVisualBounds();
+        stage.setX(bounds.getMinX() + (bounds.getWidth() - 1600f) / 2);
+        stage.setY(bounds.getMinY() + (bounds.getHeight() - 900f) / 2);
+
+
         stage.setTitle("Marvel Ultimate War");
         stage.setScene(MainMenu.create());
         stage.show();
