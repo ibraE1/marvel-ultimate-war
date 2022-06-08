@@ -22,7 +22,12 @@ import model.world.*;
 
 import java.util.ArrayList;
 
+import static views.gui.GameApp.popUp;
+
 public class InGame {
+
+    static boolean singleTarget = false;
+    static int index;
     static Player player1;
     static Player player2;
     static Button[][] gameBoard = new Button[5][5];
@@ -98,7 +103,7 @@ public class InGame {
             try {
                 newGame.useLeaderAbility();
             } catch (LeaderNotCurrentException | LeaderAbilityAlreadyUsedException ex) {
-                throw new RuntimeException(ex);
+                popUp(ex);
             }
             board.getChildren().clear();
             board.getChildren().addAll(createBoard(newGame));
@@ -120,7 +125,7 @@ public class InGame {
             try {
                 handleAbility(key, newGame);
             } catch (AbilityUseException | CloneNotSupportedException | NotEnoughResourcesException e) {
-                throw new RuntimeException(e);
+                popUp(e);
             }
             if (newGame.checkGameOver() != null)
                 GameApp.onGameOver(newGame.checkGameOver());
@@ -135,6 +140,31 @@ public class InGame {
             profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
             profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
         });
+
+
+        ArrayList<Ability> abs = newGame.getCurrentChampion().getAbilities();
+        for (int k = 0; k < 5; k++) {
+            System.out.println("a");
+            for (int j = 0; j < 5; j++) {
+                System.out.println("b");
+                final int finalK = getButtonX(gameBoard[k][j]);
+                final int finalJ = getButtonY(gameBoard[k][j]);
+
+                gameBoard[k][j].addEventFilter(MouseEvent.MOUSE_CLICKED , e -> {
+                    try {
+                        if (singleTarget) {
+                            newGame.castAbility(abs.get(index), finalK, finalJ);
+                            singleTarget = false;
+                        }
+                    } catch (NotEnoughResourcesException | CloneNotSupportedException | InvalidTargetException |
+                             AbilityUseException ex) {
+                        popUp(ex);
+                    }
+                });
+            }
+        }
+
+
         return new Scene(root, 1600, 900);
     }
 
@@ -309,28 +339,28 @@ public class InGame {
                 try {
                     newGame.move(Direction.UP);
                 } catch (UnallowedMovementException | NotEnoughResourcesException e) {
-                    throw new RuntimeException(e);
+                    popUp(e);
                 }
                 break;
             case DOWN:
                 try {
                     newGame.move(Direction.DOWN);
                 } catch (UnallowedMovementException | NotEnoughResourcesException e) {
-                    throw new RuntimeException(e);
+                    popUp(e);
                 }
                 break;
             case LEFT:
                 try {
                     newGame.move(Direction.LEFT);
                 } catch (UnallowedMovementException | NotEnoughResourcesException e) {
-                    throw new RuntimeException(e);
+                    popUp(e);
                 }
                 break;
             case RIGHT:
                 try {
                     newGame.move(Direction.RIGHT);
                 } catch (UnallowedMovementException | NotEnoughResourcesException e) {
-                    throw new RuntimeException(e);
+                    popUp(e);
                 }
                 break;
         }
@@ -342,28 +372,28 @@ public class InGame {
                 try {
                     newGame.attack(Direction.UP);
                 } catch (InvalidTargetException | ChampionDisarmedException | NotEnoughResourcesException e) {
-                    throw new RuntimeException(e);
+                    popUp(e);
                 }
                 break;
             case DOWN:
                 try {
                     newGame.attack(Direction.DOWN);
                 } catch (InvalidTargetException | ChampionDisarmedException | NotEnoughResourcesException e) {
-                    throw new RuntimeException(e);
+                    popUp(e);
                 }
                 break;
             case LEFT:
                 try {
                     newGame.attack(Direction.LEFT);
                 } catch (InvalidTargetException | ChampionDisarmedException | NotEnoughResourcesException e) {
-                    throw new RuntimeException(e);
+                    popUp(e);
                 }
                 break;
             case RIGHT:
                 try {
                     newGame.attack(Direction.RIGHT);
                 } catch (InvalidTargetException | ChampionDisarmedException | NotEnoughResourcesException e) {
-                    throw new RuntimeException(e);
+                    popUp(e);
                 }
                 break;
         }
@@ -378,43 +408,15 @@ public class InGame {
         } else if (abs.get(i).getCastArea() == AreaOfEffect.SURROUND) {
             newGame.castAbility(abs.get(i));
         } else if (abs.get(i).getCastArea() == AreaOfEffect.SINGLETARGET) {
-            System.out.println("k");
-            for (int k = 0; k < 5; k++) {
-                System.out.println("a");
-                for (int j = 0; j < 5; j++) {
-                    System.out.println("b");
-                    final int finalK = getButtonX(gameBoard[k][j]);
-                    final int finalJ = getButtonY(gameBoard[k][j]);
-                    Button btn = gameBoard[k][j];
-
-                    btn.addEventFilter(MouseEvent.MOUSE_CLICKED , e -> {
-                        System.out.println("abl el try");
-                        try {
-                            System.out.println("ba3d");
-                            newGame.castAbility(abs.get(i), finalK, finalJ);
-                            System.out.println("BA3D");
-                        } catch (Exception ex) {
-                            System.out.println("BAAAA3D");
-                            throw new RuntimeException(ex);
-                        }
-
-//                        createBoard(newGame);
-                    });
-                }
-            }
+            singleTarget = true;
+            index = i;
         }
     }
     public static void handleAbility(KeyEvent key, Game newGame) throws AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
         switch (key.getCode()) {
-            case DIGIT1:
-                abilityHelper(newGame, 0);
-                break;
-            case DIGIT2:
-                abilityHelper(newGame, 1);
-                break;
-            case DIGIT3:
-                abilityHelper(newGame, 2);
-                break;
+            case DIGIT1 -> abilityHelper(newGame, 0);
+            case DIGIT2 -> abilityHelper(newGame, 1);
+            case DIGIT3 -> abilityHelper(newGame, 2);
         }
     }
 }

@@ -552,7 +552,7 @@ public class DisplayChampions {
             try {
                 GameApp.onReady(player1, player2);
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                GameApp.popUp(ex);
             }
         });
 
