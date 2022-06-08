@@ -18,6 +18,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
+import javafx.stage.Screen;
 import model.abilities.Ability;
 import model.world.AntiHero;
 import model.world.Hero;
@@ -30,6 +31,7 @@ import static engine.Game.getAvailableChampions;
 
 public class DisplayChampions {
 
+    private static final Button ready = new Button("Ready");
     private static final HBox iconsContainer1 = new HBox();
     private static final HBox iconsContainer2 = new HBox();
     private static final HBox iconsContainer3 = new HBox();
@@ -88,6 +90,10 @@ public class DisplayChampions {
                     root.getChildren().add(lead1Pane);
                     lead1Pane.setLayoutX(actionSite1.getLayoutX() + 27);
                     lead1Pane.setLayoutY(25);
+                    showHint();
+                    if (player2.getLeader() != null) {
+                        ready.setDisable(false);
+                    }
                 }
             });
             actionSite2.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
@@ -96,6 +102,10 @@ public class DisplayChampions {
                     root.getChildren().add(lead2Pane);
                     lead2Pane.setLayoutX(actionSite2.getLayoutX() + 27);
                     lead2Pane.setLayoutY(210);
+                    showHint();
+                    if (player1.getLeader() != null) {
+                        ready.setDisable(false);
+                    }
                 }
             });
         }
@@ -128,7 +138,11 @@ public class DisplayChampions {
         } else if (playerTurn == 5) {
             hintString = "%s, choose one last champion".formatted(player2Name);
         } else if (playerTurn == 6) {
-            root.getChildren().remove(hintBoxContainer);
+            if (player1.getLeader() == null || player2.getLeader() == null) {
+                hintString = "Choose your leaders";
+            } else {
+                root.getChildren().remove(hintBoxContainer);
+            }
         }
 
         Label hintTitle = new Label("Hint");
@@ -212,10 +226,6 @@ public class DisplayChampions {
         Label abilityTitle = new Label("Champion Abilities");
         abilityTitle.setStyle("-fx-font-size: 32; -fx-text-fill: white");
         abilityTitleBox.getChildren().add(abilityTitle);
-
-        stats.setId("vbox-left");
-        abilityTitle.setId("ability-title");
-        abilityDisplay.setId("vbox-bottom");
 
         HBox hpBox = new HBox();
         HBox speedBox = new HBox();
@@ -483,9 +493,6 @@ public class DisplayChampions {
         vl.setStrokeWidth(2);
         vl.setOpacity(0.6);
 
-        Button ready = new Button("Ready");
-        statsParent.setId("stats-parent");
-
         for (int count = 0; count < avatars.size(); count++) {
             int i = count;
             avatars.get(i).addEventFilter(MouseEvent.MOUSE_ENTERED , e -> {
@@ -498,7 +505,6 @@ public class DisplayChampions {
                 champPreview.getChildren().clear();
                 numbers.getChildren().clear();
                 onHover(i);
-
             });
             avatars.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
                 chooseChampions(avatars.get(i), i);
@@ -523,14 +529,9 @@ public class DisplayChampions {
                     for (Button b : avatars) {
                         b.setDisable(true);
                     }
-                    ready.setDisable(false);
                     chooseLeader();
                 }
-                System.out.println(playerTurn);
                 showHint();
-                System.out.println("--------------------------");
-                System.out.println(playerTurn);
-                System.out.println(iconsContainerArr2.get(2));
             });
         }
 

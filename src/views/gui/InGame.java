@@ -14,11 +14,9 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import model.abilities.Ability;
-import model.abilities.CrowdControlAbility;
-import model.abilities.DamagingAbility;
-import model.abilities.HealingAbility;
+import model.abilities.*;
 import model.effects.Effect;
 import model.world.*;
 
@@ -27,6 +25,10 @@ import java.util.ArrayList;
 public class InGame {
     static Player player1;
     static Player player2;
+
+    static ArrayList<Node> boardTiles = new ArrayList<>();
+
+    static Button[][] gameBoard = new Button[5][5];
 
     public static Scene create(Game newGame) {
         player1 = newGame.getFirstPlayer();
@@ -112,12 +114,19 @@ public class InGame {
         BorderPane root = new BorderPane(board, menu, right, turn, profiles);
         root.setPadding(new Insets(0, 10, 0, 10));
         root.addEventFilter(KeyEvent.KEY_RELEASED, key -> {
-            if (!attack.isSelected())
+            if (!attack.isSelected()) {
                 handleMove(key, newGame);
-            else {
+            } else if (attack.isSelected()){
                 attack.selectedProperty().setValue(false);
                 handleAttack(key, newGame);
             }
+
+            try {
+                handleAbility(key, newGame);
+            } catch (AbilityUseException | CloneNotSupportedException | NotEnoughResourcesException e) {
+                throw new RuntimeException(e);
+            }
+
             if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
                 newGame.endTurn();
                 right.getChildren().clear();
@@ -217,7 +226,6 @@ public class InGame {
     }
 
     private static ArrayList<Node> createBoard(Game newGame) {
-        ArrayList<Node> boardTiles = new ArrayList<>();
         for (int i = 0; i < newGame.getBoard().length; i++) {
             for (int j = 0; j < newGame.getBoard()[i].length; j++) {
                 Object tile = newGame.getBoard()[i][j];
@@ -231,6 +239,7 @@ public class InGame {
                         GridPane.setHalignment(btn, HPos.CENTER);
                         btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                         boardTiles.add(btn);
+                        gameBoard[i][j] = btn;
                     } else if (tile instanceof Cover) {
                         Cover cv = (Cover) tile;
                         ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
@@ -245,12 +254,14 @@ public class InGame {
                         GridPane.setHalignment(btn, HPos.CENTER);
                         btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                         boardTiles.add(btn);
+                        gameBoard[i][j] = btn;
                     }
                 } else {
                     Button btn = new Button();
                     GridPane.setConstraints(btn, j, 4 - i);
                     btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                     boardTiles.add(btn);
+                    gameBoard[i][j] = btn;
                 }
             }
         }
@@ -332,6 +343,45 @@ public class InGame {
                 } catch (InvalidTargetException | ChampionDisarmedException | NotEnoughResourcesException e) {
                     throw new RuntimeException(e);
                 }
+                break;
+        }
+    }
+    public static void abilityHelper(Game newGame, int i) throws AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
+        ArrayList<Ability> abs = newGame.getCurrentChampion().getAbilities();
+
+        if (abs.get(i).getCastArea() == AreaOfEffect.SELFTARGET) {
+            newGame.castAbility(abs.get(i));
+        } else if (abs.get(i).getCastArea() == AreaOfEffect.TEAMTARGET) {
+            newGame.castAbility(abs.get(i));
+        } else if (abs.get(i).getCastArea() == AreaOfEffect.SURROUND) {
+            newGame.castAbility(abs.get(i));
+        } else if (abs.get(i).getCastArea() == AreaOfEffect.SINGLETARGET) {
+            for (int k = 0; k < 5; k++) {
+                for (int j = 0; j < 5; j++) {
+                    int finalK = k;
+                    int finalJ = j;
+                    gameBoard[k][j].addEventFilter(MouseEvent.MOUSE_CLICKED , e -> {
+                        try {
+                            newGame.castAbility(abs.get(i), 4 - finalK, finalJ);
+                        } catch (NotEnoughResourcesException | InvalidTargetException | CloneNotSupportedException |
+                                 AbilityUseException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    });
+                }
+            }
+        }
+    }
+    public static void handleAbility(KeyEvent key, Game newGame) throws AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
+        switch (key.getCode()) {
+            case DIGIT1:
+                abilityHelper(newGame, 0);
+                break;
+            case DIGIT2:
+                abilityHelper(newGame, 1);
+                break;
+            case DIGIT3:
+                abilityHelper(newGame, 2);
                 break;
         }
     }

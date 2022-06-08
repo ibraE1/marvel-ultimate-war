@@ -25,17 +25,16 @@ public class GameApp extends Application {
         stage.getIcons().add(new Image("views/assets/icon.png"));
         stage.setResizable(false);
 
-        // Middle of primary screen
-
-//        stage.setX((screenWidth - 1600f) / 2);
-//        stage.setY((screenHeight - 900f) / 2);
-
-        // Middle of secondary screen
-
-        Rectangle2D bounds = Screen.getScreens().get(1).getVisualBounds();
-        stage.setX(bounds.getMinX() + (bounds.getWidth() - 1600f) / 2);
-        stage.setY(bounds.getMinY() + (bounds.getHeight() - 900f) / 2);
-
+        if (Screen.getScreens().size() > 1) {
+            // Middle of secondary screen
+            Rectangle2D bounds = Screen.getScreens().get(1).getVisualBounds();
+            stage.setX(bounds.getMinX() + (bounds.getWidth() - 1600f) / 2);
+            stage.setY(bounds.getMinY() + (bounds.getHeight() - 900f) / 2);
+        } else {
+            // Middle of primary screen
+            stage.setX((screenWidth - 1600f) / 2);
+            stage.setY((screenHeight - 900f) / 2);
+        }
 
         stage.setTitle("Marvel Ultimate War");
         stage.setScene(MainMenu.create());
