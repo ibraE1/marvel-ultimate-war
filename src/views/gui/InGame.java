@@ -117,13 +117,13 @@ public class InGame {
                 attack.selectedProperty().setValue(false);
                 handleAttack(key, newGame);
             }
-
             try {
                 handleAbility(key, newGame);
             } catch (AbilityUseException | CloneNotSupportedException | NotEnoughResourcesException e) {
                 throw new RuntimeException(e);
             }
-
+            if (newGame.checkGameOver() != null)
+                GameApp.onGameOver(newGame.checkGameOver());
             if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
                 newGame.endTurn();
                 right.getChildren().clear();

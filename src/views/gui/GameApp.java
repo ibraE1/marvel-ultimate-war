@@ -24,18 +24,8 @@ public class GameApp extends Application {
     public void start(Stage Ignore) throws IOException {
         stage.getIcons().add(new Image("views/assets/icon.png"));
         stage.setResizable(false);
-
-        if (Screen.getScreens().size() > 1) {
-            // Middle of secondary screen
-            Rectangle2D bounds = Screen.getScreens().get(1).getVisualBounds();
-            stage.setX(bounds.getMinX() + (bounds.getWidth() - 1600f) / 2);
-            stage.setY(bounds.getMinY() + (bounds.getHeight() - 900f) / 2);
-        } else {
-            // Middle of primary screen
-            stage.setX((screenWidth - 1600f) / 2);
-            stage.setY((screenHeight - 900f) / 2);
-        }
-
+        stage.setX((screenWidth - 1600f) / 2);
+        stage.setY((screenHeight - 900f) / 2);
         stage.setTitle("Marvel Ultimate War");
         stage.setScene(MainMenu.create());
         stage.show();
@@ -65,5 +55,9 @@ public class GameApp extends Application {
     public static void onReady(Player player1, Player player2) throws IOException {
         Game newGame = new Game(player1, player2);
         stage.setScene(InGame.create(newGame));
+    }
+
+    public static void onGameOver(Player winner) {
+        stage.setScene(GameOver.create(winner));
     }
 }
