@@ -2,6 +2,7 @@ package views.gui;
 
 import engine.Game;
 import engine.Player;
+import engine.PriorityQueue;
 import exceptions.*;
 import javafx.event.Event;
 import javafx.geometry.HPos;
@@ -13,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -36,9 +38,23 @@ public class InGame {
         quit.setPrefSize(100, 50);
         quit.setOnAction(e -> GameApp.onQuit());
         menu.getChildren().add(quit);
-        ToggleButton attack = new ToggleButton("Attack");
-        attack.setPrefSize(100, 50);
-        menu.getChildren().add(attack);
+        ArrayList<ImageView> turnImages = new ArrayList<>();
+        int size = newGame.getTurnOrder().size();
+        PriorityQueue pq = new PriorityQueue(size);
+        for (int i = 0; i < size; i++) {
+            Champion ch = (Champion) (newGame.getTurnOrder().remove());
+            Image img = new Image("views/assets/champions/%s.png".formatted(ch.getName()));
+            pq.insert(ch);
+            ImageView iv = new ImageView(img);
+            iv.setFitHeight(40);
+            iv.setFitWidth(40);
+            turnImages.add(iv);
+        }
+        for (int i = 0; i < size; i++)
+            newGame.getTurnOrder().insert(pq.remove());
+        menu.getChildren().add(createTurnOrder(turnImages));
+        menu.setMaxHeight(160);
+        menu.setAlignment(Pos.BASELINE_LEFT);
 
         TabPane profiles = new TabPane();
         profiles.getTabs().add(new Tab(player1.getName(), createProfile(player1, newGame, 1)));
@@ -70,28 +86,10 @@ public class InGame {
         right.setPrefWidth(400);
         right.setPadding(new Insets(0, 10, 0, 0));
 
-        TilePane turn = new TilePane(Orientation.HORIZONTAL);
-        ArrayList<ImageView> turnImages = new ArrayList<>();
-        /*PriorityQueue pq = newGame.getTurnOrder();
-        int size = newGame.getTurnOrder().size();
-        for (int i = 0; i < size && !pq.isEmpty(); i++) {
-            Champion ch = (Champion) (pq.remove());
-            Image img = new Image("views/assets/champions/%s.png".formatted(ch.getName()));
-            ImageView iv = new ImageView(img);
-            iv.setFitHeight(40);
-            iv.setFitWidth(40);
-            turnImages.add(iv);
-        }
-        for (ImageView iv : turnImages) {
-            turn.getChildren().add(iv);
-            turn.getChildren().add(new Label(">"));
-        }
-        turn.getChildren().remove(turn.getChildren().size() - 1);
-        */
-        turn.setPrefHeight(160);
-        turn.setAlignment(Pos.CENTER);
-        turn.setPrefTileWidth(40);
-
+        HBox HUD = new HBox();
+        ToggleButton attack = new ToggleButton("Attack");
+        attack.setPrefSize(100, 50);
+        HUD.getChildren().add(attack);
         Button leaderAbility = new Button("Use Leader Ability");
         leaderAbility.setPrefHeight(50);
         leaderAbility.setOnAction(e -> {
@@ -106,11 +104,15 @@ public class InGame {
             profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
             profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
         });
-        menu.getChildren().add(leaderAbility);
+        HUD.getChildren().add(leaderAbility);
+        HUD.setMaxHeight(160);
+        HUD.setAlignment(Pos.BASELINE_LEFT);
 
-        BorderPane root = new BorderPane(board, menu, right, turn, profiles);
+        BorderPane root = new BorderPane(board, menu, right, HUD, profiles);
         root.setPadding(new Insets(0, 10, 0, 10));
         root.addEventFilter(KeyEvent.KEY_RELEASED, key -> {
+            if (key.getCode() == KeyCode.TAB)
+                return;
             if (!attack.isSelected()) {
                 handleMove(key, newGame);
             } else if (attack.isSelected()){
@@ -128,6 +130,9 @@ public class InGame {
                 newGame.endTurn();
                 right.getChildren().clear();
                 right.getChildren().add(currentChampInfo(newGame));
+                turnImages.add(turnImages.remove(0));
+                menu.getChildren().remove(menu.getChildren().size()-1);
+                menu.getChildren().add(createTurnOrder(turnImages));
             }
             board.getChildren().clear();
             board.getChildren().addAll(createBoard(newGame));
@@ -301,6 +306,19 @@ public class InGame {
         info.getChildren().add(champAbilities(newGame.getCurrentChampion()));
         info.setAlignment(Pos.BASELINE_RIGHT);
         return info;
+    }
+
+    public static TilePane createTurnOrder(ArrayList<ImageView> turnImages) {
+        TilePane turn = new TilePane(Orientation.HORIZONTAL);
+        for (ImageView iv : turnImages) {
+            turn.getChildren().add(iv);
+            turn.getChildren().add(new Label(">"));
+        }
+        turn.getChildren().remove(turn.getChildren().size() - 1);
+        turn.setPrefTileWidth(40);
+        turn.setMaxHeight(40);
+        turn.setPrefWidth(12*40);
+        return turn;
     }
 
     private static void handleMove(KeyEvent key, Game newGame) {
