@@ -25,9 +25,6 @@ import java.util.ArrayList;
 public class InGame {
     static Player player1;
     static Player player2;
-
-    static ArrayList<Node> boardTiles = new ArrayList<>();
-
     static Button[][] gameBoard = new Button[5][5];
 
     public static Scene create(Game newGame) {
@@ -225,7 +222,32 @@ public class InGame {
         return profile;
     }
 
+    public static int getButtonX(Button btn) {
+        int count = 4;
+        for (int i = 0; i < gameBoard.length; i++) {
+            for (int j = 0; j < gameBoard[i].length; j++) {
+                if (gameBoard[i][j] == btn) {
+                    return count;
+                }
+            }
+            count--;
+        }
+        return 0;
+    }
+
+    public static int getButtonY(Button btn) {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (gameBoard[i][j] == btn) {
+                    return j;
+                }
+            }
+        }
+        return 0;
+    }
+
     private static ArrayList<Node> createBoard(Game newGame) {
+        ArrayList<Node> boardTiles = new ArrayList<>();
         for (int i = 0; i < newGame.getBoard().length; i++) {
             for (int j = 0; j < newGame.getBoard()[i].length; j++) {
                 Object tile = newGame.getBoard()[i][j];
@@ -356,17 +378,27 @@ public class InGame {
         } else if (abs.get(i).getCastArea() == AreaOfEffect.SURROUND) {
             newGame.castAbility(abs.get(i));
         } else if (abs.get(i).getCastArea() == AreaOfEffect.SINGLETARGET) {
+            System.out.println("k");
             for (int k = 0; k < 5; k++) {
+                System.out.println("a");
                 for (int j = 0; j < 5; j++) {
-                    int finalK = k;
-                    int finalJ = j;
-                    gameBoard[k][j].addEventFilter(MouseEvent.MOUSE_CLICKED , e -> {
+                    System.out.println("b");
+                    final int finalK = getButtonX(gameBoard[k][j]);
+                    final int finalJ = getButtonY(gameBoard[k][j]);
+                    Button btn = gameBoard[k][j];
+
+                    btn.addEventFilter(MouseEvent.MOUSE_CLICKED , e -> {
+                        System.out.println("abl el try");
                         try {
-                            newGame.castAbility(abs.get(i), 4 - finalK, finalJ);
-                        } catch (NotEnoughResourcesException | InvalidTargetException | CloneNotSupportedException |
-                                 AbilityUseException ex) {
+                            System.out.println("ba3d");
+                            newGame.castAbility(abs.get(i), finalK, finalJ);
+                            System.out.println("BA3D");
+                        } catch (Exception ex) {
+                            System.out.println("BAAAA3D");
                             throw new RuntimeException(ex);
                         }
+
+//                        createBoard(newGame);
                     });
                 }
             }
