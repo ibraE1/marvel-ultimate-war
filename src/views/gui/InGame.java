@@ -33,17 +33,22 @@ public class InGame {
     static boolean abt1 = false;
     static boolean abt2 = false;
     static boolean abt3 = false;
+    static TilePane menu = new TilePane(Orientation.HORIZONTAL);
+    static ArrayList<ImageView> turnImages = new ArrayList<>();
+    static HBox profiles = new HBox();
+    static GridPane board = new GridPane();
+    static VBox right = new VBox();
+    static HBox HUD = new HBox();
 
     public static Scene create(Game newGame) {
         player1 = newGame.getFirstPlayer();
         player2 = newGame.getSecondPlayer();
 
-        TilePane menu = new TilePane(Orientation.HORIZONTAL);
         Button quit = new Button("Quit");
         quit.setPrefSize(100, 50);
         quit.setOnAction(e -> GameApp.onQuit());
         menu.getChildren().add(quit);
-        ArrayList<ImageView> turnImages = new ArrayList<>();
+
         int size = newGame.getTurnOrder().size();
         PriorityQueue pq = new PriorityQueue(size);
         for (int i = 0; i < size; i++) {
@@ -61,14 +66,12 @@ public class InGame {
         menu.setMaxHeight(160);
         menu.setAlignment(Pos.BASELINE_LEFT);
 
-        HBox profiles = new HBox();
         profiles.getChildren().add(createProfile(player1, newGame, 1));
         profiles.getChildren().add(createProfile(player2, newGame, 2));
         profiles.addEventFilter(KeyEvent.ANY, Event::consume);
         profiles.setPrefWidth(450);
         profiles.setPadding(new Insets(0, 10, 0, 0));
 
-        GridPane board = new GridPane();
         for (int i = 0; i < 5; i++) {
             ColumnConstraints colConst = new ColumnConstraints();
             colConst.setPercentWidth(100.0 / 5);
@@ -85,12 +88,12 @@ public class InGame {
         }
         board.getChildren().addAll(createBoard(newGame));
 
-        VBox right = new VBox();
+
         right.getChildren().add(champAbilities(newGame.getCurrentChampion()));
         right.setPrefWidth(250);
         right.setPadding(new Insets(0, 10, 0, 0));
 
-        HBox HUD = new HBox();
+
         ToggleButton attack = new ToggleButton("Attack");
         attack.setPrefSize(100, 50);
         HUD.getChildren().add(attack);
@@ -388,8 +391,7 @@ public class InGame {
             for (int j = 0; j < newGame.getBoard()[i].length; j++) {
                 Object tile = newGame.getBoard()[i][j];
                 if (tile != null) {
-                    if (tile instanceof Champion) {
-                        Champion ch = (Champion) tile;
+                    if (tile instanceof Champion ch) {
                         ImageView iv = new ImageView(new Image("views/assets/champions/%s.png".formatted(ch.getName())));
                         Button btn = new Button();
                         btn.setGraphic(iv);
@@ -412,8 +414,7 @@ public class InGame {
                             }
                         });
                         boardTiles.add(btn);
-                    } else if (tile instanceof Cover) {
-                        Cover cv = (Cover) tile;
+                    } else if (tile instanceof Cover cv) {
                         ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
                         Button btn = new Button();
                         btn.setGraphic(iv);
@@ -560,6 +561,19 @@ public class InGame {
     private static void handleSingeTarget(int x, int y, Game newGame, Ability ability) {
         try {
             newGame.castAbility(ability, x, y);
+            if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
+                newGame.endTurn();
+                right.getChildren().clear();
+                right.getChildren().add(currentChampInfo(newGame));
+                turnImages.add(turnImages.remove(0));
+                menu.getChildren().remove(menu.getChildren().size() - 1);
+                menu.getChildren().add(createTurnOrder(turnImages));
+            }
+            board.getChildren().clear();
+            board.getChildren().addAll(createBoard(newGame));
+            profiles.getChildren().clear();
+            profiles.getChildren().add(createProfile(player1, newGame, 1));
+            profiles.getChildren().add(createProfile(player2, newGame, 2));
         } catch (AbilityUseException | InvalidTargetException | NotEnoughResourcesException |
                  CloneNotSupportedException e) {
             popUp(e);
