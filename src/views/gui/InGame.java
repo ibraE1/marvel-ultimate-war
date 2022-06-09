@@ -144,11 +144,11 @@ public class InGame {
         HUD.getChildren().add(cast1);
         ToggleButton cast2 = new ToggleButton("Ability 2");
         cast2.setOnAction(e -> {
-            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() == AreaOfEffect.SINGLETARGET) {
+            if (newGame.getCurrentChampion().getAbilities().get(1).getCastArea() == AreaOfEffect.SINGLETARGET) {
                 singleTarget = true;
                 cast1.selectedProperty().setValue(false);
             }
-            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() != AreaOfEffect.DIRECTIONAL) {
+            if (newGame.getCurrentChampion().getAbilities().get(1).getCastArea() != AreaOfEffect.DIRECTIONAL) {
                 try {
                     handleAbility(newGame, 1);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
@@ -176,11 +176,11 @@ public class InGame {
         HUD.getChildren().add(cast2);
         ToggleButton cast3 = new ToggleButton("Ability 3");
         cast3.setOnAction(e -> {
-            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() == AreaOfEffect.SINGLETARGET) {
+            if (newGame.getCurrentChampion().getAbilities().get(2).getCastArea() == AreaOfEffect.SINGLETARGET) {
                 singleTarget = true;
                 cast1.selectedProperty().setValue(false);
             }
-            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() != AreaOfEffect.DIRECTIONAL) {
+            if (newGame.getCurrentChampion().getAbilities().get(2).getCastArea() != AreaOfEffect.DIRECTIONAL) {
                 try {
                     handleAbility(newGame, 2);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
@@ -206,6 +206,30 @@ public class InGame {
         });
         cast3.setPrefSize(100, 50);
         HUD.getChildren().add(cast3);
+        /*if (newGame.getCurrentChampion().getAbilities().size() > 3) {
+            ToggleButton cast4 = new ToggleButton("Punch");
+            cast4.setOnAction(e -> {
+                singleTarget = true;
+                cast1.selectedProperty().setValue(false);
+                if (newGame.checkGameOver() != null)
+                    GameApp.onGameOver(newGame.checkGameOver());
+                if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
+                    newGame.endTurn();
+                    right.getChildren().clear();
+                    right.getChildren().add(currentChampInfo(newGame));
+                    turnImages.add(turnImages.remove(0));
+                    menu.getChildren().remove(menu.getChildren().size() - 1);
+                    menu.getChildren().add(createTurnOrder(turnImages));
+                }
+                board.getChildren().clear();
+                board.getChildren().addAll(createBoard(newGame));
+                profiles.getTabs().clear();
+                profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
+                profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+            });
+            cast4.setPrefSize(100, 50);
+            HUD.getChildren().add(cast4);
+        }*/
         HUD.setMaxHeight(160);
         HUD.setAlignment(Pos.BASELINE_LEFT);
 
@@ -391,7 +415,7 @@ public class InGame {
         }
         return boardTiles;
     }
-    
+
     private static VBox currentChampInfo(Game newGame) {
         VBox info = new VBox();
         Label l1 = new Label("Current Champ: ");
@@ -520,7 +544,8 @@ public class InGame {
     private static void handleSingeTarget(int x, int y, Game newGame, Ability ability) {
         try {
             newGame.castAbility(ability, x, y);
-        } catch (AbilityUseException | InvalidTargetException | NotEnoughResourcesException | CloneNotSupportedException e) {
+        } catch (AbilityUseException | InvalidTargetException | NotEnoughResourcesException |
+                 CloneNotSupportedException e) {
             popUp(e);
         }
     }
