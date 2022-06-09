@@ -12,16 +12,20 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import model.abilities.*;
 import model.effects.Effect;
 import model.world.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import static views.gui.GameApp.popUp;
@@ -125,7 +129,7 @@ public class InGame {
                 try {
                     handleAbility(0);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
-                    throw new RuntimeException(ex);
+                    popUp(ex);
                 }
                 cast1.selectedProperty().setValue(false);
                 if (newGame.checkGameOver() != null)
@@ -158,7 +162,7 @@ public class InGame {
                 try {
                     handleAbility(1);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
-                    throw new RuntimeException(ex);
+                    popUp(ex);
                 }
                 cast2.selectedProperty().setValue(false);
                 if (newGame.checkGameOver() != null)
@@ -191,7 +195,7 @@ public class InGame {
                 try {
                     handleAbility(2);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
-                    throw new RuntimeException(ex);
+                    popUp(ex);
                 }
                 cast3.selectedProperty().setValue(false);
                 if (newGame.checkGameOver() != null)
