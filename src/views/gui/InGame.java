@@ -123,7 +123,7 @@ public class InGame {
                 try {
                     handleAbility(0);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
-                    throw new RuntimeException(ex);
+                    popUp(ex);
                 }
                 cast1.selectedProperty().setValue(false);
                 update();
@@ -142,7 +142,7 @@ public class InGame {
                 try {
                     handleAbility(1);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
-                    throw new RuntimeException(ex);
+                    popUp(ex);
                 }
                 cast2.selectedProperty().setValue(false);
                 update();
@@ -161,7 +161,7 @@ public class InGame {
                 try {
                     handleAbility(2);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
-                    throw new RuntimeException(ex);
+                    popUp(ex);
                 }
                 cast3.selectedProperty().setValue(false);
                 update();
