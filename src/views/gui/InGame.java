@@ -61,12 +61,11 @@ public class InGame {
         menu.setMaxHeight(160);
         menu.setAlignment(Pos.BASELINE_LEFT);
 
-        TabPane profiles = new TabPane();
-        profiles.getTabs().add(new Tab(player1.getName(), createProfile(player1, newGame, 1)));
-        profiles.getTabs().add(new Tab(player2.getName(), createProfile(player2, newGame, 2)));
-        profiles.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        HBox profiles = new HBox();
+        profiles.getChildren().add(createProfile(player1, newGame, 1));
+        profiles.getChildren().add(createProfile(player2, newGame, 2));
         profiles.addEventFilter(KeyEvent.ANY, Event::consume);
-        profiles.setPrefWidth(390);
+        profiles.setPrefWidth(450);
         profiles.setPadding(new Insets(0, 10, 0, 0));
 
         GridPane board = new GridPane();
@@ -87,8 +86,8 @@ public class InGame {
         board.getChildren().addAll(createBoard(newGame));
 
         VBox right = new VBox();
-        right.getChildren().add(currentChampInfo(newGame));
-        right.setPrefWidth(400);
+        right.getChildren().add(champAbilities(newGame.getCurrentChampion()));
+        right.setPrefWidth(250);
         right.setPadding(new Insets(0, 10, 0, 0));
 
         HBox HUD = new HBox();
@@ -105,9 +104,9 @@ public class InGame {
             }
             board.getChildren().clear();
             board.getChildren().addAll(createBoard(newGame));
-            profiles.getTabs().clear();
-            profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
-            profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+            profiles.getChildren().clear();
+            profiles.getChildren().add(createProfile(player1, newGame, 1));
+            profiles.getChildren().add(createProfile(player2, newGame, 2));
         });
         HUD.getChildren().add(leaderAbility);
         ToggleButton cast1 = new ToggleButton("Ability 1");
@@ -136,9 +135,9 @@ public class InGame {
                 }
                 board.getChildren().clear();
                 board.getChildren().addAll(createBoard(newGame));
-                profiles.getTabs().clear();
-                profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
-                profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+                profiles.getChildren().clear();
+                profiles.getChildren().add(createProfile(player1, newGame, 1));
+                profiles.getChildren().add(createProfile(player2, newGame, 2));
             }
         });
         cast1.setPrefSize(100, 50);
@@ -169,9 +168,9 @@ public class InGame {
                 }
                 board.getChildren().clear();
                 board.getChildren().addAll(createBoard(newGame));
-                profiles.getTabs().clear();
-                profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
-                profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+                profiles.getChildren().clear();
+                profiles.getChildren().add(createProfile(player1, newGame, 1));
+                profiles.getChildren().add(createProfile(player2, newGame, 2));
             }
         });
         cast2.setPrefSize(100, 50);
@@ -202,13 +201,29 @@ public class InGame {
                 }
                 board.getChildren().clear();
                 board.getChildren().addAll(createBoard(newGame));
-                profiles.getTabs().clear();
-                profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
-                profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+                profiles.getChildren().clear();
+                profiles.getChildren().add(createProfile(player1, newGame, 1));
+                profiles.getChildren().add(createProfile(player2, newGame, 2));
             }
         });
         cast3.setPrefSize(100, 50);
         HUD.getChildren().add(cast3);
+        Button endTurn = new Button("End Turn");
+        endTurn.setOnAction(e -> {
+            newGame.endTurn();
+            right.getChildren().clear();
+            right.getChildren().add(currentChampInfo(newGame));
+            turnImages.add(turnImages.remove(0));
+            menu.getChildren().remove(menu.getChildren().size() - 1);
+            menu.getChildren().add(createTurnOrder(turnImages));
+            board.getChildren().clear();
+            board.getChildren().addAll(createBoard(newGame));
+            profiles.getChildren().clear();
+            profiles.getChildren().add(createProfile(player1, newGame, 1));
+            profiles.getChildren().add(createProfile(player2, newGame, 2));
+        });
+        endTurn.setPrefSize(100, 50);
+        HUD.getChildren().add(endTurn);
         /*if (newGame.getCurrentChampion().getAbilities().size() > 3) {
             ToggleButton cast4 = new ToggleButton("Punch");
             cast4.setOnAction(e -> {
@@ -270,21 +285,23 @@ public class InGame {
             }
             board.getChildren().clear();
             board.getChildren().addAll(createBoard(newGame));
-            profiles.getTabs().clear();
-            profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
-            profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+            profiles.getChildren().clear();
+            profiles.getChildren().add(createProfile(player1, newGame, 1));
+            profiles.getChildren().add(createProfile(player2, newGame, 2));
         });
 
         return new Scene(root, 1600, 900);
     }
 
-    private static VBox champInfo(Champion c) {
+    private static VBox champInfo(Champion c, Game newGame) {
         VBox currentChampInfo = new VBox();
         ImageView champView = new ImageView(new Image("views/assets/champions/%s.png".formatted(c.getName())));
         champView.setFitWidth(40);
         champView.setFitHeight(40);
         VBox nameBox = new VBox();
-        String title = (c == player1.getLeader() || c == player2.getLeader()) ? "(Leader) " + c.getName() : c.getName();
+        String title = (c == player1.getLeader() || c == player2.getLeader()) ? "(L) " : "";
+        title += (c == newGame.getCurrentChampion()) ? "(C) " : "";
+        title += c.getName();
         nameBox.getChildren().add(new Label(title));
         if (c instanceof Hero) {
             nameBox.getChildren().add(new Label("Hero"));
@@ -349,6 +366,7 @@ public class InGame {
 
     private static VBox createProfile(Player player, Game newGame, int i) {
         VBox profile = new VBox();
+        Label name = new Label(player.getName());
         if (i == 1 && newGame.isFirstLeaderAbilityUsed())
             profile.getChildren().add(new Label("Leader Ability Used"));
         else if (i == 2 && newGame.isSecondLeaderAbilityUsed())
@@ -357,8 +375,9 @@ public class InGame {
             profile.getChildren().add(new Label("Leader Ability Not Used"));
         VBox team = new VBox();
         for (Champion c : player.getTeam()) {
-            team.getChildren().add(champInfo(c));
+            team.getChildren().add(champInfo(c, newGame));
         }
+        profile.getChildren().add(name);
         profile.getChildren().add(team);
         return profile;
     }
@@ -421,12 +440,6 @@ public class InGame {
 
     private static VBox currentChampInfo(Game newGame) {
         VBox info = new VBox();
-        Label l1 = new Label("Current Champ: ");
-        l1.setPrefHeight(20);
-        info.getChildren().add(l1);
-        Label l2 = new Label("" + newGame.getCurrentChampion().getName());
-        l2.setMaxHeight(20);
-        info.getChildren().add(l2);
         info.getChildren().add(champAbilities(newGame.getCurrentChampion()));
         info.setAlignment(Pos.BASELINE_RIGHT);
         return info;
