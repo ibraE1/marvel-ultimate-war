@@ -11,7 +11,10 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -50,7 +53,6 @@ public class InGame {
         quit.setPrefSize(100, 50);
         quit.setOnAction(e -> GameApp.onQuit());
         menu.getChildren().add(quit);
-
         int size = newGame.getTurnOrder().size();
         PriorityQueue pq = new PriorityQueue(size);
         for (int i = 0; i < size; i++) {
@@ -107,11 +109,7 @@ public class InGame {
             } catch (LeaderNotCurrentException | LeaderAbilityAlreadyUsedException ex) {
                 popUp(ex);
             }
-            board.getChildren().clear();
-            board.getChildren().addAll(createBoard());
-            profiles.getChildren().clear();
-            profiles.getChildren().add(createProfile(player1, 1));
-            profiles.getChildren().add(createProfile(player2, 2));
+            update();
         });
         HUD.getChildren().add(leaderAbility);
         ToggleButton cast1 = new ToggleButton("Ability 1");
@@ -128,21 +126,7 @@ public class InGame {
                     throw new RuntimeException(ex);
                 }
                 cast1.selectedProperty().setValue(false);
-                if (newGame.checkGameOver() != null)
-                    GameApp.onGameOver(newGame.checkGameOver());
-                if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
-                    newGame.endTurn();
-                    right.getChildren().clear();
-                    right.getChildren().add(currentChampInfo());
-                    turnImages.add(turnImages.remove(0));
-                    menu.getChildren().remove(menu.getChildren().size() - 1);
-                    menu.getChildren().add(createTurnOrder(turnImages));
-                }
-                board.getChildren().clear();
-                board.getChildren().addAll(createBoard());
-                profiles.getChildren().clear();
-                profiles.getChildren().add(createProfile(player1, 1));
-                profiles.getChildren().add(createProfile(player2, 2));
+                update();
             }
         });
         cast1.setPrefSize(100, 50);
@@ -161,21 +145,7 @@ public class InGame {
                     throw new RuntimeException(ex);
                 }
                 cast2.selectedProperty().setValue(false);
-                if (newGame.checkGameOver() != null)
-                    GameApp.onGameOver(newGame.checkGameOver());
-                if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
-                    newGame.endTurn();
-                    right.getChildren().clear();
-                    right.getChildren().add(currentChampInfo());
-                    turnImages.add(turnImages.remove(0));
-                    menu.getChildren().remove(menu.getChildren().size() - 1);
-                    menu.getChildren().add(createTurnOrder(turnImages));
-                }
-                board.getChildren().clear();
-                board.getChildren().addAll(createBoard());
-                profiles.getChildren().clear();
-                profiles.getChildren().add(createProfile(player1, 1));
-                profiles.getChildren().add(createProfile(player2, 2));
+                update();
             }
         });
         cast2.setPrefSize(100, 50);
@@ -194,21 +164,7 @@ public class InGame {
                     throw new RuntimeException(ex);
                 }
                 cast3.selectedProperty().setValue(false);
-                if (newGame.checkGameOver() != null)
-                    GameApp.onGameOver(newGame.checkGameOver());
-                if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
-                    newGame.endTurn();
-                    right.getChildren().clear();
-                    right.getChildren().add(currentChampInfo());
-                    turnImages.add(turnImages.remove(0));
-                    menu.getChildren().remove(menu.getChildren().size() - 1);
-                    menu.getChildren().add(createTurnOrder(turnImages));
-                }
-                board.getChildren().clear();
-                board.getChildren().addAll(createBoard());
-                profiles.getChildren().clear();
-                profiles.getChildren().add(createProfile(player1, 1));
-                profiles.getChildren().add(createProfile(player2, 2));
+                update();
             }
         });
         cast3.setPrefSize(100, 50);
@@ -229,30 +185,6 @@ public class InGame {
         });
         endTurn.setPrefSize(100, 50);
         HUD.getChildren().add(endTurn);
-        /*if (newGame.getCurrentChampion().getAbilities().size() > 3) {
-            ToggleButton cast4 = new ToggleButton("Punch");
-            cast4.setOnAction(e -> {
-                singleTarget = true;
-                cast1.selectedProperty().setValue(false);
-                if (newGame.checkGameOver() != null)
-                    GameApp.onGameOver(newGame.checkGameOver());
-                if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
-                    newGame.endTurn();
-                    right.getChildren().clear();
-                    right.getChildren().add(currentChampInfo(newGame));
-                    turnImages.add(turnImages.remove(0));
-                    menu.getChildren().remove(menu.getChildren().size() - 1);
-                    menu.getChildren().add(createTurnOrder(turnImages));
-                }
-                board.getChildren().clear();
-                board.getChildren().addAll(createBoard(newGame));
-                profiles.getTabs().clear();
-                profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
-                profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
-            });
-            cast4.setPrefSize(100, 50);
-            HUD.getChildren().add(cast4);
-        }*/
         HUD.setMaxHeight(160);
         HUD.setAlignment(Pos.BASELINE_LEFT);
 
@@ -278,11 +210,8 @@ public class InGame {
                 cast1.selectedProperty().setValue(false);
             } else
                 handleMove(key);
-            if (newGame.checkGameOver() != null)
-                GameApp.onGameOver(newGame.checkGameOver());
             update();
         });
-
         return new Scene(root, 1600, 900);
     }
 
@@ -569,6 +498,8 @@ public class InGame {
     }
 
     public static void update() {
+        if (newGame.checkGameOver() != null)
+            GameApp.onGameOver(newGame.checkGameOver());
         if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
             newGame.endTurn();
             right.getChildren().clear();
