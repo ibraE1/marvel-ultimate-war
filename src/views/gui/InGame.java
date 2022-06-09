@@ -401,13 +401,13 @@ public class InGame {
                         btn.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
                             if (singleTarget) {
                                 if (abt1) {
-                                    handleSingeTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(0));
+                                    handleSingleTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(0));
                                     abt1 = false;
                                 } else if (abt2) {
-                                    handleSingeTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(1));
+                                    handleSingleTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(1));
                                     abt2 = false;
                                 } else if (abt3) {
-                                    handleSingeTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(2));
+                                    handleSingleTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(2));
                                     abt3 = false;
                                 }
                                 singleTarget = false;
@@ -558,7 +558,7 @@ public class InGame {
         }
     }
 
-    private static void handleSingeTarget(int x, int y, Game newGame, Ability ability) {
+    private static void handleSingleTarget(int x, int y, Game newGame, Ability ability) {
         try {
             newGame.castAbility(ability, x, y);
             if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
