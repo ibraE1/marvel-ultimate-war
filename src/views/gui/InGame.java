@@ -66,7 +66,6 @@ public class InGame {
         quit.setFont(Font.font("Arial", 24));
         menu.getChildren().add(quit);
 
-
         int size = newGame.getTurnOrder().size();
         PriorityQueue pq = new PriorityQueue(size);
         for (int i = 0; i < size; i++) {
@@ -200,10 +199,13 @@ public class InGame {
         endTurn.setPrefSize(100, 50);
         HUD.getChildren().add(endTurn);
         HUD.setMaxHeight(160);
-        HUD.setAlignment(Pos.BASELINE_LEFT);
+        HUD.setAlignment(Pos.CENTER);
 
-        BorderPane root = new BorderPane(board, menu, right, HUD, profiles);
-        root.setPadding(new Insets(0, 10, 0, 10));
+        Pane boardPane = new Pane();
+        boardPane.setPadding(new Insets(10,10,5,10));
+        boardPane.getChildren().add(board);
+
+        BorderPane root = new BorderPane(boardPane, menu, right, HUD, profiles);
         root.addEventFilter(KeyEvent.KEY_RELEASED, key -> {
             if (key.getCode() == KeyCode.TAB)
                 return;
@@ -289,7 +291,7 @@ public class InGame {
 
 
         root.setPadding(new Insets(20,20,20,20));
-        root.setStyle("-fx-text-fill: White;-fx-font-size: 20;-fx-background-color: rgb(33,41,50); -fx-font-weight: 700");
+        root.setStyle("-fx-font-size: 16; -fx-font-weight: 700");
 
 
         return new Scene(root, 1600, 900);
@@ -394,6 +396,9 @@ public class InGame {
                         ImageView iv = new ImageView(new Image("views/assets/champions/%s.png".formatted(ch.getName())));
                         Button btn = new Button();
                         btn.setGraphic(iv);
+                        btn.setFocusTraversable(false);
+                        btn.styleProperty().bind(Bindings.when(btn.hoverProperty()).then("-fx-cursor: hand;")
+                                .otherwise("-fx-cursor: default;"));
                         GridPane.setConstraints(btn, ch.getLocation().y, 4 - ch.getLocation().x);
                         GridPane.setHalignment(btn, HPos.CENTER);
                         btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -422,6 +427,9 @@ public class InGame {
                                 + "-fx-base: #AE3522; "
                                 + "-fx-text-fill: orange;");
                         btn.setTooltip(tt);
+                        btn.setFocusTraversable(false);
+                        btn.styleProperty().bind(Bindings.when(btn.hoverProperty()).then("-fx-cursor: hand;")
+                                .otherwise("-fx-cursor: default;"));
                         GridPane.setConstraints(btn, cv.getLocation().y, 4 - cv.getLocation().x);
                         GridPane.setHalignment(btn, HPos.CENTER);
                         btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -429,6 +437,9 @@ public class InGame {
                     }
                 } else {
                     Button btn = new Button();
+                    btn.setFocusTraversable(false);
+                    btn.styleProperty().bind(Bindings.when(btn.hoverProperty()).then("-fx-cursor: hand;")
+                            .otherwise("-fx-cursor: default;"));
                     GridPane.setConstraints(btn, j, 4 - i);
                     btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                     boardTiles.add(btn);
