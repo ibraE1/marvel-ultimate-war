@@ -114,6 +114,7 @@ public class InGame {
         cast1.setOnAction(e -> {
             if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() == AreaOfEffect.SINGLETARGET) {
                 singleTarget = true;
+                abt1 = true;
                 cast1.selectedProperty().setValue(false);
             }
             if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() != AreaOfEffect.DIRECTIONAL) {
@@ -146,6 +147,7 @@ public class InGame {
         cast2.setOnAction(e -> {
             if (newGame.getCurrentChampion().getAbilities().get(1).getCastArea() == AreaOfEffect.SINGLETARGET) {
                 singleTarget = true;
+                abt2 = true;
                 cast1.selectedProperty().setValue(false);
             }
             if (newGame.getCurrentChampion().getAbilities().get(1).getCastArea() != AreaOfEffect.DIRECTIONAL) {
@@ -178,6 +180,7 @@ public class InGame {
         cast3.setOnAction(e -> {
             if (newGame.getCurrentChampion().getAbilities().get(2).getCastArea() == AreaOfEffect.SINGLETARGET) {
                 singleTarget = true;
+                abt3 = true;
                 cast1.selectedProperty().setValue(false);
             }
             if (newGame.getCurrentChampion().getAbilities().get(2).getCastArea() != AreaOfEffect.DIRECTIONAL) {
@@ -374,17 +377,17 @@ public class InGame {
                         GridPane.setConstraints(btn, ch.getLocation().y, 4 - ch.getLocation().x);
                         GridPane.setHalignment(btn, HPos.CENTER);
                         btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                        iv.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+                        btn.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
                             if (singleTarget) {
                                 if (abt1) {
-                                    System.out.println(ch.getLocation().x + " " + ch.getLocation().y);
                                     handleSingeTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(0));
+                                    abt1 = false;
                                 } else if (abt2) {
-                                    System.out.println(ch.getLocation().x + " " + ch.getLocation().y);
                                     handleSingeTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(1));
+                                    abt2 = false;
                                 } else if (abt3) {
-                                    System.out.println(ch.getLocation().x + " " + ch.getLocation().y);
                                     handleSingeTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(2));
+                                    abt3 = false;
                                 }
                                 singleTarget = false;
                             }
