@@ -3,9 +3,10 @@ package views.gui;
 import engine.Game;
 import engine.Player;
 import javafx.application.Application;
-import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.stage.Screen;
+import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -59,5 +60,26 @@ public class GameApp extends Application {
 
     public static void onGameOver(Player winner) {
         stage.setScene(GameOver.create(winner));
+    }
+
+    public static void popUp(Exception e) {
+
+        Popup popUp = new Popup();
+        VBox popUpContainer = new VBox();
+        javafx.scene.control.Label exceptionMessage = new javafx.scene.control.Label(e.getMessage());
+        javafx.scene.control.Label exceptionTitle = new Label("Oops!");
+        exceptionMessage.setStyle("-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 700");
+        exceptionTitle.setStyle("-fx-text-fill: gold; -fx-font-size: 22; -fx-font-weight: 700;-fx-underline: true;");
+        popUpContainer.getChildren().add(exceptionTitle);
+        popUpContainer.getChildren().add(exceptionMessage);
+        popUpContainer.setPrefSize(450,300);
+        popUpContainer.setStyle("-fx-background-color: rgb(0,0,0,0.8)");
+        popUp.getContent().add(popUpContainer);
+        popUp.setAutoHide(true);
+        popUp.show(GameApp.getStage());
+    }
+
+    public static Stage getStage() {
+        return stage;
     }
 }
