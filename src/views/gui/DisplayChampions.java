@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -18,6 +19,8 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
+import javafx.stage.Popup;
+import javafx.stage.Stage;
 import model.abilities.Ability;
 import model.world.AntiHero;
 import model.world.Hero;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
 import static engine.Game.getAvailableChampions;
 
 public class DisplayChampions {
-
+    private static Pane dummy;
     private static final Button ready = new Button("Ready");
     private static final HBox iconsContainer1 = new HBox();
     private static final HBox iconsContainer2 = new HBox();
@@ -181,11 +184,13 @@ public class DisplayChampions {
     public static void chooseChampions(Button btn, int i) {
         if (playerTurn % 2 == 0) {
             player1.getTeam().add(getAvailableChampions().get(i));
-            btn.setDisable(true);
         } else {
             player2.getTeam().add(getAvailableChampions().get(i));
-            btn.setDisable(true);
         }
+        if (getAvailableChampions().get(i).getName().equals("Spiderman")) {
+            root.getChildren().add(dummy);
+        }
+        btn.setDisable(true);
     }
 
     public static void onHover(int i) {
@@ -555,35 +560,30 @@ public class DisplayChampions {
             }
         });
 
-        Button test = new Button("test");
-        test.setPrefSize(75,25);
-        test.setLayoutX(600);
-        test.setLayoutY(0);
-        test.setFont(Font.font("Georgia", 18));
-
-        test.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            System.out.print("Leader 1: ");
-            for (int i = 0; i < 4; i++) {
-                if (i == 0) {
-                    System.out.print(player1.getLeader().getName() + "\t");
-                } else {
-                    System.out.print(player1.getTeam().get(i-1).getName() + " ");
-                }
-            }
-            System.out.println();
-            System.out.print("Leader 2: ");
-            for (int i = 0; i < 4; i++) {
-                if (i == 0) {
-                    System.out.print(player2.getLeader().getName() + "\t");
-                } else {
-                    System.out.print(player2.getTeam().get(i-1).getName() + ", ");
-                }
-            }
-            System.out.println("\nPlayer 1: " + player1Name + "and Player 2: " + player2Name);
-            System.out.println(playerTurn);
-        });
-
         showHint();
+
+        dummy = new Pane();
+        dummy.setPrefSize(80,80);
+        dummy.setLayoutX(345);
+        dummy.setLayoutY(220);
+
+
+        dummy.addEventFilter(MouseEvent.MOUSE_CLICKED, e-> {
+            if (playerTurn < 6) {
+                Popup popUp = new Popup();
+                Image spiderman = new Image("views/assets/eg.png");
+                ImageView meme = new ImageView(spiderman);
+                Pane popUpContainer = new Pane();
+                popUpContainer.getChildren().add(meme);
+                popUpContainer.setStyle("-fx-background-color: rgb(0,0,0)");
+                popUp.getContent().add(popUpContainer);
+                popUp.setAutoHide(true);
+                popUp.show(GameApp.getStage());
+                root.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
+                    popUp.hide();
+                });
+            }
+        });
 
         statsParent.setLayoutX(25);
         statsParent.setLayoutY(345);
@@ -731,7 +731,6 @@ public class DisplayChampions {
         root.getChildren().add(player2Box);
         root.getChildren().add(vsPane);
         root.getChildren().add(hintBoxContainer);
-//        root.getChildren().add(test);
 
         return new Scene(root, 1600,900, Color.rgb(33,41,50));
     }

@@ -593,7 +593,6 @@ public class Game {
 
 			}
 		}
-
 	}
 
 	public void endTurn() {

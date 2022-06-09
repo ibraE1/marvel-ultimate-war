@@ -3,9 +3,15 @@ package views.gui;
 import engine.Game;
 import engine.Player;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
@@ -65,17 +71,29 @@ public class GameApp extends Application {
     public static void popUp(Exception e) {
         Popup popUp = new Popup();
         VBox popUpContainer = new VBox();
-        javafx.scene.control.Label exceptionMessage = new javafx.scene.control.Label(e.getMessage());
-        javafx.scene.control.Label exceptionTitle = new Label("Oops!");
-        exceptionMessage.setStyle("-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 700");
-        exceptionTitle.setStyle("-fx-text-fill: gold; -fx-font-size: 22; -fx-font-weight: 700;-fx-underline: true;");
+        Label exceptionMessage = new Label(e.getMessage());
+        Label exceptionTitle = new Label("Oops!");
+        Image dp = new Image("views/assets/dp.png");
+        ImageView dp_view = new ImageView(dp);
+        Pane p = new Pane();
+        p.setBackground(Background.fill(Color.BLACK));
+        p.getChildren().add(dp_view);
+        dp_view.setFitWidth(100);
+        dp_view.setPreserveRatio(true);
+        exceptionMessage.setStyle("-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: 700");
+        exceptionTitle.setStyle("-fx-text-fill: gold; -fx-font-size: 26; -fx-font-weight: 700;-fx-underline: true;");
         popUpContainer.getChildren().add(exceptionTitle);
         popUpContainer.getChildren().add(exceptionMessage);
-        popUpContainer.setPrefSize(450,300);
-        popUpContainer.setStyle("-fx-background-color: rgb(0,0,0,0.8)");
+        popUpContainer.setAlignment(Pos.CENTER);
+        popUpContainer.setPrefSize(520,120);
+        popUpContainer.setStyle("-fx-background-color: rgb(0,0,0)");
         popUp.getContent().add(popUpContainer);
+        popUp.getContent().add(p);
         popUp.setAutoHide(true);
         popUp.show(GameApp.getStage());
+        stage.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
+           popUp.hide();
+        });
     }
 
     public static Stage getStage() {
