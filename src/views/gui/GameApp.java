@@ -63,7 +63,6 @@ public class GameApp extends Application {
     }
 
     public static void popUp(Exception e) {
-
         Popup popUp = new Popup();
         VBox popUpContainer = new VBox();
         javafx.scene.control.Label exceptionMessage = new javafx.scene.control.Label(e.getMessage());
