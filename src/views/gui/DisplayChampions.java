@@ -1,6 +1,8 @@
 package views.gui;
 
 import engine.Player;
+import exceptions.AbilityUseException;
+import exceptions.NotEnoughResourcesException;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -553,6 +555,8 @@ public class DisplayChampions {
                 GameApp.onReady(player1, player2);
             } catch (IOException ex) {
                 GameApp.popUp(ex);
+            } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
+                throw new RuntimeException(ex);
             }
         });
 

@@ -2,6 +2,8 @@ package views.gui;
 
 import engine.Game;
 import engine.Player;
+import exceptions.AbilityUseException;
+import exceptions.NotEnoughResourcesException;
 import javafx.application.Application;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -53,7 +55,7 @@ public class GameApp extends Application {
         DisplayChampions.onHover(0);
     }
 
-    public static void onReady(Player player1, Player player2) throws IOException {
+    public static void onReady(Player player1, Player player2) throws IOException, AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
         Game newGame = new Game(player1, player2);
         stage.setScene(InGame.create(newGame));
     }
@@ -66,8 +68,8 @@ public class GameApp extends Application {
 
         Popup popUp = new Popup();
         VBox popUpContainer = new VBox();
-        javafx.scene.control.Label exceptionMessage = new javafx.scene.control.Label(e.getMessage());
-        javafx.scene.control.Label exceptionTitle = new Label("Oops!");
+        Label exceptionMessage = new Label(e.getMessage());
+        Label exceptionTitle = new Label("Oops!");
         exceptionMessage.setStyle("-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: 700");
         exceptionTitle.setStyle("-fx-text-fill: gold; -fx-font-size: 22; -fx-font-weight: 700;-fx-underline: true;");
         popUpContainer.getChildren().add(exceptionTitle);
