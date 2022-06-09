@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import static views.gui.GameApp.popUp;
 
 public class InGame {
-
-    static boolean singleTarget = false;
-    static int index;
     static Player player1;
     static Player player2;
-    static Button[][] gameBoard = new Button[5][5];
+    static boolean singleTarget = false;
+    static boolean abt1 = false;
+    static boolean abt2 = false;
+    static boolean abt3 = false;
 
     public static Scene create(Game newGame) {
         player1 = newGame.getFirstPlayer();
@@ -110,6 +110,102 @@ public class InGame {
             profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
         });
         HUD.getChildren().add(leaderAbility);
+        ToggleButton cast1 = new ToggleButton("Ability 1");
+        cast1.setOnAction(e -> {
+            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() == AreaOfEffect.SINGLETARGET) {
+                singleTarget = true;
+                cast1.selectedProperty().setValue(false);
+            }
+            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() != AreaOfEffect.DIRECTIONAL) {
+                try {
+                    handleAbility(newGame, 0);
+                } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                cast1.selectedProperty().setValue(false);
+                if (newGame.checkGameOver() != null)
+                    GameApp.onGameOver(newGame.checkGameOver());
+                if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
+                    newGame.endTurn();
+                    right.getChildren().clear();
+                    right.getChildren().add(currentChampInfo(newGame));
+                    turnImages.add(turnImages.remove(0));
+                    menu.getChildren().remove(menu.getChildren().size() - 1);
+                    menu.getChildren().add(createTurnOrder(turnImages));
+                }
+                board.getChildren().clear();
+                board.getChildren().addAll(createBoard(newGame));
+                profiles.getTabs().clear();
+                profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
+                profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+            }
+        });
+        cast1.setPrefSize(100, 50);
+        HUD.getChildren().add(cast1);
+        ToggleButton cast2 = new ToggleButton("Ability 2");
+        cast2.setOnAction(e -> {
+            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() == AreaOfEffect.SINGLETARGET) {
+                singleTarget = true;
+                cast1.selectedProperty().setValue(false);
+            }
+            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() != AreaOfEffect.DIRECTIONAL) {
+                try {
+                    handleAbility(newGame, 1);
+                } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                cast2.selectedProperty().setValue(false);
+                if (newGame.checkGameOver() != null)
+                    GameApp.onGameOver(newGame.checkGameOver());
+                if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
+                    newGame.endTurn();
+                    right.getChildren().clear();
+                    right.getChildren().add(currentChampInfo(newGame));
+                    turnImages.add(turnImages.remove(0));
+                    menu.getChildren().remove(menu.getChildren().size() - 1);
+                    menu.getChildren().add(createTurnOrder(turnImages));
+                }
+                board.getChildren().clear();
+                board.getChildren().addAll(createBoard(newGame));
+                profiles.getTabs().clear();
+                profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
+                profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+            }
+        });
+        cast2.setPrefSize(100, 50);
+        HUD.getChildren().add(cast2);
+        ToggleButton cast3 = new ToggleButton("Ability 3");
+        cast3.setOnAction(e -> {
+            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() == AreaOfEffect.SINGLETARGET) {
+                singleTarget = true;
+                cast1.selectedProperty().setValue(false);
+            }
+            if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() != AreaOfEffect.DIRECTIONAL) {
+                try {
+                    handleAbility(newGame, 2);
+                } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                cast3.selectedProperty().setValue(false);
+                if (newGame.checkGameOver() != null)
+                    GameApp.onGameOver(newGame.checkGameOver());
+                if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
+                    newGame.endTurn();
+                    right.getChildren().clear();
+                    right.getChildren().add(currentChampInfo(newGame));
+                    turnImages.add(turnImages.remove(0));
+                    menu.getChildren().remove(menu.getChildren().size() - 1);
+                    menu.getChildren().add(createTurnOrder(turnImages));
+                }
+                board.getChildren().clear();
+                board.getChildren().addAll(createBoard(newGame));
+                profiles.getTabs().clear();
+                profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
+                profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
+            }
+        });
+        cast3.setPrefSize(100, 50);
+        HUD.getChildren().add(cast3);
         HUD.setMaxHeight(160);
         HUD.setAlignment(Pos.BASELINE_LEFT);
 
@@ -118,17 +214,23 @@ public class InGame {
         root.addEventFilter(KeyEvent.KEY_RELEASED, key -> {
             if (key.getCode() == KeyCode.TAB)
                 return;
-            if (!attack.isSelected()) {
-                handleMove(key, newGame);
-            } else if (attack.isSelected()){
+            if (attack.isSelected()) {
                 attack.selectedProperty().setValue(false);
                 handleAttack(key, newGame);
-            }
-            try {
-                handleAbility(key, newGame);
-            } catch (AbilityUseException | CloneNotSupportedException | NotEnoughResourcesException e) {
-                popUp(e);
-            }
+            } else if (cast1.isSelected()) {
+                if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() == AreaOfEffect.DIRECTIONAL)
+                    handleDirectional(key, newGame, newGame.getCurrentChampion().getAbilities().get(0));
+                cast1.selectedProperty().setValue(false);
+            } else if (cast2.isSelected()) {
+                if (newGame.getCurrentChampion().getAbilities().get(1).getCastArea() == AreaOfEffect.DIRECTIONAL)
+                    handleDirectional(key, newGame, newGame.getCurrentChampion().getAbilities().get(1));
+                cast2.selectedProperty().setValue(false);
+            } else if (cast3.isSelected()) {
+                if (newGame.getCurrentChampion().getAbilities().get(2).getCastArea() == AreaOfEffect.DIRECTIONAL)
+                    handleDirectional(key, newGame, newGame.getCurrentChampion().getAbilities().get(2));
+                cast1.selectedProperty().setValue(false);
+            } else
+                handleMove(key, newGame);
             if (newGame.checkGameOver() != null)
                 GameApp.onGameOver(newGame.checkGameOver());
             if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
@@ -136,7 +238,7 @@ public class InGame {
                 right.getChildren().clear();
                 right.getChildren().add(currentChampInfo(newGame));
                 turnImages.add(turnImages.remove(0));
-                menu.getChildren().remove(menu.getChildren().size()-1);
+                menu.getChildren().remove(menu.getChildren().size() - 1);
                 menu.getChildren().add(createTurnOrder(turnImages));
             }
             board.getChildren().clear();
@@ -145,30 +247,6 @@ public class InGame {
             profiles.getTabs().add(new Tab("Player 1", createProfile(player1, newGame, 1)));
             profiles.getTabs().add(new Tab("Player 2", createProfile(player2, newGame, 2)));
         });
-
-
-        ArrayList<Ability> abs = newGame.getCurrentChampion().getAbilities();
-        for (int k = 0; k < 5; k++) {
-            System.out.println("a");
-            for (int j = 0; j < 5; j++) {
-                System.out.println("b");
-                final int finalK = getButtonX(gameBoard[k][j]);
-                final int finalJ = getButtonY(gameBoard[k][j]);
-
-                gameBoard[k][j].addEventFilter(MouseEvent.MOUSE_CLICKED , e -> {
-                    try {
-                        if (singleTarget) {
-                            newGame.castAbility(abs.get(index), finalK, finalJ);
-                            singleTarget = false;
-                        }
-                    } catch (NotEnoughResourcesException | CloneNotSupportedException | InvalidTargetException |
-                             AbilityUseException ex) {
-                        popUp(ex);
-                    }
-                });
-            }
-        }
-
 
         return new Scene(root, 1600, 900);
     }
@@ -188,12 +266,13 @@ public class InGame {
         } else if (c instanceof AntiHero) {
             nameBox.getChildren().add(new Label("AntiHero"));
         }
+        nameBox.getChildren().add(new Label("HP: " + c.getCurrentHP() + "/" + c.getMaxHP()));
         nameBox.setAlignment(Pos.CENTER);
         HBox topBox = new HBox();
         topBox.getChildren().add(champView);
         topBox.getChildren().add(nameBox);
         currentChampInfo.getChildren().add(topBox);
-        currentChampInfo.getChildren().add(new Label("HP: " + c.getCurrentHP() + "/" + c.getMaxHP()));
+        topBox.setSpacing(10);
         GridPane stats = new GridPane();
         stats.add(new Label("Mana: " + c.getMana()), 0, 0, 1, 1);
         stats.add(new Label("Actions: " + c.getCurrentActionPoints() + "/" + c.getMaxActionPointsPerTurn()), 1, 0, 1, 1);
@@ -257,30 +336,6 @@ public class InGame {
         return profile;
     }
 
-    public static int getButtonX(Button btn) {
-        int count = 4;
-        for (int i = 0; i < gameBoard.length; i++) {
-            for (int j = 0; j < gameBoard[i].length; j++) {
-                if (gameBoard[i][j] == btn) {
-                    return count;
-                }
-            }
-            count--;
-        }
-        return 0;
-    }
-
-    public static int getButtonY(Button btn) {
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                if (gameBoard[i][j] == btn) {
-                    return j;
-                }
-            }
-        }
-        return 0;
-    }
-
     private static ArrayList<Node> createBoard(Game newGame) {
         ArrayList<Node> boardTiles = new ArrayList<>();
         for (int i = 0; i < newGame.getBoard().length; i++) {
@@ -295,8 +350,22 @@ public class InGame {
                         GridPane.setConstraints(btn, ch.getLocation().y, 4 - ch.getLocation().x);
                         GridPane.setHalignment(btn, HPos.CENTER);
                         btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                        iv.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+                            if (singleTarget) {
+                                if (abt1) {
+                                    System.out.println(ch.getLocation().x + " " + ch.getLocation().y);
+                                    handleSingeTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(0));
+                                } else if (abt2) {
+                                    System.out.println(ch.getLocation().x + " " + ch.getLocation().y);
+                                    handleSingeTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(1));
+                                } else if (abt3) {
+                                    System.out.println(ch.getLocation().x + " " + ch.getLocation().y);
+                                    handleSingeTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(2));
+                                }
+                                singleTarget = false;
+                            }
+                        });
                         boardTiles.add(btn);
-                        gameBoard[i][j] = btn;
                     } else if (tile instanceof Cover) {
                         Cover cv = (Cover) tile;
                         ImageView iv = new ImageView(new Image("views/assets/champions/wall.png"));
@@ -311,20 +380,18 @@ public class InGame {
                         GridPane.setHalignment(btn, HPos.CENTER);
                         btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                         boardTiles.add(btn);
-                        gameBoard[i][j] = btn;
                     }
                 } else {
                     Button btn = new Button();
                     GridPane.setConstraints(btn, j, 4 - i);
                     btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
                     boardTiles.add(btn);
-                    gameBoard[i][j] = btn;
                 }
             }
         }
         return boardTiles;
     }
-
+    
     private static VBox currentChampInfo(Game newGame) {
         VBox info = new VBox();
         Label l1 = new Label("Current Champ: ");
@@ -347,7 +414,7 @@ public class InGame {
         turn.getChildren().remove(turn.getChildren().size() - 1);
         turn.setPrefTileWidth(40);
         turn.setMaxHeight(40);
-        turn.setPrefWidth(12*40);
+        turn.setPrefWidth(12 * 40);
         return turn;
     }
 
@@ -416,25 +483,55 @@ public class InGame {
                 break;
         }
     }
-    public static void abilityHelper(Game newGame, int i) throws AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
-        ArrayList<Ability> abs = newGame.getCurrentChampion().getAbilities();
 
-        if (abs.get(i).getCastArea() == AreaOfEffect.SELFTARGET) {
-            newGame.castAbility(abs.get(i));
-        } else if (abs.get(i).getCastArea() == AreaOfEffect.TEAMTARGET) {
-            newGame.castAbility(abs.get(i));
-        } else if (abs.get(i).getCastArea() == AreaOfEffect.SURROUND) {
-            newGame.castAbility(abs.get(i));
-        } else if (abs.get(i).getCastArea() == AreaOfEffect.SINGLETARGET) {
-            singleTarget = true;
-            index = i;
+    private static void handleDirectional(KeyEvent key, Game newGame, Ability abt) {
+        switch (key.getCode()) {
+            case UP:
+                try {
+                    newGame.castAbility(abt, Direction.UP);
+                } catch (NotEnoughResourcesException | AbilityUseException | CloneNotSupportedException e) {
+                    popUp(e);
+                }
+                break;
+            case DOWN:
+                try {
+                    newGame.castAbility(abt, Direction.DOWN);
+                } catch (NotEnoughResourcesException | AbilityUseException | CloneNotSupportedException e) {
+                    popUp(e);
+                }
+                break;
+            case LEFT:
+                try {
+                    newGame.castAbility(abt, Direction.LEFT);
+                } catch (NotEnoughResourcesException | AbilityUseException | CloneNotSupportedException e) {
+                    popUp(e);
+                }
+                break;
+            case RIGHT:
+                try {
+                    newGame.castAbility(abt, Direction.RIGHT);
+                } catch (NotEnoughResourcesException | AbilityUseException | CloneNotSupportedException e) {
+                    popUp(e);
+                }
+                break;
         }
     }
-    public static void handleAbility(KeyEvent key, Game newGame) throws AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
-        switch (key.getCode()) {
-            case DIGIT1 -> abilityHelper(newGame, 0);
-            case DIGIT2 -> abilityHelper(newGame, 1);
-            case DIGIT3 -> abilityHelper(newGame, 2);
+
+    private static void handleSingeTarget(int x, int y, Game newGame, Ability ability) {
+        try {
+            newGame.castAbility(ability, x, y);
+        } catch (AbilityUseException | InvalidTargetException | NotEnoughResourcesException | CloneNotSupportedException e) {
+            popUp(e);
         }
+    }
+
+    public static void handleAbility(Game newGame, int i) throws AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
+        ArrayList<Ability> abs = newGame.getCurrentChampion().getAbilities();
+        if (abs.get(i).getCastArea() == AreaOfEffect.SELFTARGET)
+            newGame.castAbility(abs.get(i));
+        else if (abs.get(i).getCastArea() == AreaOfEffect.TEAMTARGET)
+            newGame.castAbility(abs.get(i));
+        else if (abs.get(i).getCastArea() == AreaOfEffect.SURROUND)
+            newGame.castAbility(abs.get(i));
     }
 }
