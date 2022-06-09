@@ -29,6 +29,7 @@ import static views.gui.GameApp.popUp;
 public class InGame {
     static Player player1;
     static Player player2;
+    static Game newGame;
     static boolean singleTarget = false;
     static boolean abt1 = false;
     static boolean abt2 = false;
@@ -41,6 +42,7 @@ public class InGame {
     static HBox HUD = new HBox();
 
     public static Scene create(Game newGame) {
+        InGame.newGame = newGame;
         player1 = newGame.getFirstPlayer();
         player2 = newGame.getSecondPlayer();
 
@@ -66,8 +68,8 @@ public class InGame {
         menu.setMaxHeight(160);
         menu.setAlignment(Pos.BASELINE_LEFT);
 
-        profiles.getChildren().add(createProfile(player1, newGame, 1));
-        profiles.getChildren().add(createProfile(player2, newGame, 2));
+        profiles.getChildren().add(createProfile(player1, 1));
+        profiles.getChildren().add(createProfile(player2, 2));
         profiles.addEventFilter(KeyEvent.ANY, Event::consume);
         profiles.setPrefWidth(450);
         profiles.setPadding(new Insets(0, 10, 0, 0));
@@ -86,7 +88,7 @@ public class InGame {
             rowConst.setFillHeight(true);
             board.getRowConstraints().add(rowConst);
         }
-        board.getChildren().addAll(createBoard(newGame));
+        board.getChildren().addAll(createBoard());
 
 
         right.getChildren().add(champAbilities(newGame.getCurrentChampion()));
@@ -106,10 +108,10 @@ public class InGame {
                 popUp(ex);
             }
             board.getChildren().clear();
-            board.getChildren().addAll(createBoard(newGame));
+            board.getChildren().addAll(createBoard());
             profiles.getChildren().clear();
-            profiles.getChildren().add(createProfile(player1, newGame, 1));
-            profiles.getChildren().add(createProfile(player2, newGame, 2));
+            profiles.getChildren().add(createProfile(player1, 1));
+            profiles.getChildren().add(createProfile(player2, 2));
         });
         HUD.getChildren().add(leaderAbility);
         ToggleButton cast1 = new ToggleButton("Ability 1");
@@ -121,7 +123,7 @@ public class InGame {
             }
             if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() != AreaOfEffect.DIRECTIONAL) {
                 try {
-                    handleAbility(newGame, 0);
+                    handleAbility(0);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -131,16 +133,16 @@ public class InGame {
                 if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
                     newGame.endTurn();
                     right.getChildren().clear();
-                    right.getChildren().add(currentChampInfo(newGame));
+                    right.getChildren().add(currentChampInfo());
                     turnImages.add(turnImages.remove(0));
                     menu.getChildren().remove(menu.getChildren().size() - 1);
                     menu.getChildren().add(createTurnOrder(turnImages));
                 }
                 board.getChildren().clear();
-                board.getChildren().addAll(createBoard(newGame));
+                board.getChildren().addAll(createBoard());
                 profiles.getChildren().clear();
-                profiles.getChildren().add(createProfile(player1, newGame, 1));
-                profiles.getChildren().add(createProfile(player2, newGame, 2));
+                profiles.getChildren().add(createProfile(player1, 1));
+                profiles.getChildren().add(createProfile(player2, 2));
             }
         });
         cast1.setPrefSize(100, 50);
@@ -154,7 +156,7 @@ public class InGame {
             }
             if (newGame.getCurrentChampion().getAbilities().get(1).getCastArea() != AreaOfEffect.DIRECTIONAL) {
                 try {
-                    handleAbility(newGame, 1);
+                    handleAbility(1);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -164,16 +166,16 @@ public class InGame {
                 if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
                     newGame.endTurn();
                     right.getChildren().clear();
-                    right.getChildren().add(currentChampInfo(newGame));
+                    right.getChildren().add(currentChampInfo());
                     turnImages.add(turnImages.remove(0));
                     menu.getChildren().remove(menu.getChildren().size() - 1);
                     menu.getChildren().add(createTurnOrder(turnImages));
                 }
                 board.getChildren().clear();
-                board.getChildren().addAll(createBoard(newGame));
+                board.getChildren().addAll(createBoard());
                 profiles.getChildren().clear();
-                profiles.getChildren().add(createProfile(player1, newGame, 1));
-                profiles.getChildren().add(createProfile(player2, newGame, 2));
+                profiles.getChildren().add(createProfile(player1, 1));
+                profiles.getChildren().add(createProfile(player2, 2));
             }
         });
         cast2.setPrefSize(100, 50);
@@ -187,7 +189,7 @@ public class InGame {
             }
             if (newGame.getCurrentChampion().getAbilities().get(2).getCastArea() != AreaOfEffect.DIRECTIONAL) {
                 try {
-                    handleAbility(newGame, 2);
+                    handleAbility(2);
                 } catch (AbilityUseException | NotEnoughResourcesException | CloneNotSupportedException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -197,16 +199,16 @@ public class InGame {
                 if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
                     newGame.endTurn();
                     right.getChildren().clear();
-                    right.getChildren().add(currentChampInfo(newGame));
+                    right.getChildren().add(currentChampInfo());
                     turnImages.add(turnImages.remove(0));
                     menu.getChildren().remove(menu.getChildren().size() - 1);
                     menu.getChildren().add(createTurnOrder(turnImages));
                 }
                 board.getChildren().clear();
-                board.getChildren().addAll(createBoard(newGame));
+                board.getChildren().addAll(createBoard());
                 profiles.getChildren().clear();
-                profiles.getChildren().add(createProfile(player1, newGame, 1));
-                profiles.getChildren().add(createProfile(player2, newGame, 2));
+                profiles.getChildren().add(createProfile(player1, 1));
+                profiles.getChildren().add(createProfile(player2, 2));
             }
         });
         cast3.setPrefSize(100, 50);
@@ -215,15 +217,15 @@ public class InGame {
         endTurn.setOnAction(e -> {
             newGame.endTurn();
             right.getChildren().clear();
-            right.getChildren().add(currentChampInfo(newGame));
+            right.getChildren().add(currentChampInfo());
             turnImages.add(turnImages.remove(0));
             menu.getChildren().remove(menu.getChildren().size() - 1);
             menu.getChildren().add(createTurnOrder(turnImages));
             board.getChildren().clear();
-            board.getChildren().addAll(createBoard(newGame));
+            board.getChildren().addAll(createBoard());
             profiles.getChildren().clear();
-            profiles.getChildren().add(createProfile(player1, newGame, 1));
-            profiles.getChildren().add(createProfile(player2, newGame, 2));
+            profiles.getChildren().add(createProfile(player1, 1));
+            profiles.getChildren().add(createProfile(player2, 2));
         });
         endTurn.setPrefSize(100, 50);
         HUD.getChildren().add(endTurn);
@@ -261,42 +263,30 @@ public class InGame {
                 return;
             if (attack.isSelected()) {
                 attack.selectedProperty().setValue(false);
-                handleAttack(key, newGame);
+                handleAttack(key);
             } else if (cast1.isSelected()) {
                 if (newGame.getCurrentChampion().getAbilities().get(0).getCastArea() == AreaOfEffect.DIRECTIONAL)
-                    handleDirectional(key, newGame, newGame.getCurrentChampion().getAbilities().get(0));
+                    handleDirectional(key, newGame.getCurrentChampion().getAbilities().get(0));
                 cast1.selectedProperty().setValue(false);
             } else if (cast2.isSelected()) {
                 if (newGame.getCurrentChampion().getAbilities().get(1).getCastArea() == AreaOfEffect.DIRECTIONAL)
-                    handleDirectional(key, newGame, newGame.getCurrentChampion().getAbilities().get(1));
+                    handleDirectional(key, newGame.getCurrentChampion().getAbilities().get(1));
                 cast2.selectedProperty().setValue(false);
             } else if (cast3.isSelected()) {
                 if (newGame.getCurrentChampion().getAbilities().get(2).getCastArea() == AreaOfEffect.DIRECTIONAL)
-                    handleDirectional(key, newGame, newGame.getCurrentChampion().getAbilities().get(2));
+                    handleDirectional(key, newGame.getCurrentChampion().getAbilities().get(2));
                 cast1.selectedProperty().setValue(false);
             } else
-                handleMove(key, newGame);
+                handleMove(key);
             if (newGame.checkGameOver() != null)
                 GameApp.onGameOver(newGame.checkGameOver());
-            if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
-                newGame.endTurn();
-                right.getChildren().clear();
-                right.getChildren().add(currentChampInfo(newGame));
-                turnImages.add(turnImages.remove(0));
-                menu.getChildren().remove(menu.getChildren().size() - 1);
-                menu.getChildren().add(createTurnOrder(turnImages));
-            }
-            board.getChildren().clear();
-            board.getChildren().addAll(createBoard(newGame));
-            profiles.getChildren().clear();
-            profiles.getChildren().add(createProfile(player1, newGame, 1));
-            profiles.getChildren().add(createProfile(player2, newGame, 2));
+            update();
         });
 
         return new Scene(root, 1600, 900);
     }
 
-    private static VBox champInfo(Champion c, Game newGame) {
+    private static VBox champInfo(Champion c) {
         VBox currentChampInfo = new VBox();
         ImageView champView = new ImageView(new Image("views/assets/champions/%s.png".formatted(c.getName())));
         champView.setFitWidth(40);
@@ -367,7 +357,7 @@ public class InGame {
         return currentChampAbilities;
     }
 
-    private static VBox createProfile(Player player, Game newGame, int i) {
+    private static VBox createProfile(Player player, int i) {
         VBox profile = new VBox();
         Label name = new Label(player.getName());
         if (i == 1 && newGame.isFirstLeaderAbilityUsed())
@@ -378,14 +368,14 @@ public class InGame {
             profile.getChildren().add(new Label("Leader Ability Not Used"));
         VBox team = new VBox();
         for (Champion c : player.getTeam()) {
-            team.getChildren().add(champInfo(c, newGame));
+            team.getChildren().add(champInfo(c));
         }
         profile.getChildren().add(name);
         profile.getChildren().add(team);
         return profile;
     }
 
-    private static ArrayList<Node> createBoard(Game newGame) {
+    private static ArrayList<Node> createBoard() {
         ArrayList<Node> boardTiles = new ArrayList<>();
         for (int i = 0; i < newGame.getBoard().length; i++) {
             for (int j = 0; j < newGame.getBoard()[i].length; j++) {
@@ -401,13 +391,13 @@ public class InGame {
                         btn.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
                             if (singleTarget) {
                                 if (abt1) {
-                                    handleSingleTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(0));
+                                    handleSingleTarget(ch.getLocation().x, ch.getLocation().y, newGame.getCurrentChampion().getAbilities().get(0));
                                     abt1 = false;
                                 } else if (abt2) {
-                                    handleSingleTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(1));
+                                    handleSingleTarget(ch.getLocation().x, ch.getLocation().y, newGame.getCurrentChampion().getAbilities().get(1));
                                     abt2 = false;
                                 } else if (abt3) {
-                                    handleSingleTarget(ch.getLocation().x, ch.getLocation().y, newGame, newGame.getCurrentChampion().getAbilities().get(2));
+                                    handleSingleTarget(ch.getLocation().x, ch.getLocation().y, newGame.getCurrentChampion().getAbilities().get(2));
                                     abt3 = false;
                                 }
                                 singleTarget = false;
@@ -439,7 +429,7 @@ public class InGame {
         return boardTiles;
     }
 
-    private static VBox currentChampInfo(Game newGame) {
+    private static VBox currentChampInfo() {
         VBox info = new VBox();
         info.getChildren().add(champAbilities(newGame.getCurrentChampion()));
         info.setAlignment(Pos.BASELINE_RIGHT);
@@ -459,7 +449,7 @@ public class InGame {
         return turn;
     }
 
-    private static void handleMove(KeyEvent key, Game newGame) {
+    private static void handleMove(KeyEvent key) {
         switch (key.getCode()) {
             case UP:
                 try {
@@ -492,7 +482,7 @@ public class InGame {
         }
     }
 
-    private static void handleAttack(KeyEvent key, Game newGame) {
+    private static void handleAttack(KeyEvent key) {
         switch (key.getCode()) {
             case UP:
                 try {
@@ -525,7 +515,7 @@ public class InGame {
         }
     }
 
-    private static void handleDirectional(KeyEvent key, Game newGame, Ability abt) {
+    private static void handleDirectional(KeyEvent key, Ability abt) {
         switch (key.getCode()) {
             case UP:
                 try {
@@ -558,29 +548,17 @@ public class InGame {
         }
     }
 
-    private static void handleSingleTarget(int x, int y, Game newGame, Ability ability) {
+    private static void handleSingleTarget(int x, int y, Ability ability) {
         try {
             newGame.castAbility(ability, x, y);
-            if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
-                newGame.endTurn();
-                right.getChildren().clear();
-                right.getChildren().add(currentChampInfo(newGame));
-                turnImages.add(turnImages.remove(0));
-                menu.getChildren().remove(menu.getChildren().size() - 1);
-                menu.getChildren().add(createTurnOrder(turnImages));
-            }
-            board.getChildren().clear();
-            board.getChildren().addAll(createBoard(newGame));
-            profiles.getChildren().clear();
-            profiles.getChildren().add(createProfile(player1, newGame, 1));
-            profiles.getChildren().add(createProfile(player2, newGame, 2));
+            update();
         } catch (AbilityUseException | InvalidTargetException | NotEnoughResourcesException |
                  CloneNotSupportedException e) {
             popUp(e);
         }
     }
 
-    public static void handleAbility(Game newGame, int i) throws AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
+    public static void handleAbility(int i) throws AbilityUseException, NotEnoughResourcesException, CloneNotSupportedException {
         ArrayList<Ability> abs = newGame.getCurrentChampion().getAbilities();
         if (abs.get(i).getCastArea() == AreaOfEffect.SELFTARGET)
             newGame.castAbility(abs.get(i));
@@ -588,5 +566,21 @@ public class InGame {
             newGame.castAbility(abs.get(i));
         else if (abs.get(i).getCastArea() == AreaOfEffect.SURROUND)
             newGame.castAbility(abs.get(i));
+    }
+
+    public static void update() {
+        if (newGame.getCurrentChampion().getCurrentActionPoints() == 0) {
+            newGame.endTurn();
+            right.getChildren().clear();
+            right.getChildren().add(currentChampInfo());
+            turnImages.add(turnImages.remove(0));
+            menu.getChildren().remove(menu.getChildren().size() - 1);
+            menu.getChildren().add(createTurnOrder(turnImages));
+        }
+        board.getChildren().clear();
+        board.getChildren().addAll(createBoard());
+        profiles.getChildren().clear();
+        profiles.getChildren().add(createProfile(player1, 1));
+        profiles.getChildren().add(createProfile(player2, 2));
     }
 }
