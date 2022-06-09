@@ -18,7 +18,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
-import javafx.stage.Screen;
 import model.abilities.Ability;
 import model.world.AntiHero;
 import model.world.Hero;
@@ -684,10 +683,10 @@ public class DisplayChampions {
         Label playerName1 = new Label(player1Name);
         Label playerName2 = new Label(player2Name);
 
-        playerName1.setPrefSize(180,300);
+        playerName1.setPrefWidth(180);
         playerName1.setWrapText(true);
         playerName1.setAlignment(Pos.TOP_LEFT);
-        playerName2.setPrefSize(180,300);
+        playerName2.setPrefWidth(180);
         playerName2.setWrapText(true);
         playerName2.setAlignment(Pos.TOP_LEFT);
 
@@ -706,10 +705,10 @@ public class DisplayChampions {
         player2Box.getChildren().add(playerName2);
 
         player1Box.setLayoutX(1015);
-        player1Box.setLayoutY(160);
+        player1Box.setLayoutY(185);
 
         player2Box.setLayoutX(1465);
-        player2Box.setLayoutY(160);
+        player2Box.setLayoutY(135);
 
         root.getChildren().add(gp);
         root.getChildren().add(statsParent);
